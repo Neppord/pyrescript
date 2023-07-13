@@ -1,7 +1,7 @@
 import json
 import sys
 from functools import partial, wraps
-from typing import List, Dict
+from typing import List, Dict, Any
 
 from foreign.data_array import range_impl
 from foreign.data_eq import eq_int_impl
@@ -122,8 +122,31 @@ def interpret_foreign(module_name, identifier):
     else:
         raise NotImplementedError
 
+class Expression:
+    def interpret(self, interpreter, frame: Dict[str, Any]):
+        if isinstance(self, Literal):
+            return interpreter.literal(self.value, frame)
+        elif isinstance(self, Var):
+            return interpreter.var(self.value, frame)
+        elif isinstance(self, Abs):
+            def abs(x):
+                return interpreter.expression(self.body, {self.argument: x} | frame)
 
-class App:
+            return abs
+        elif isinstance(self, App):
+            function = interpreter.expression(self.abstraction, frame)
+            argument = interpreter.expression(self.argument, frame)
+            return function(argument)
+        elif isinstance(self, Case):
+            return interpreter.case(self.caseExpressions, self.caseAlternatives, frame)
+        elif isinstance(self, Accessor):
+            return interpreter.accessor(self.expression, self.fieldName, frame)
+        elif isinstance(self, Let):
+            return interpreter.let(self.binds, self.expression, frame)
+        else:
+            raise NotImplementedError
+
+class App(Expression):
     def __init__(self, abstraction, argument):
         self.argument = argument
         self.abstraction = abstraction
@@ -132,13 +155,13 @@ class App:
         return f"{repr(self.abstraction)} ({repr(self.argument)})"
 
 
-class Abs:
+class Abs(Expression):
     def __init__(self, argument, body):
         self.argument = argument
         self.body = json_to_expression(body)
 
 
-class Literal:
+class Literal(Expression):
     def __init__(self, value):
         self.value = value
 
@@ -151,7 +174,7 @@ class Literal:
         raise NotImplementedError
 
 
-class Var:
+class Var(Expression):
     def __init__(self, value):
         self.value = value
 
@@ -159,19 +182,19 @@ class Var:
         return f"{'.'.join(self.value['moduleName'])}.{self.value['identifier']}"
 
 
-class Case:
+class Case(Expression):
     def __init__(self, caseExpressions, caseAlternatives):
         self.caseExpressions = caseExpressions
         self.caseAlternatives = caseAlternatives
 
 
-class Accessor:
+class Accessor(Expression):
     def __init__(self, expression, fieldName):
         self.expression = expression
         self.fieldName = fieldName
 
 
-class Let:
+class Let(Expression):
     def __init__(self, binds, expression):
         self.binds = binds
         self.expression = expression
@@ -280,29 +303,8 @@ class Interpreter(object):
             return {k: self.expression(json_to_expression(v), frame) for k, v in literal["value"]}
         raise NotImplementedError
 
-    def expression(self, expression, frame):
-        if isinstance(expression, Literal):
-            return self.literal(expression.value, frame)
-        elif isinstance(expression, Var):
-            return self.var(expression.value, frame)
-        elif isinstance(expression, Abs):
-            def abs(x):
-                return self.expression(expression.body, {expression.argument: x} | frame)
-
-            return abs
-        elif isinstance(expression, App):
-            function = self.expression(expression.abstraction, frame)
-            argument = self.expression(expression.argument, frame)
-            return function(argument)
-        elif isinstance(expression, Case):
-            return self.case(expression.caseExpressions, expression.caseAlternatives, frame)
-        elif isinstance(expression, Accessor):
-            return self.accessor(expression.expression, expression.fieldName, frame)
-        elif isinstance(expression, Let):
-            return self.let(expression.binds, expression.expression, frame)
-        else:
-            raise NotImplementedError
-
+    def expression(self, expression: Expression, frame):
+        return expression.interpret(self, frame)
     def case(self, expressions, alternatives, frame):
         expression, = expressions
         to_match = json_to_expression(expression)
