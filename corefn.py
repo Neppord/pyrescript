@@ -1,7 +1,7 @@
 import json
 import sys
 from functools import partial, wraps
-from typing import List
+from typing import List, Dict
 
 from foreign.data_array import range_impl
 from foreign.data_eq import eq_int_impl
@@ -123,14 +123,70 @@ def interpret_foreign(module_name, identifier):
         raise NotImplementedError
 
 
-class Declaration:
-    pass
+class App:
+    def __init__(self, abstraction, argument):
+        self.argument = argument
+        self.abstraction = abstraction
+
+
+class Abs:
+    def __init__(self, argument, body):
+        self.argument = argument
+        self.body = json_to_expression(body)
+
+
+class Literal:
+    def __init__(self, value):
+        self.value = value
+
+
+class Var:
+    def __init__(self, value):
+        self.value = value
+
+
+class Case:
+    def __init__(self, caseExpressions, caseAlternatives):
+        self.caseExpressions = caseExpressions
+        self.caseAlternatives = caseAlternatives
+
+
+class Accessor:
+    def __init__(self, expression, fieldName):
+        self.expression = expression
+        self.fieldName = fieldName
+
+
+class Let:
+    def __init__(self, binds, expression):
+        self.binds = binds
+        self.expression = expression
+
+
+def json_to_expression(expression):
+    type_ = expression["type"]
+    if type_ == "App":
+        return App(expression["abstraction"], expression["argument"])
+    elif type_ == "Abs":
+        return Abs(expression["argument"], expression["body"])
+    elif type_ == "Literal":
+        return Literal(expression["value"])
+    elif type_ == "Var":
+        return Var(expression["value"])
+    elif type_ == "Case":
+        return Case(expression["caseExpressions"], expression["caseAlternatives"])
+    elif type_ == "Accessor":
+        return Accessor(expression["expression"], expression["fieldName"])
+    elif type_ == "Let":
+        return Let(expression["binds"], expression["expression"])
+    else:
+        raise NotImplementedError
 
 
 class NonRecDeclaration:
     def __init__(self, name, expression):
-        self.expression = expression
         self.name = name
+        self.expression = json_to_expression(expression)
 
     def __repr__(self):
         return f"{self.name} = {self.expression}"
@@ -153,7 +209,7 @@ class RecDeclaration:
         return self.binds
 
 
-class Module(object):
+class Module:
     def __init__(self, module):
         self.module = module
         self.declarations = [
@@ -185,6 +241,9 @@ class Module(object):
                         return True
         return False
 
+    def __repr__(self):
+        return "\n".join(repr(decl) for decl in self.declarations)
+
 
 class Interpreter(object):
     def __init__(self, _load_module):
@@ -208,6 +267,31 @@ class Interpreter(object):
         raise NotImplementedError
 
     def expression(self, expression, frame):
+        if isinstance(expression, dict):
+            return self.expression_dict(expression, frame)
+        elif isinstance(expression, Literal):
+            return self.literal(expression.value, frame)
+        elif isinstance(expression, Var):
+            return self.var(expression.value, frame)
+        elif isinstance(expression, Abs):
+            def abs(x):
+                return self.expression(expression.body, {expression.argument: x} | frame)
+
+            return abs
+        elif isinstance(expression, App):
+            function = self.expression(expression.abstraction, frame)
+            argument = self.expression(expression.argument, frame)
+            return function(argument)
+        elif isinstance(expression, Case):
+            return self.case(expression.caseExpressions, expression.caseAlternatives, frame)
+        elif isinstance(expression, Accessor):
+            return self.accessor(expression.expression, expression.fieldName, frame)
+        elif isinstance(expression, Let):
+            return self.let(expression.binds, expression.expression, frame)
+        else:
+            return self.expression_dict(expression.expression, frame)
+
+    def expression_dict(self, expression: Dict, frame):
         type_ = expression["type"]
         if type_ == "App":
             function = self.expression(expression["abstraction"], frame)
