@@ -1,14 +1,7 @@
 import json
 import sys
-from functools import wraps
-from typing import List, Dict, Any
 
-from foreign.data_array import range_impl
-from foreign.data_eq import eq_int_impl
-from foreign.data_euclidean_ring import int_mod, int_div, int_degree
-from foreign.data_foldable import foldr_array, foldl_array
-from foreign.data_semigroup import concat_string
-from foreign.data_semiring import int_add, int_mul
+from foreign import foreign
 
 
 def load_module(module_name):
@@ -28,92 +21,12 @@ def load_module(module_name):
     return Module(data)
 
 
-def not_implemented_effect():
-    raise NotImplementedError
-
-
 prim = {
     ('Prim',): {
         'undefined': "undefined"
     }
 }
 
-
-def pure(x):
-    return x
-
-
-def apply(f):
-    def apply2(a):
-        return f(a)
-
-    return apply2
-
-
-def run_fn_2(fn):
-    return curry(fn, 2)
-
-
-def curry(fn, n):
-    if n == 1:
-        return fn
-    elif n == 2:
-        return wraps(fn)(lambda x: wraps(fn)(lambda y: fn(x, y)))
-    elif n == 3:
-        return wraps(fn)(lambda x: wraps(fn)(lambda y: wraps(fn)(lambda z: fn(x, y, z))))
-    else:
-        raise NotImplementedError
-
-
-def bindE(a, atob):
-    return atob(a)
-
-
-foreign = {
-    ('Effect',): {
-        'pureE': pure,
-        'bindE': curry(bindE, 2)
-    },
-    ('Effect', 'Console'): {
-        'log': print
-    },
-    ('Data', 'Array'): {
-        'rangeImpl': range_impl,
-    },
-    ('Data', 'Eq'): {
-        'eqIntImpl': eq_int_impl,
-    },
-    ('Data', 'EuclideanRing'): {
-        'intDegree': int_degree,
-        'intDiv': curry(int_div, 2),
-        'intMod': curry(int_mod, 2),
-    },
-    ('Data', 'Foldable'): {
-        'foldrArray': curry(foldr_array, 3),
-        'foldlArray': curry(foldl_array, 3),
-    },
-    ('Data', 'Function', 'Uncurried'): {
-        'runFn2': run_fn_2,
-    },
-    ('Data', 'Semigroup'): {
-        'concatString': curry(concat_string, 2)
-    },
-    ('Data', 'Semiring'): {
-        'intAdd': curry(int_add, 2),
-        'intMul': curry(int_mul, 2),
-    },
-    ('Data', 'Show'): {
-        'showIntImpl': str
-    },
-    ('Data', 'Unit'): {
-        'unit': None
-    },
-}
-
-
-def intMod(a, b):
-    abs_b = abs(b)
-    return ((a % abs_b) + abs_b) % abs_b
 
 
 def interpret_foreign(module_name, identifier):
@@ -125,7 +38,7 @@ def interpret_foreign(module_name, identifier):
 
 class Expression:
 
-    def interpret(self, interpreter, frame: Dict[str, Any]):
+    def interpret(self, interpreter, frame):
         raise NotImplementedError
 
 
@@ -135,9 +48,11 @@ class App(Expression):
         self.abstraction = abstraction
 
     def __repr__(self):
-        return f"{repr(self.abstraction)} ({repr(self.argument)})"
+        f = repr(self.abstraction)
+        a = repr(self.argument)
+        return "{f} ({a})" % {f: f, a: a}
 
-    def interpret(self, interpreter, frame: Dict[str, Any]):
+    def interpret(self, interpreter, frame):
         function = interpreter.expression(self.abstraction, frame)
         argument = interpreter.expression(self.argument, frame)
         return function(argument)
@@ -148,24 +63,35 @@ class Abs(Expression):
         self.argument = argument
         self.body = body
 
-    def interpret(self, interpreter, frame: Dict[str, Any]):
+    def interpret(self, interpreter, frame):
         return AbsWithFrame(interpreter, self, frame)
 
     def __repr__(self):
-        return f"\\{self.argument} -> {repr(self.body)} "
+        argument = self.argument
+        body = repr(self.body)
+        return "\\{argument} -> {body} " % {argument: argument, body: body}
+
 
 class AbsWithFrame:
 
-    def __init__(self, interpreter, abs: Abs, frame: Dict[str, Any]):
+    def __init__(self, interpreter, abs, frame):
         self.interpreter = interpreter
         self.abs = abs
         self.frame = frame
 
     def __call__(self, x, **kwargs):
-        return self.interpreter.expression(self.abs.body, {self.abs.argument: x} | self.frame)
+        new_frame = {}
+        new_frame.update(self.frame)
+        new_frame[self.abs.argument] = x
+        return self.interpreter.expression(self.abs.body, new_frame)
 
     def __repr__(self):
-        return f"\\{self.abs.argument} -> {repr(self.abs.body)} "
+        body_repr = repr(self.abs.body)
+        if self.frame:
+            frame_repr = "; ".join(k + " = " + repr(v) for k, v in self.frame.items())
+            return "\\" + self.abs.argument + " -> let " + frame_repr + " in " + body_repr
+        else:
+            return "\\" + self.abs.argument + " -> " +body_repr
 
 
 class Literal(Expression):
@@ -180,7 +106,7 @@ class Literal(Expression):
             return repr({k: repr(json_to_expression(v)) for k, v in self.value["value"]})
         raise NotImplementedError
 
-    def interpret(self, interpreter, frame: Dict[str, Any]):
+    def interpret(self, interpreter, frame):
         return interpreter.literal(self.value, frame)
 
 
@@ -190,20 +116,20 @@ class Var(Expression):
 
     def __repr__(self):
         if 'moduleName' in self.value:
-            return f"{'.'.join(self.value['moduleName'])}.{self.value['identifier']}"
+            return '.'.join(self.value['moduleName']) + "." + self.value['identifier']
         else:
             return self.value['identifier']
 
-    def interpret(self, interpreter, frame: Dict[str, Any]):
+    def interpret(self, interpreter, frame):
         return interpreter.var(self.value, frame)
 
 
 class Case(Expression):
-    def __init__(self, caseExpressions, caseAlternatives):
-        self.caseExpressions = caseExpressions
-        self.caseAlternatives = caseAlternatives
+    def __init__(self, case_expressions, case_alternatives):
+        self.caseExpressions = case_expressions
+        self.caseAlternatives = case_alternatives
 
-    def interpret(self, interpreter, frame: Dict[str, Any]):
+    def interpret(self, interpreter, frame):
         return interpreter.case(self.caseExpressions, self.caseAlternatives, frame)
 
 
@@ -212,7 +138,7 @@ class Accessor(Expression):
         self.expression = expression
         self.fieldName = fieldName
 
-    def interpret(self, interpreter, frame: Dict[str, Any]):
+    def interpret(self, interpreter, frame):
         return interpreter.accessor(self.expression, self.fieldName, frame)
 
 
@@ -221,12 +147,14 @@ class Let(Expression):
         self.binds = binds
         self.expression = expression
 
-    def interpret(self, interpreter, frame: Dict[str, Any]):
+    def interpret(self, interpreter, frame):
         return interpreter.let(self.binds, self.expression, frame)
 
     def __repr__(self):
         binds = '  ' + '\n  '.join(repr(b) for b in self.binds)
-        return f"let\n{binds}\nin {repr(self.expression)}"
+        expression = repr(self.expression)
+        return "let\n{binds}\nin {expression}" % {binds: binds, expression: expression}
+
 
 def json_to_expression(expression):
     type_ = expression["type"]
@@ -254,14 +182,16 @@ class NonRecDeclaration:
         self.expression = json_to_expression(expression)
 
     def __repr__(self):
-        return f"{self.name} = {self.expression}"
+        name = self.name
+        expression = self.expression
+        return "{name} = {expression}" % {name: name, expression: expression}
 
     def get_declarations(self):
         return self
 
 
 class RecDeclaration:
-    def __init__(self, binds: List):
+    def __init__(self, binds):
         self.binds = [
             NonRecDeclaration(bind['identifier'], bind['expression'])
             for bind in binds
@@ -284,7 +214,7 @@ class Module:
             for decl in module['decls']
         ]
 
-    def decl(self, name) -> NonRecDeclaration:
+    def decl(self, name):
         for decl in self.declarations:
             if isinstance(decl, NonRecDeclaration) and decl.name == name:
                 return decl
@@ -320,7 +250,7 @@ class Interpreter(object):
     def run_module_by_name(self, module_name):
         self.run_main(self.load_module(module_name))
 
-    def declaration(self, decl: NonRecDeclaration):
+    def declaration(self, decl):
         return self.expression(decl.expression, {})
 
     def literal(self, literal, frame):
@@ -331,7 +261,7 @@ class Interpreter(object):
             return {k: self.expression(json_to_expression(v), frame) for k, v in literal["value"]}
         raise NotImplementedError
 
-    def expression(self, expression: Expression, frame):
+    def expression(self, expression, frame):
         return expression.interpret(self, frame)
 
     def case(self, expressions, alternatives, frame):
@@ -342,7 +272,10 @@ class Interpreter(object):
             binder, = alternative["binders"]
             result, new_frame = self.binder(binder, to_match, frame)
             if result:
-                return self.expression(alternative_expression, new_frame | frame)
+                next_frame = {}
+                next_frame.update(frame)
+                next_frame.update(new_frame)
+                return self.expression(alternative_expression, next_frame)
         raise NotImplementedError
 
     def binder(self, binder, to_match, frame):
@@ -386,9 +319,10 @@ class Interpreter(object):
         return record[field_name]
 
     def let(self, binds, expression, frame):
-        new_frame = frame
+        new_frame = {}
+        new_frame.update(frame)
         for bind in binds:
-            new_frame |= self.bind(bind, frame)
+            new_frame.update(self.bind(bind, frame))
         return self.expression(expression, new_frame)
 
     def bind(self, bind, frame):
