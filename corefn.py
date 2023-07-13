@@ -5,6 +5,9 @@ from foreign import foreign
 
 
 def load_module(module_name):
+    """
+    :type module_name: list
+    """
     file_name = "output/" + ".".join(module_name) + "/corefn.json"
     with open(file_name) as json_file:
         data = json.load(json_file)
