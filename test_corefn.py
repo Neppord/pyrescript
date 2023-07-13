@@ -46,7 +46,7 @@ def test_hello_concat(capsys):
     assert capsys.readouterr().out == "hello world!\n"
 
 
-def xtest_e2e_fizz_buzz(monkeypatch, capsys):
+def test_e2e_fizz_buzz(monkeypatch, capsys):
     monkeypatch.chdir("e2e/fizz-buzz")
     check_call(["spago", "build", "--purs-args", "--codegen corefn"], shell=True)
     capsys.readouterr()
