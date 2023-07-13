@@ -307,10 +307,11 @@ class Interpreter(object):
         expression, = expressions
         to_match = json_to_expression(expression)
         for alternative in alternatives:
+            alternative_expression = json_to_expression(alternative["expression"])
             binder, = alternative["binders"]
             result, new_frame = self.binder(binder, to_match, frame)
             if result:
-                return self.expression(json_to_expression(alternative["expression"]), new_frame | frame)
+                return self.expression(alternative_expression, new_frame | frame)
         raise NotImplementedError
 
     def binder(self, binder, to_match, frame):

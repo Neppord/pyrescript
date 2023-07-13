@@ -1,4 +1,5 @@
-def int_mod(a, b): return a % b
+def int_mod(a, b):
+    return a % b
 
 
 def int_degree(x): return min(abs(x), 2147483647)
