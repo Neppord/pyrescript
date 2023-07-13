@@ -1,6 +1,7 @@
 import json
 import sys
 from functools import partial, wraps
+from typing import List
 
 from foreign.data_array import range_impl
 from foreign.data_eq import eq_int_impl
@@ -67,6 +68,7 @@ def curry(fn, n):
 def bindE(a, atob):
     return atob(a)
 
+
 foreign = {
     ('Effect',): {
         'pureE': pure,
@@ -121,20 +123,53 @@ def interpret_foreign(module_name, identifier):
         raise NotImplementedError
 
 
+class Declaration:
+    pass
+
+
+class NonRecDeclaration:
+    def __init__(self, name, expression):
+        self.expression = expression
+        self.name = name
+
+    def __repr__(self):
+        return f"{self.name} = {self.expression}"
+
+    def get_declarations(self):
+        return self
+
+
+class RecDeclaration:
+    def __init__(self, binds: List):
+        self.binds = [
+            NonRecDeclaration(bind['identifier'], bind['expression'])
+            for bind in binds
+        ]
+
+    def __repr__(self):
+        return "\n".join(repr(bind) for bind in self.binds)
+
+    def get_declarations(self):
+        return self.binds
+
+
 class Module(object):
     def __init__(self, module):
         self.module = module
-        self.__decls = {decl["identifier"]: decl for decl in module["decls"] if "identifier" in decl}
+        self.declarations = [
+            NonRecDeclaration(decl['identifier'], decl['expression'])
+            if decl['bindType'] == "NonRec" else
+            RecDeclaration(decl["binds"])
+            for decl in module['decls']
+        ]
 
-    def decl(self, name):
-        for decl in self.module["decls"]:
-            bind_type = decl["bindType"]
-            if bind_type == "NonRec":
-                if decl["identifier"] == name:
-                    return decl
-            elif bind_type == "Rec":
-                for bind in decl["binds"]:
-                    if bind["identifier"] == name:
+    def decl(self, name) -> NonRecDeclaration:
+        for decl in self.declarations:
+            if isinstance(decl, NonRecDeclaration) and decl.name == name:
+                return decl
+            elif isinstance(decl, RecDeclaration):
+                for bind in decl.binds:
+                    if bind.name == name:
                         return bind
         raise NotImplementedError
 
@@ -161,8 +196,8 @@ class Interpreter(object):
     def run_module_by_name(self, module_name):
         self.run_main(self.load_module(module_name))
 
-    def declaration(self, decl):
-        return self.expression(decl["expression"], {})
+    def declaration(self, decl: NonRecDeclaration):
+        return self.expression(decl.expression, {})
 
     def literal(self, literal, frame):
         literal_type = literal["literalType"]
@@ -184,6 +219,7 @@ class Interpreter(object):
         elif type_ == "Abs":
             def abs(x):
                 return self.expression(expression["body"], {expression["argument"]: x} | frame)
+
             return abs
         elif type_ == "Literal":
             return self.literal(expression["value"], frame)
