@@ -122,6 +122,7 @@ def interpret_foreign(module_name, identifier):
     else:
         raise NotImplementedError
 
+
 class Expression:
     def interpret(self, interpreter, frame: Dict[str, Any]):
         if isinstance(self, Literal):
@@ -145,6 +146,7 @@ class Expression:
             return interpreter.let(self.binds, self.expression, frame)
         else:
             raise NotImplementedError
+
 
 class App(Expression):
     def __init__(self, abstraction, argument):
@@ -305,6 +307,7 @@ class Interpreter(object):
 
     def expression(self, expression: Expression, frame):
         return expression.interpret(self, frame)
+
     def case(self, expressions, alternatives, frame):
         expression, = expressions
         to_match = json_to_expression(expression)
