@@ -190,9 +190,9 @@ def json_to_expression(expression):
     elif type_ == "Case":
         return Case(expression["caseExpressions"], expression["caseAlternatives"])
     elif type_ == "Accessor":
-        return Accessor(expression["expression"], expression["fieldName"])
+        return Accessor(json_to_expression(expression["expression"]), expression["fieldName"])
     elif type_ == "Let":
-        return Let(expression["binds"], expression["expression"])
+        return Let(expression["binds"], json_to_expression(expression["expression"]))
     else:
         raise NotImplementedError
 
@@ -277,7 +277,7 @@ class Interpreter(object):
         if literal_type in ["StringLiteral", "BooleanLiteral", "IntLiteral"]:
             return literal["value"]
         elif literal_type == "ObjectLiteral":
-            return {k: self.expression(v, frame) for k, v in literal["value"]}
+            return {k: self.expression(json_to_expression(v), frame) for k, v in literal["value"]}
         raise NotImplementedError
 
     def expression(self, expression, frame):
@@ -301,18 +301,16 @@ class Interpreter(object):
         elif isinstance(expression, Let):
             return self.let(expression.binds, expression.expression, frame)
         else:
-            return self.expression(
-                json_to_expression(expression),
-                frame
-            )
+            raise NotImplementedError
 
     def case(self, expressions, alternatives, frame):
         expression, = expressions
+        to_match = json_to_expression(expression)
         for alternative in alternatives:
             binder, = alternative["binders"]
-            result, new_frame = self.binder(binder, expression, frame)
+            result, new_frame = self.binder(binder, to_match, frame)
             if result:
-                return self.expression(alternative["expression"], new_frame | frame)
+                return self.expression(json_to_expression(alternative["expression"]), new_frame | frame)
         raise NotImplementedError
 
     def binder(self, binder, to_match, frame):
@@ -363,7 +361,7 @@ class Interpreter(object):
 
     def bind(self, bind, frame):
         if bind["bindType"] == "NonRec":
-            return {bind["identifier"]: self.expression(bind["expression"], frame)}
+            return {bind["identifier"]: self.expression(json_to_expression(bind["expression"]), frame)}
         else:
             raise NotImplementedError
 
