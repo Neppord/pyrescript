@@ -267,9 +267,7 @@ class Interpreter(object):
         raise NotImplementedError
 
     def expression(self, expression, frame):
-        if isinstance(expression, dict):
-            return self.expression_dict(expression, frame)
-        elif isinstance(expression, Literal):
+        if isinstance(expression, Literal):
             return self.literal(expression.value, frame)
         elif isinstance(expression, Var):
             return self.var(expression.value, frame)
@@ -289,33 +287,10 @@ class Interpreter(object):
         elif isinstance(expression, Let):
             return self.let(expression.binds, expression.expression, frame)
         else:
-            return self.expression_dict(expression.expression, frame)
-
-    def expression_dict(self, expression: Dict, frame):
-        type_ = expression["type"]
-        if type_ == "App":
-            function = self.expression(expression["abstraction"], frame)
-            if "argument" in expression:
-                argument = self.expression(expression["argument"], frame)
-                return function(argument)
-            else:
-                raise NotImplemented
-        elif type_ == "Abs":
-            def abs(x):
-                return self.expression(expression["body"], {expression["argument"]: x} | frame)
-
-            return abs
-        elif type_ == "Literal":
-            return self.literal(expression["value"], frame)
-        elif type_ == "Var":
-            return self.var(expression["value"], frame)
-        elif type_ == "Case":
-            return self.case(expression["caseExpressions"], expression["caseAlternatives"], frame)
-        elif type_ == "Accessor":
-            return self.accessor(expression["expression"], expression["fieldName"], frame)
-        elif type_ == "Let":
-            return self.let(expression["binds"], expression["expression"], frame)
-        raise NotImplementedError
+            return self.expression(
+                json_to_expression(expression),
+                frame
+            )
 
     def case(self, expressions, alternatives, frame):
         expression, = expressions
