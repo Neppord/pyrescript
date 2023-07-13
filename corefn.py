@@ -128,6 +128,9 @@ class App:
         self.argument = argument
         self.abstraction = abstraction
 
+    def __repr__(self):
+        return f"{repr(self.abstraction)} ({repr(self.argument)})"
+
 
 class Abs:
     def __init__(self, argument, body):
@@ -139,10 +142,21 @@ class Literal:
     def __init__(self, value):
         self.value = value
 
+    def __repr__(self):
+        literal_type = self.value["literalType"]
+        if literal_type in ["StringLiteral", "BooleanLiteral", "IntLiteral"]:
+            return self.value["value"]
+        elif literal_type == "ObjectLiteral":
+            return repr({k: repr(json_to_expression(v)) for k, v in self.value["value"]})
+        raise NotImplementedError
+
 
 class Var:
     def __init__(self, value):
         self.value = value
+
+    def __repr__(self):
+        return f"{'.'.join(self.value['moduleName'])}.{self.value['identifier']}"
 
 
 class Case:
@@ -166,7 +180,7 @@ class Let:
 def json_to_expression(expression):
     type_ = expression["type"]
     if type_ == "App":
-        return App(expression["abstraction"], expression["argument"])
+        return App(json_to_expression(expression["abstraction"]), json_to_expression(expression["argument"]))
     elif type_ == "Abs":
         return Abs(expression["argument"], expression["body"])
     elif type_ == "Literal":
