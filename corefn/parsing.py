@@ -34,10 +34,8 @@ def load_module(module_name):
             for child in decl["binds"].children:
                 bind = dict(iter_object(child))
                 identifier = str_(bind['identifier'])
-                declarations[identifier] = Declaration(
-                    identifier,
-                    expression_(bind['expression'])
-                )
+                expression = expression_(bind['expression'])
+                declarations[identifier] = Declaration(identifier, expression)
         else:
             raise NotImplementedError()
     return Module(declarations)
