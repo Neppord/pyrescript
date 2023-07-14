@@ -1,0 +1,315 @@
+-+- 0
+size: 4
+unsigned: 0
+---
+-+- 1
+size: 1
+unsigned: 1
+---
+-+- 2
+value: 2048
+---
+-+- 3
+align: 2
+size: 22
+fldofs dwSize: 0
+fldsize dwSize: 4
+fldofs dwCursorPosition: 4
+fldsize dwCursorPosition: 4
+fldofs wAttributes: 8
+fldsize wAttributes: 2
+fldunsigned wAttributes: 1
+fldofs srWindow: 10
+fldsize srWindow: 8
+fldofs dwMaximumWindowSize: 18
+fldsize dwMaximumWindowSize: 4
+---
+-+- 4
+align: 2
+size: 4
+fldofs X: 0
+fldsize X: 2
+fldunsigned X: 0
+fldofs Y: 2
+fldsize Y: 2
+fldunsigned Y: 0
+---
+-+- 5
+value: 0
+---
+-+- 6
+value: 1
+---
+-+- 7
+value: 65000
+---
+-+- 8
+value: 65001
+---
+-+- 9
+value: 1
+---
+-+- 10
+value: 0
+---
+-+- 11
+value: 4
+---
+-+- 12
+value: 1024
+---
+-+- 13
+value: 65536
+---
+-+- 14
+size: 4
+unsigned: 1
+---
+-+- 15
+size: 8
+unsigned: 1
+---
+-+- 16
+value: 6
+---
+-+- 17
+value: 1113
+---
+-+- 18
+align: 4
+size: 8
+fldofs dwLowDateTime: 0
+fldsize dwLowDateTime: 4
+fldunsigned dwLowDateTime: 1
+fldofs dwHighDateTime: 4
+fldsize dwHighDateTime: 4
+fldunsigned dwHighDateTime: 1
+---
+-+- 19
+value: 2
+---
+-+- 20
+value: 256
+---
+-+- 21
+value: 4096
+---
+-+- 22
+value: 512
+---
+-+- 23
+value: 1
+---
+-+- 24
+size: 8
+---
+-+- 25
+size: 4
+unsigned: 0
+---
+-+- 26
+value: 4294967295
+---
+-+- 27
+size: 4
+unsigned: 0
+---
+-+- 28
+value: 4096
+---
+-+- 29
+value: 256
+---
+-+- 30
+value: 8
+---
+-+- 31
+size: 4
+unsigned: 0
+---
+-+- 32
+size: 8
+---
+-+- 33
+size: 8
+---
+-+- 34
+size: 8
+---
+-+- 35
+size: 8
+---
+-+- 36
+size: 8
+---
+-+- 37
+size: 8
+---
+-+- 38
+size: 8
+---
+-+- 39
+size: 8
+---
+-+- 40
+size: 8
+---
+-+- 41
+size: 8
+---
+-+- 42
+size: 8
+---
+-+- 43
+value: 260
+---
+-+- 44
+value: 8
+---
+-+- 45
+align: 4
+size: 156
+fldofs dwOSVersionInfoSize: 0
+fldsize dwOSVersionInfoSize: 4
+fldunsigned dwOSVersionInfoSize: 1
+fldofs dwMajorVersion: 4
+fldsize dwMajorVersion: 4
+fldunsigned dwMajorVersion: 1
+fldofs dwMinorVersion: 8
+fldsize dwMinorVersion: 4
+fldunsigned dwMinorVersion: 1
+fldofs dwBuildNumber: 12
+fldsize dwBuildNumber: 4
+fldunsigned dwBuildNumber: 1
+fldofs dwPlatformId: 16
+fldsize dwPlatformId: 4
+fldunsigned dwPlatformId: 1
+fldofs szCSDVersion: 20
+fldsize szCSDVersion: 128
+fldofs wServicePackMajor: 148
+fldsize wServicePackMajor: 2
+fldunsigned wServicePackMajor: 1
+fldofs wServicePackMinor: 150
+fldsize wServicePackMinor: 2
+fldunsigned wServicePackMinor: 1
+fldofs wSuiteMask: 152
+fldsize wSuiteMask: 2
+fldunsigned wSuiteMask: 1
+fldofs wProductType: 154
+fldsize wProductType: 1
+fldunsigned wProductType: 1
+---
+-+- 46
+size: 8
+---
+-+- 47
+value: 2097151
+---
+-+- 48
+value: 128
+---
+-+- 49
+value: 2
+---
+-+- 50
+value: 64
+---
+-+- 51
+value: 1024
+---
+-+- 52
+value: 4096
+---
+-+- 53
+value: 256
+---
+-+- 54
+value: 2048
+---
+-+- 55
+value: 1
+---
+-+- 56
+value: 8
+---
+-+- 57
+value: 16
+---
+-+- 58
+value: 32
+---
+-+- 59
+value: 131072
+---
+-+- 60
+value: 1
+---
+-+- 61
+size: 8
+unsigned: 1
+---
+-+- 62
+align: 2
+size: 8
+fldofs Left: 0
+fldsize Left: 2
+fldunsigned Left: 0
+fldofs Top: 2
+fldsize Top: 2
+fldunsigned Top: 0
+fldofs Right: 4
+fldsize Right: 2
+fldunsigned Right: 0
+fldofs Bottom: 6
+fldsize Bottom: 2
+fldunsigned Bottom: 0
+---
+-+- 63
+value: 4294967284
+---
+-+- 64
+value: 4294967286
+---
+-+- 65
+value: 4294967285
+---
+-+- 66
+value: 1048576
+---
+-+- 67
+align: 2
+size: 16
+---
+-+- 68
+size: 8
+unsigned: 1
+---
+-+- 69
+value: 0
+---
+-+- 70
+value: 258
+---
+-+- 71
+size: 2
+unsigned: 1
+---
+-+- 72
+value: 1024
+---
+-+- 73
+size: 2
+unsigned: 1
+---
+-+- 74
+value: 262144
+---
+-+- 75
+value: 524288
+---
+-+- 76
+value: 32767
+---
+-+- 77
+value: 16384
+---

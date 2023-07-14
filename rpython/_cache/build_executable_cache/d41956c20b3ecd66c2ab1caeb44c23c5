@@ -1,0 +1,1336 @@
+-+- 0
+defined: 0
+---
+-+- 1
+defined: 0
+---
+-+- 2
+defined: 1
+value: 16
+---
+-+- 3
+defined: 0
+---
+-+- 4
+defined: 0
+---
+-+- 5
+defined: 0
+---
+-+- 6
+defined: 0
+---
+-+- 7
+defined: 0
+---
+-+- 8
+defined: 0
+---
+-+- 9
+defined: 0
+---
+-+- 10
+defined: 1
+value: 2
+---
+-+- 11
+defined: 1
+value: 23
+---
+-+- 12
+defined: 1
+value: 6
+---
+-+- 13
+defined: 1
+value: 26
+---
+-+- 14
+defined: 0
+---
+-+- 15
+defined: 0
+---
+-+- 16
+defined: 0
+---
+-+- 17
+defined: 0
+---
+-+- 18
+defined: 0
+---
+-+- 19
+defined: 0
+---
+-+- 20
+defined: 0
+---
+-+- 21
+defined: 0
+---
+-+- 22
+defined: 0
+---
+-+- 23
+defined: 0
+---
+-+- 24
+defined: 1
+value: 11
+---
+-+- 25
+defined: 0
+---
+-+- 26
+defined: 1
+value: 0
+---
+-+- 27
+defined: 0
+---
+-+- 28
+defined: 0
+---
+-+- 29
+defined: 1
+value: 1024
+---
+-+- 30
+defined: 1
+value: 256
+---
+-+- 31
+defined: 1
+value: 2
+---
+-+- 32
+defined: 0
+---
+-+- 33
+defined: 0
+---
+-+- 34
+defined: 1
+value: 4
+---
+-+- 35
+defined: 1
+value: 8
+---
+-+- 36
+defined: 1
+value: 1
+---
+-+- 37
+defined: 1
+value: 2048
+---
+-+- 38
+defined: 0
+---
+-+- 39
+defined: 0
+---
+-+- 40
+defined: 0
+---
+-+- 41
+defined: 0
+---
+-+- 42
+defined: 1
+value: 102
+---
+-+- 43
+defined: 0
+---
+-+- 44
+defined: 1
+value: 11002
+---
+-+- 45
+defined: 1
+value: 10022
+---
+-+- 46
+defined: 0
+---
+-+- 47
+defined: 1
+value: 11003
+---
+-+- 48
+defined: 1
+value: 10047
+---
+-+- 49
+defined: 0
+---
+-+- 50
+defined: 1
+value: 8
+---
+-+- 51
+defined: 1
+value: 11001
+---
+-+- 52
+defined: 1
+value: 11001
+---
+-+- 53
+defined: 0
+---
+-+- 54
+defined: 0
+---
+-+- 55
+defined: 1
+value: 10109
+---
+-+- 56
+defined: 1
+value: 10044
+---
+-+- 57
+defined: 0
+---
+-+- 58
+defined: 1
+value: 112
+---
+-+- 59
+defined: 1
+value: 4
+---
+-+- 60
+defined: 1
+value: 113
+---
+-+- 61
+defined: 1
+value: 140
+---
+-+- 62
+defined: 1
+value: 8
+---
+-+- 63
+defined: 1
+value: 32
+---
+-+- 64
+defined: 1
+value: 5
+---
+-+- 65
+defined: 1
+value: 16
+---
+-+- 66
+defined: 1
+value: 4
+---
+-+- 67
+defined: 1
+value: 1
+---
+-+- 68
+defined: 1
+value: 64
+---
+-+- 69
+defined: 1
+value: 2
+---
+-+- 70
+defined: 1
+value: 2147772030
+---
+-+- 71
+defined: 1
+value: -1
+---
+-+- 72
+defined: 0
+---
+-+- 73
+defined: 0
+---
+-+- 74
+align: 4
+size: 16
+fldofs Data1: 0
+fldsize Data1: 4
+fldunsigned Data1: 1
+fldofs Data2: 4
+fldsize Data2: 2
+fldunsigned Data2: 1
+fldofs Data3: 6
+fldsize Data3: 2
+fldunsigned Data3: 1
+fldofs Data4: 8
+fldsize Data4: 8
+---
+-+- 75
+defined: 0
+---
+-+- 76
+defined: 1
+value: 0
+---
+-+- 77
+defined: 1
+value: 4294967295
+---
+-+- 78
+defined: 1
+value: 2130706433
+---
+-+- 79
+defined: 0
+---
+-+- 80
+defined: 1
+value: 4294967295
+---
+-+- 81
+defined: 0
+---
+-+- 82
+defined: 1
+value: 65
+---
+-+- 83
+defined: 1
+value: 22
+---
+-+- 84
+defined: 1
+value: 4294967295
+---
+-+- 85
+defined: 1
+value: 18446744073709551615
+---
+-+- 86
+defined: 1
+value: 1024
+---
+-+- 87
+defined: 0
+---
+-+- 88
+defined: 0
+---
+-+- 89
+defined: 0
+---
+-+- 90
+defined: 0
+---
+-+- 91
+defined: 0
+---
+-+- 92
+defined: 0
+---
+-+- 93
+defined: 0
+---
+-+- 94
+defined: 0
+---
+-+- 95
+defined: 0
+---
+-+- 96
+defined: 0
+---
+-+- 97
+defined: 0
+---
+-+- 98
+defined: 0
+---
+-+- 99
+defined: 0
+---
+-+- 100
+defined: 0
+---
+-+- 101
+defined: 0
+---
+-+- 102
+defined: 0
+---
+-+- 103
+defined: 1
+value: 0
+---
+-+- 104
+defined: 0
+---
+-+- 105
+defined: 0
+---
+-+- 106
+defined: 0
+---
+-+- 107
+defined: 0
+---
+-+- 108
+defined: 0
+---
+-+- 109
+defined: 0
+---
+-+- 110
+defined: 0
+---
+-+- 111
+defined: 0
+---
+-+- 112
+defined: 0
+---
+-+- 113
+defined: 0
+---
+-+- 114
+defined: 0
+---
+-+- 115
+defined: 0
+---
+-+- 116
+defined: 0
+---
+-+- 117
+defined: 0
+---
+-+- 118
+defined: 0
+---
+-+- 119
+defined: 0
+---
+-+- 120
+defined: 0
+---
+-+- 121
+defined: 0
+---
+-+- 122
+defined: 0
+---
+-+- 123
+defined: 1
+value: 26
+---
+-+- 124
+defined: 1
+value: 14
+---
+-+- 125
+defined: 0
+---
+-+- 126
+defined: 1
+value: 21
+---
+-+- 127
+defined: 1
+value: 1
+---
+-+- 128
+defined: 1
+value: 12
+---
+-+- 129
+defined: 1
+value: 13
+---
+-+- 130
+defined: 1
+value: 10
+---
+-+- 131
+defined: 1
+value: 9
+---
+-+- 132
+defined: 1
+value: 11
+---
+-+- 133
+defined: 0
+---
+-+- 134
+defined: 0
+---
+-+- 135
+defined: 1
+value: 19
+---
+-+- 136
+defined: 0
+---
+-+- 137
+defined: 0
+---
+-+- 138
+defined: 0
+---
+-+- 139
+defined: 0
+---
+-+- 140
+defined: 0
+---
+-+- 141
+defined: 1
+value: 38
+---
+-+- 142
+defined: 1
+value: 40
+---
+-+- 143
+defined: 1
+value: 32
+---
+-+- 144
+defined: 0
+---
+-+- 145
+defined: 0
+---
+-+- 146
+defined: 1
+value: 39
+---
+-+- 147
+defined: 1
+value: 4
+---
+-+- 148
+defined: 0
+---
+-+- 149
+defined: 1
+value: 27
+---
+-+- 150
+defined: 0
+---
+-+- 151
+defined: 1
+value: 12
+---
+-+- 152
+defined: 0
+---
+-+- 153
+defined: 0
+---
+-+- 154
+defined: 1
+value: 13
+---
+-+- 155
+defined: 1
+value: 2
+---
+-+- 156
+defined: 0
+---
+-+- 157
+defined: 1
+value: 9
+---
+-+- 158
+defined: 1
+value: 11
+---
+-+- 159
+defined: 1
+value: 10
+---
+-+- 160
+defined: 1
+value: 1
+---
+-+- 161
+defined: 1
+value: 25
+---
+-+- 162
+defined: 0
+---
+-+- 163
+defined: 0
+---
+-+- 164
+defined: 0
+---
+-+- 165
+defined: 1
+value: 3
+---
+-+- 166
+defined: 1
+value: 4
+---
+-+- 167
+defined: 0
+---
+-+- 168
+defined: 1
+value: 512
+---
+-+- 169
+defined: 1
+value: 4
+---
+-+- 170
+defined: 0
+---
+-+- 171
+defined: 0
+---
+-+- 172
+defined: 1
+value: 4096
+---
+-+- 173
+defined: 0
+---
+-+- 174
+defined: 1
+value: 1
+---
+-+- 175
+defined: 1
+value: 2
+---
+-+- 176
+defined: 1
+value: 256
+---
+-+- 177
+defined: 1
+value: 8
+---
+-+- 178
+defined: 0
+---
+-+- 179
+defined: 0
+---
+-+- 180
+defined: 0
+---
+-+- 181
+defined: 0
+---
+-+- 182
+defined: 0
+---
+-+- 183
+defined: 0
+---
+-+- 184
+defined: 0
+---
+-+- 185
+defined: 0
+---
+-+- 186
+defined: 0
+---
+-+- 187
+defined: 0
+---
+-+- 188
+defined: 0
+---
+-+- 189
+defined: 0
+---
+-+- 190
+defined: 0
+---
+-+- 191
+defined: 1
+value: 16
+---
+-+- 192
+defined: 1
+value: 1025
+---
+-+- 193
+defined: 1
+value: 32
+---
+-+- 194
+defined: 1
+value: 4
+---
+-+- 195
+defined: 1
+value: 1
+---
+-+- 196
+defined: 1
+value: 2
+---
+-+- 197
+defined: 1
+value: 8
+---
+-+- 198
+defined: 0
+---
+-+- 199
+defined: 0
+---
+-+- 200
+defined: 0
+---
+-+- 201
+defined: 0
+---
+-+- 202
+defined: 0
+---
+-+- 203
+defined: 0
+---
+-+- 204
+defined: 0
+---
+-+- 205
+defined: 0
+---
+-+- 206
+defined: 0
+---
+-+- 207
+defined: 0
+---
+-+- 208
+defined: 0
+---
+-+- 209
+defined: 0
+---
+-+- 210
+defined: 1
+value: 1
+---
+-+- 211
+defined: 1
+value: 2
+---
+-+- 212
+defined: 1
+value: 768
+---
+-+- 213
+defined: 0
+---
+-+- 214
+defined: 1
+value: 4
+---
+-+- 215
+defined: 1
+value: 16
+---
+-+- 216
+defined: 1
+value: 1024
+---
+-+- 217
+defined: 1
+value: 512
+---
+-+- 218
+defined: 1
+value: 256
+---
+-+- 219
+defined: 0
+---
+-+- 220
+defined: 1
+value: 16
+---
+-+- 221
+value: 0
+---
+-+- 222
+value: 1
+---
+-+- 223
+value: 2
+---
+-+- 224
+defined: 0
+---
+-+- 225
+defined: 0
+---
+-+- 226
+defined: 0
+---
+-+- 227
+defined: 0
+---
+-+- 228
+defined: 0
+---
+-+- 229
+defined: 0
+---
+-+- 230
+defined: 1
+value: 2550136836
+---
+-+- 231
+defined: 1
+value: 2550136833
+---
+-+- 232
+defined: 0
+---
+-+- 233
+defined: 1
+value: 2
+---
+-+- 234
+defined: 0
+---
+-+- 235
+defined: 1
+value: 3
+---
+-+- 236
+defined: 1
+value: 4
+---
+-+- 237
+defined: 1
+value: 5
+---
+-+- 238
+defined: 1
+value: 1
+---
+-+- 239
+defined: 0
+---
+-+- 240
+defined: 0
+---
+-+- 241
+defined: 1
+value: 65531
+---
+-+- 242
+defined: 0
+---
+-+- 243
+defined: 0
+---
+-+- 244
+defined: 0
+---
+-+- 245
+defined: 1
+value: 65535
+---
+-+- 246
+defined: 0
+---
+-+- 247
+defined: 0
+---
+-+- 248
+defined: 1
+value: 2147483647
+---
+-+- 249
+defined: 1
+value: 2
+---
+-+- 250
+defined: 1
+value: 32
+---
+-+- 251
+defined: 1
+value: 1
+---
+-+- 252
+defined: 0
+---
+-+- 253
+defined: 1
+value: 16
+---
+-+- 254
+defined: 1
+value: 4103
+---
+-+- 255
+defined: 1
+value: -5
+---
+-+- 256
+defined: 1
+value: 8
+---
+-+- 257
+defined: 1
+value: 128
+---
+-+- 258
+defined: 1
+value: 256
+---
+-+- 259
+defined: 0
+---
+-+- 260
+defined: 0
+---
+-+- 261
+defined: 0
+---
+-+- 262
+defined: 1
+value: 4098
+---
+-+- 263
+defined: 1
+value: 4100
+---
+-+- 264
+defined: 1
+value: 4102
+---
+-+- 265
+defined: 1
+value: 4
+---
+-+- 266
+defined: 0
+---
+-+- 267
+defined: 1
+value: 4097
+---
+-+- 268
+defined: 1
+value: 4099
+---
+-+- 269
+defined: 1
+value: 4101
+---
+-+- 270
+defined: 1
+value: 4104
+---
+-+- 271
+defined: 1
+value: 64
+---
+-+- 272
+defined: 0
+---
+-+- 273
+defined: 0
+---
+-+- 274
+defined: 0
+---
+-+- 275
+value: 15
+---
+-+- 276
+defined: 0
+---
+-+- 277
+defined: 1
+value: 16
+---
+-+- 278
+defined: 1
+value: 3
+---
+-+- 279
+defined: 1
+value: 17
+---
+-+- 280
+defined: 0
+---
+-+- 281
+defined: 1
+value: 4
+---
+-+- 282
+defined: 1
+value: 1
+---
+-+- 283
+defined: 0
+---
+-+- 284
+defined: 0
+---
+-+- 285
+defined: 0
+---
+-+- 286
+defined: 0
+---
+-+- 287
+defined: 0
+---
+-+- 288
+defined: 1
+---
+-+- 289
+align: 8
+size: 408
+fldofs wVersion: 0
+fldsize wVersion: 2
+fldunsigned wVersion: 1
+fldofs wHighVersion: 2
+fldsize wHighVersion: 2
+fldunsigned wHighVersion: 1
+fldofs szDescription: 16
+fldsize szDescription: 257
+fldofs szSystemStatus: 273
+fldsize szSystemStatus: 129
+fldofs iMaxSockets: 4
+fldsize iMaxSockets: 2
+fldunsigned iMaxSockets: 1
+fldofs iMaxUdpDg: 6
+fldsize iMaxUdpDg: 2
+fldunsigned iMaxUdpDg: 1
+fldofs lpVendorInfo: 8
+fldsize lpVendorInfo: 8
+---
+-+- 290
+defined: 1
+value: 10047
+---
+-+- 291
+defined: 1
+value: 10036
+---
+-+- 292
+defined: 1
+value: 10004
+---
+-+- 293
+defined: 1
+value: 10056
+---
+-+- 294
+size: 8
+---
+-+- 295
+defined: 1
+value: 10035
+---
+-+- 296
+align: 4
+size: 44
+fldofs lNetworkEvents: 0
+fldsize lNetworkEvents: 4
+fldunsigned lNetworkEvents: 0
+fldofs iErrorCode: 4
+fldsize iErrorCode: 40
+---
+-+- 297
+align: 4
+size: 32
+fldofs ChainLen: 0
+fldsize ChainLen: 4
+fldunsigned ChainLen: 0
+fldofs ChainEntries: 4
+fldsize ChainEntries: 28
+---
+-+- 298
+align: 4
+size: 372
+---
+-+- 299
+align: 4
+size: 628
+fldofs dwServiceFlags1: 0
+fldsize dwServiceFlags1: 4
+fldunsigned dwServiceFlags1: 1
+fldofs dwServiceFlags2: 4
+fldsize dwServiceFlags2: 4
+fldunsigned dwServiceFlags2: 1
+fldofs dwServiceFlags3: 8
+fldsize dwServiceFlags3: 4
+fldunsigned dwServiceFlags3: 1
+fldofs dwServiceFlags4: 12
+fldsize dwServiceFlags4: 4
+fldunsigned dwServiceFlags4: 1
+fldofs dwProviderFlags: 16
+fldsize dwProviderFlags: 4
+fldunsigned dwProviderFlags: 1
+fldofs ProviderId: 20
+fldsize ProviderId: 16
+fldofs dwCatalogEntryId: 36
+fldsize dwCatalogEntryId: 4
+fldunsigned dwCatalogEntryId: 1
+fldofs ProtocolChain: 40
+fldsize ProtocolChain: 32
+fldofs iVersion: 72
+fldsize iVersion: 4
+fldunsigned iVersion: 0
+fldofs iAddressFamily: 76
+fldsize iAddressFamily: 4
+fldunsigned iAddressFamily: 0
+fldofs iMaxSockAddr: 80
+fldsize iMaxSockAddr: 4
+fldunsigned iMaxSockAddr: 0
+fldofs iMinSockAddr: 84
+fldsize iMinSockAddr: 4
+fldunsigned iMinSockAddr: 0
+fldofs iSocketType: 88
+fldsize iSocketType: 4
+fldunsigned iSocketType: 0
+fldofs iProtocol: 92
+fldsize iProtocol: 4
+fldunsigned iProtocol: 0
+fldofs iProtocolMaxOffset: 96
+fldsize iProtocolMaxOffset: 4
+fldunsigned iProtocolMaxOffset: 0
+fldofs iNetworkByteOrder: 100
+fldsize iNetworkByteOrder: 4
+fldunsigned iNetworkByteOrder: 0
+fldofs iSecurityScheme: 104
+fldsize iSecurityScheme: 4
+fldunsigned iSecurityScheme: 0
+fldofs dwMessageSize: 108
+fldsize dwMessageSize: 4
+fldunsigned dwMessageSize: 1
+fldofs dwProviderReserved: 112
+fldsize dwProviderReserved: 4
+fldunsigned dwProviderReserved: 1
+fldofs szProtocol: 116
+fldsize szProtocol: 512
+---
+-+- 300
+defined: 1
+value: 1
+---
+-+- 301
+defined: 1
+value: 6
+---
+-+- 302
+defined: 1
+value: 87
+---
+-+- 303
+defined: 1
+value: 996
+---
+-+- 304
+defined: 1
+value: 997
+---
+-+- 305
+defined: 1
+value: 8
+---
+-+- 306
+defined: 1
+value: 995
+---
+-+- 307
+defined: 1
+value: 4294967295
+---
+-+- 308
+defined: 1
+value: 258
+---
+-+- 309
+align: 8
+size: 48
+fldofs ai_flags: 0
+fldsize ai_flags: 4
+fldunsigned ai_flags: 0
+fldofs ai_family: 4
+fldsize ai_family: 4
+fldunsigned ai_family: 0
+fldofs ai_socktype: 8
+fldsize ai_socktype: 4
+fldunsigned ai_socktype: 0
+fldofs ai_protocol: 12
+fldsize ai_protocol: 4
+fldunsigned ai_protocol: 0
+fldofs ai_addrlen: 16
+fldsize ai_addrlen: 8
+fldunsigned ai_addrlen: 1
+fldofs ai_addr: 32
+fldsize ai_addr: 8
+fldofs ai_canonname: 24
+fldsize ai_canonname: 8
+fldofs ai_next: 40
+fldsize ai_next: 8
+---
+-+- 310
+align: 8
+size: 32
+fldofs h_name: 0
+fldsize h_name: 8
+fldofs h_aliases: 8
+fldsize h_aliases: 8
+fldofs h_addrtype: 16
+fldsize h_addrtype: 2
+fldunsigned h_addrtype: 0
+fldofs h_length: 18
+fldsize h_length: 2
+fldunsigned h_length: 0
+fldofs h_addr_list: 24
+fldsize h_addr_list: 8
+---
+-+- 311
+align: 2
+size: 16
+fldofs s6_addr: 0
+fldsize s6_addr: 16
+---
+-+- 312
+align: 4
+size: 4
+fldofs s_addr: 0
+fldsize s_addr: 4
+fldunsigned s_addr: 1
+---
+-+- 313
+defined: 0
+---
+-+- 314
+align: 8
+size: 24
+fldofs p_proto: 16
+fldsize p_proto: 2
+fldunsigned p_proto: 0
+---
+-+- 315
+align: 8
+size: 32
+fldofs s_name: 0
+fldsize s_name: 8
+fldofs s_port: 24
+fldsize s_port: 2
+fldunsigned s_port: 0
+fldofs s_proto: 16
+fldsize s_proto: 8
+---
+-+- 316
+size: 8
+unsigned: 1
+---
+-+- 317
+align: 2
+size: 16
+fldofs sa_family: 0
+fldsize sa_family: 2
+fldunsigned sa_family: 1
+fldofs sa_data: 2
+fldsize sa_data: 14
+---
+-+- 318
+align: 4
+size: 16
+fldofs sin_family: 0
+fldsize sin_family: 2
+fldunsigned sin_family: 1
+fldofs sin_port: 2
+fldsize sin_port: 2
+fldunsigned sin_port: 1
+fldofs sin_addr: 4
+fldsize sin_addr: 4
+---
+-+- 319
+align: 4
+size: 28
+fldofs sin6_family: 0
+fldsize sin6_family: 2
+fldunsigned sin6_family: 1
+fldofs sin6_port: 2
+fldsize sin6_port: 2
+fldunsigned sin6_port: 1
+fldofs sin6_flowinfo: 4
+fldsize sin6_flowinfo: 4
+fldunsigned sin6_flowinfo: 1
+fldofs sin6_addr: 8
+fldsize sin6_addr: 16
+fldofs sin6_scope_id: 24
+fldsize sin6_scope_id: 4
+fldunsigned sin6_scope_id: 1
+---
+-+- 320
+defined: 0
+---
+-+- 321
+defined: 0
+---
+-+- 322
+size: 4
+unsigned: 0
+---
+-+- 323
+size: 8
+unsigned: 0
+---
+-+- 324
+align: 4
+size: 12
+fldofs onoff: 0
+fldsize onoff: 4
+fldunsigned onoff: 1
+fldofs keepalivetime: 4
+fldsize keepalivetime: 4
+fldunsigned keepalivetime: 1
+fldofs keepaliveinterval: 8
+fldsize keepaliveinterval: 4
+fldunsigned keepaliveinterval: 1
+---
+-+- 325
+align: 4
+size: 8
+fldofs tv_sec: 0
+fldsize tv_sec: 4
+fldunsigned tv_sec: 0
+fldofs tv_usec: 4
+fldsize tv_usec: 4
+fldunsigned tv_usec: 0
+---
+-+- 326
+size: 2
+unsigned: 1
+---
+-+- 327
+size: 4
+unsigned: 1
+---
