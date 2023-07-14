@@ -2,6 +2,7 @@ import json
 import sys
 
 from foreign import foreign
+from rjson import loads
 
 
 def load_module(module_name):
@@ -10,7 +11,8 @@ def load_module(module_name):
     """
     file_name = "output/" + ".".join(module_name) + "/corefn.json"
     with open(file_name) as json_file:
-        data = json.load(json_file)
+        s = json_file.read()
+    data = loads(s)
     children = [data]
     while children:
         current = children.pop()

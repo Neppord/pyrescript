@@ -1,10 +1,8 @@
-import os
-from foreign import curry
-from subprocess import check_call
-
 from corefn import Interpreter, Module, load_module
 from examples import hello_world, hello_concat
+from foreign import curry
 from lib import lib
+from subprocess import check_call
 
 
 def _load_module(module_name):
