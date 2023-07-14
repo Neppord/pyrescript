@@ -181,10 +181,10 @@ def json_to_expression(expression):
         raise NotImplementedError
 
 
-class NonRecDeclaration:
+class Declaration(object):
     def __init__(self, name, expression):
         self.name = name
-        self.expression = json_to_expression(expression)
+        self.expression = expression
 
     def __repr__(self):
         name = self.name
@@ -194,55 +194,30 @@ class NonRecDeclaration:
     def get_declarations(self):
         return self
 
-
-class RecDeclaration:
-    def __init__(self, binds):
-        self.binds = [
-            NonRecDeclaration(bind['identifier'], bind['expression'])
-            for bind in binds
-        ]
-
-    def __repr__(self):
-        return "\n".join(repr(bind) for bind in self.binds)
-
-    def get_declarations(self):
-        return self.binds
-
-
 class Module:
     def __init__(self, declarations):
         self.declarations = declarations
 
     @staticmethod
     def from_dict(decls):
-        return Module([
-            NonRecDeclaration(decl['identifier'], decl['expression'])
-            if decl['bindType'] == "NonRec" else
-            RecDeclaration(decl["binds"])
-            for decl in decls
-        ])
+        declarations = {}
+        for decl in decls:
+            if decl['bindType'] == "NonRec":
+                identifier = decl['identifier']
+                declarations[identifier] = Declaration(identifier, json_to_expression(decl['expression']))
+            else:
+                for bind in decl["binds"]:
+                    identifier = bind['identifier']
+                    declarations[identifier] = Declaration(identifier, json_to_expression(bind['expression']))
+        return Module(declarations)
     def decl(self, name):
-        for decl in self.declarations:
-            if isinstance(decl, NonRecDeclaration) and decl.name == name:
-                return decl
-            elif isinstance(decl, RecDeclaration):
-                for bind in decl.binds:
-                    if bind.name == name:
-                        return bind
-        raise NotImplementedError
+        return self.declarations[name]
 
     def has_decl(self, name):
-        for decl in self.declarations:
-            if isinstance(decl, NonRecDeclaration) and decl.name == name:
-                return True
-            elif isinstance(decl, RecDeclaration):
-                for bind in decl.binds:
-                    if bind.name == name:
-                        return True
-        return False
+        return name in self.declarations
 
     def __repr__(self):
-        return "\n".join(repr(decl) for decl in self.declarations)
+        return "\n".join(repr(decl) for decl in self.declarations.values())
 
 
 class Interpreter(object):
