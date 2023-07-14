@@ -1,6 +1,7 @@
 import sys
 
-from corefn import Interpreter, load_module
+from corefn import load_module
+from interpreter import Interpreter
 
 
 def entry_point(argv):
