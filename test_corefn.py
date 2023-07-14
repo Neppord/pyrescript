@@ -4,11 +4,6 @@ from foreign import curry
 from lib import lib
 from subprocess import check_call
 
-
-def _load_module(module_name):
-    return Module(lib[tuple(module_name)])
-
-
 class ModuleStore(object):
 
     def __init__(self):
@@ -19,7 +14,7 @@ class ModuleStore(object):
             self.add_module_dict(key, value)
 
     def add_module_dict(self, module_name, module):
-        self.modules[tuple(module_name)] = Module(module)
+        self.modules[tuple(module_name)] = Module(module['decls'])
 
     def load_module(self, module_name):
         return self.modules[tuple(module_name)]

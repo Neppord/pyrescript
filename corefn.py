@@ -23,7 +23,7 @@ def load_module(module_name):
                 children.append(value)
             elif isinstance(value, list):
                 children.extend(v for v in value if isinstance(v, dict))
-    return Module(data)
+    return Module(data['decls'])
 
 
 prim = {
@@ -210,13 +210,12 @@ class RecDeclaration:
 
 
 class Module:
-    def __init__(self, module):
-        self.module = module
+    def __init__(self, decls):
         self.declarations = [
             NonRecDeclaration(decl['identifier'], decl['expression'])
             if decl['bindType'] == "NonRec" else
             RecDeclaration(decl["binds"])
-            for decl in module['decls']
+            for decl in decls
         ]
 
     def decl(self, name):
@@ -230,14 +229,12 @@ class Module:
         raise NotImplementedError
 
     def has_decl(self, name):
-        for decl in self.module["decls"]:
-            bind_type = decl["bindType"]
-            if bind_type == "NonRec":
-                if decl["identifier"] == name:
-                    return True
-            elif bind_type == "Rec":
-                for bind in decl["binds"]:
-                    if bind["identifier"] == name:
+        for decl in self.declarations:
+            if isinstance(decl, NonRecDeclaration) and decl.name == name:
+                return True
+            elif isinstance(decl, RecDeclaration):
+                for bind in decl.binds:
+                    if bind.name == name:
                         return True
         return False
 
@@ -247,13 +244,20 @@ class Module:
 
 class Interpreter(object):
     def __init__(self, _load_module):
-        self.load_module = _load_module
+        self.__load_module = _load_module
+        self.loaded_modules = {}
+
+    def get_or_load_module(self, module):
+        module = tuple(module)
+        if not module in self.loaded_modules:
+            self.loaded_modules[module] = self.__load_module(module)
+        return self.loaded_modules[module]
 
     def run_main(self, module):
         self.declaration(module.decl("main"))
 
     def run_module_by_name(self, module_name):
-        self.run_main(self.load_module(module_name))
+        self.run_main(self.get_or_load_module(module_name))
 
     def declaration(self, decl):
         return self.expression(decl.expression, {})
@@ -307,7 +311,7 @@ class Interpreter(object):
             else:
                 raise NotImplementedError
         else:
-            module = self.load_module(module_name)
+            module = self.get_or_load_module(module_name)
             if module.has_decl(identifier):
                 return self.declaration(module.decl(identifier))
             else:
