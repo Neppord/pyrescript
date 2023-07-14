@@ -14,7 +14,7 @@ class ModuleStore(object):
             self.add_module_dict(key, value)
 
     def add_module_dict(self, module_name, module):
-        self.modules[tuple(module_name)] = Module(module['decls'])
+        self.modules[tuple(module_name)] = Module.from_dict(module['decls'])
 
     def load_module(self, module_name):
         return self.modules[tuple(module_name)]

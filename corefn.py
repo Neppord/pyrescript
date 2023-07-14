@@ -23,7 +23,7 @@ def load_module(module_name):
                 children.append(value)
             elif isinstance(value, list):
                 children.extend(v for v in value if isinstance(v, dict))
-    return Module(data['decls'])
+    return Module.from_dict(data['decls'])
 
 
 prim = {
@@ -210,14 +210,17 @@ class RecDeclaration:
 
 
 class Module:
-    def __init__(self, decls):
-        self.declarations = [
+    def __init__(self, declarations):
+        self.declarations = declarations
+
+    @staticmethod
+    def from_dict(decls):
+        return Module([
             NonRecDeclaration(decl['identifier'], decl['expression'])
             if decl['bindType'] == "NonRec" else
             RecDeclaration(decl["binds"])
             for decl in decls
-        ]
-
+        ])
     def decl(self, name):
         for decl in self.declarations:
             if isinstance(decl, NonRecDeclaration) and decl.name == name:
@@ -254,6 +257,9 @@ class Interpreter(object):
         return self.loaded_modules[module]
 
     def run_main(self, module):
+        """
+        :type module: Module
+        """
         self.declaration(module.decl("main"))
 
     def run_module_by_name(self, module_name):
