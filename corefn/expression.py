@@ -1,51 +1,4 @@
-class VarBinder(object):
-    def __init__(self, name):
-        self.name = name
-
-    def interpret(self, interpreter, to_match, frame):
-        return True, {self.name: to_match}
-
-
-class LiteralBinder(object):
-    def __init__(self, value):
-        self.value = value
-
-    def interpret(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame), {}
-
-
-class ConstructorBinder(object):
-    def __init__(self, binders):
-        self.binders = binders
-
-    def interpret(self, interpreter, to_match, frame):
-        frames = [b.interpret(interpreter, to_match, frame) for b in self.binders]
-        new_frame = {}
-        for r, f in frames:
-            if r:
-                new_frame.update(f)
-            else:
-                return False, {}
-        return True, new_frame
-
-
-class NullBinder(object):
-    def interpret(self, interpreter, to_match, frame):
-        return True, {}
-
-
-class ArrayBinder(object):
-    pass
-
-
-class NamedBinder(object):
-    def __init__(self, name, binder):
-        self.name = name
-        self.binder = binder
-
-
-class Expression:
-
+class Expression(object):
     def interpret(self, interpreter, frame):
         raise NotImplementedError
 
@@ -66,18 +19,6 @@ class App(Expression):
         while isinstance(argument, Expression):
             argument = argument.interpret(interpreter, frame)
         return function(argument)
-
-
-class Alternative(object):
-    def __init__(self, binders, expression):
-        self.binders = binders
-        self.expression = expression
-
-
-class GuardedAlternative(object):
-    def __init__(self, binders, guarded_expressions):
-        self.binders = binders
-        self.guarded_expressions = guarded_expressions
 
 
 class Abs(Expression):
@@ -114,83 +55,6 @@ class AbsWithFrame:
             return "\\" + self.abs.argument + " -> let " + frame_repr + " in " + body_repr
         else:
             return "\\" + self.abs.argument + " -> " + body_repr
-
-
-class ObjectLiteral(Expression):
-    def __init__(self, obj):
-        self.obj = obj
-
-    def __repr__(self):
-        return repr(self.obj)
-
-    def interpret(self, interpreter, frame):
-        return self.obj
-
-
-class ArrayLiteral(Expression):
-    def __init__(self, array):
-        self.array = array
-
-    def __repr__(self):
-        return repr(self.array)
-
-    def interpret(self, interpreter, frame):
-        return self.array
-
-
-class ValueLiteral(Expression):
-    def __init__(self, value):
-        self.value = value
-
-    def __repr__(self):
-        return repr(self.value)
-
-    def interpret(self, interpreter, frame):
-        return self.value
-
-
-class LocalVar(Expression):
-    def __init__(self, name):
-        self.name = name
-
-    def __repr__(self):
-        return self.name
-
-    def interpret(self, interpreter, frame):
-        return frame[self.name]
-
-
-class ExternalVar(Expression):
-    def __init__(self, module_name, name):
-        self.module_name = module_name
-        self.name = name
-
-    def __repr__(self):
-        return '.'.join(self.module_name) + "." + self.name
-
-    def interpret(self, interpreter, frame):
-        return interpreter.load_decl(self.module_name, self.name)
-
-
-class Case(Expression):
-    def __init__(self, expressions, alternatives):
-        self.expressions = expressions
-        self.alternatives = alternatives
-
-    def interpret(self, interpreter, frame):
-        to_match, = self.expressions
-        for alternative in self.alternatives:
-            if isinstance(alternative, Alternative):
-                binder, = alternative.binders
-                result, new_frame = binder.interpret(interpreter, to_match, frame)
-                if result:
-                    next_frame = {}
-                    next_frame.update(frame)
-                    next_frame.update(new_frame)
-                    return interpreter.expression(alternative.expression, next_frame)
-            else:
-                raise NotImplementedError("do not support %r yet" % alternative)
-        raise NotImplementedError
 
 
 class Accessor(Expression):

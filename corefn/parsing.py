@@ -1,6 +1,9 @@
 from corefn import Declaration, Module
-from corefn.expression import VarBinder, LiteralBinder, ConstructorBinder, NullBinder, NamedBinder, App, Alternative, \
-    GuardedAlternative, Abs, ObjectLiteral, ArrayLiteral, ValueLiteral, LocalVar, ExternalVar, Case, Accessor, Let
+from corefn.expression import App, Abs, Accessor, Let
+from corefn.binders import VarBinder, LiteralBinder, ConstructorBinder, NullBinder, NamedBinder
+from corefn.case import Alternative, GuardedAlternative, Case
+from corefn.var import LocalVar, ExternalVar
+from corefn.literals import ObjectLiteral, ArrayLiteral, ValueLiteral
 from rjson import raw_loads
 from rpython.rlib.parsing.tree import Symbol
 
