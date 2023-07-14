@@ -1,4 +1,7 @@
-from corefn import prim, interpret_foreign, load_module, expression_, Expression
+from corefn import interpret_foreign
+from corefn.expression import Expression
+from prim import prim
+from corefn.parsing import load_module, expression_
 
 
 class Interpreter(object):

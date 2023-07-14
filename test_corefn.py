@@ -1,9 +1,8 @@
-from corefn import Module, load_module
-from interpreter import Interpreter
-from examples import hello_world, hello_concat
+from corefn.parsing import load_module
 from foreign import curry
-from lib import lib
+from interpreter import Interpreter
 from subprocess import check_call
+
 
 def test_curry():
     assert curry(lambda a, b: a - b, 2)(2)(1) == 1

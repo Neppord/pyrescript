@@ -1,6 +1,6 @@
 import sys
 
-from corefn import load_module
+from corefn.parsing import load_module
 from interpreter import Interpreter
 
 

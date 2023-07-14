@@ -1,0 +1,5 @@
+prim = {
+    ('Prim',): {
+        'undefined': "undefined"
+    }
+}
