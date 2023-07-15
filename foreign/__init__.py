@@ -39,42 +39,42 @@ def bindE(a, atob):
 
 
 foreign = {
-    ('Effect',): {
+    'Effect': {
         'pureE': pure,
         'bindE': curry(bindE, 2)
     },
-    ('Effect', 'Console'): {
+    'Effect.Console': {
         'log': log
     },
-    ('Data', 'Array'): {
+    'Data.Array': {
         'rangeImpl': range_impl,
     },
-    ('Data', 'Eq'): {
+    'Data.Eq': {
         'eqIntImpl': curry(eq_int_impl, 2),
     },
-    ('Data', 'EuclideanRing'): {
+    'Data.EuclideanRing': {
         'intDegree': int_degree,
         'intDiv': curry(int_div, 2),
         'intMod': curry(int_mod, 2),
     },
-    ('Data', 'Foldable'): {
+    'Data.Foldable': {
         'foldrArray': curry(foldr_array, 3),
         'foldlArray': curry(foldl_array, 3),
     },
-    ('Data', 'Function', 'Uncurried'): {
+    'Data.Function.Uncurried': {
         'runFn2': run_fn_2,
     },
-    ('Data', 'Semigroup'): {
+    'Data.Semigroup': {
         'concatString': curry(concat_string, 2)
     },
-    ('Data', 'Semiring'): {
+    'Data.Semiring': {
         'intAdd': curry(int_add, 2),
         'intMul': curry(int_mul, 2),
     },
-    ('Data', 'Show'): {
+    'Data.Show': {
         'showIntImpl': str
     },
-    ('Data', 'Unit'): {
+    'Data.Unit': {
         'unit': "unit"
     },
 }

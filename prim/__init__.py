@@ -1,5 +1,5 @@
 prim = {
-    ('Prim',): {
+    'Prim': {
         'undefined': "undefined"
     }
 }

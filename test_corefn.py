@@ -11,7 +11,7 @@ def test_e2e_fizz_buzz(monkeypatch, capsys):
     monkeypatch.chdir("e2e/fizz-buzz")
     check_call(["spago", "build", "--purs-args", "--codegen corefn"], shell=True)
     capsys.readouterr()
-    Interpreter(load_module).run_main(load_module(["Main"]))
+    Interpreter(load_module).run_main(load_module("Main"))
     assert capsys.readouterr().out == """\
 1
 2

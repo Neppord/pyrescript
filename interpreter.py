@@ -10,7 +10,6 @@ class Interpreter(object):
         self.loaded_modules = {}
 
     def get_or_load_module(self, module):
-        module = tuple(module)
         if not module in self.loaded_modules:
             self.loaded_modules[module] = self.__load_module(module)
         return self.loaded_modules[module]
@@ -60,9 +59,9 @@ class Interpreter(object):
         raise NotImplementedError
 
     def load_decl(self, module_name, identifier):
-        if tuple(module_name) in prim:
-            if identifier in prim[tuple(module_name)]:
-                return prim[tuple(module_name)][identifier]
+        if module_name in prim:
+            if identifier in prim[module_name]:
+                return prim[module_name][identifier]
             else:
                 raise NotImplementedError
         else:
@@ -96,4 +95,4 @@ class Interpreter(object):
 
 if __name__ == '__main__':
     module_name_argument, = sys.argv[1:1] or ["Main"]
-    Interpreter(load_module).run_main(load_module(module_name_argument.split(".")))
+    Interpreter(load_module).run_main(load_module(module_name_argument))

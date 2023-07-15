@@ -18,7 +18,7 @@ class ExternalVar(Expression):
         self.name = name
 
     def __repr__(self):
-        return '.'.join(self.module_name) + "." + self.name
+        return self.module_name + "." + self.name
 
     def interpret(self, interpreter, frame):
         return interpreter.load_decl(self.module_name, self.name)
