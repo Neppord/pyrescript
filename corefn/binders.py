@@ -25,7 +25,7 @@ class StringLiteralBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == to_match.eval(interpreter, frame).value, {}
+        return self.value == to_match.value, {}
 
     def __repr__(self):
         return str(self.value)
@@ -36,7 +36,7 @@ class IntBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == to_match.eval(interpreter, frame).value, {}
+        return self.value == to_match.value, {}
 
     def __repr__(self):
         return str(self.value)
@@ -47,7 +47,7 @@ class FloatBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == to_match.eval(interpreter, frame).value, {}
+        return self.value == to_match.value, {}
 
     def __repr__(self):
         raise NotImplementedError()
