@@ -1,6 +1,14 @@
 from corefn.expression import Expression
 from corefn.literals import String
 
+"""
+Abs aka Lambda, Callable etc.
+
+Represents a mapping between two values of type Expr. A function that takes 
+more then one argument is represented by nesting multiple Abs, one returning
+ the other
+
+"""
 
 class AbsInterface(Expression):
 
