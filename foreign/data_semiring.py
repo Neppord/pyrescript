@@ -1,7 +1,7 @@
 from corefn.literals import Int
 
 
-def int_add(a, b):
+def int_add(i, a, b):
     """
 
     :type a: Int
@@ -10,5 +10,5 @@ def int_add(a, b):
     return Int(a.value + b.value)
 
 
-def int_mul(a, b):
+def int_mul(i, a, b):
     return Int(a.value * b.value)

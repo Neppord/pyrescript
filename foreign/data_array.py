@@ -1,7 +1,7 @@
 from corefn.literals import Array, Int
 
 
-def range_impl(start, end):
+def range_impl(i, start, end):
     """
     :type start: Int
     :type end: Int

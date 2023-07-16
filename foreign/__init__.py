@@ -1,6 +1,6 @@
 from corefn.abs import Foreign, Dynamic
 from corefn.expression import App
-from corefn.literals import String, Effect
+from corefn.literals import String, Effect, unit
 from foreign.data_array import range_impl
 from foreign.data_eq import eq_int_impl
 from foreign.data_euclidean_ring import int_degree, int_div, int_mod
@@ -40,7 +40,7 @@ foreign = {
         'foldlArray': Dynamic(foldl_array),
     },
     'Data.Function.Uncurried': {
-        'runFn2': to_foreign(lambda a: a),
+        'runFn2': to_foreign(lambda i, a: a),
     },
     'Data.Semigroup': {
         'concatString': to_foreign(concat_string),
@@ -50,9 +50,9 @@ foreign = {
         'intMul': to_foreign(int_mul),
     },
     'Data.Show': {
-        'showIntImpl': to_foreign(lambda e: String(str(e.value)))
+        'showIntImpl': to_foreign(lambda i, e: String(str(e.value)))
     },
     'Data.Unit': {
-        'unit': to_foreign("unit")
+        'unit': unit
     },
 }

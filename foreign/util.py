@@ -1,6 +1,6 @@
 from types import FunctionType, BuiltinFunctionType
 
-from corefn.abs import Foreign
+from corefn.abs import Foreign, Native1, Native2
 from corefn.literals import String
 from rpython.rlib.objectmodel import not_rpython
 
@@ -13,25 +13,11 @@ def to_foreign(value):
     elif t in [FunctionType, BuiltinFunctionType]:
         arguments = value.func_code.co_argcount
         if arguments == 1:
-            return Foreign(value.func_code.co_name, lambda x: value(x))
+            raise TypeError("expected at least the 2 arguments a interpreter and a expression")
         elif arguments == 2:
-            return Foreign(value.func_code.co_name,
-                lambda x: Foreign(
-                    "%s (%s)" % (value.func_code.co_name, x.__repr__()),
-                    lambda y: value(x, y)
-              )
-            )
+            return Native1(value)
         elif arguments == 3:
-            return Foreign(
-                value.func_code.co_name,
-                lambda x: Foreign(
-                    "%s (%s)" % (value.func_code.co_name, x.__repr__()),
-                    lambda y: Foreign(
-                    "%s (%s) (%s)" % (value.func_code.co_name, x.__repr__(), y.__repr__()),
-                        lambda z: value(x, y, z)
-                    )
-                )
-            )
+            return Native2(value)
         else:
             NotImplementedError("dont support %s number of arguments" % arguments)
     else:
