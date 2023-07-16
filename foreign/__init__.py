@@ -14,16 +14,6 @@ from foreign.effect_console import log
 
 from rpython.rlib.objectmodel import not_rpython
 
-def apply(f):
-    def apply2(a):
-        return f(a)
-    return apply2
-
-
-def run_fn_2(fn):
-    """noop all functions are curried by default"""
-    return fn
-
 
 @not_rpython
 def to_foreign(value):
@@ -33,13 +23,9 @@ def to_foreign(value):
     elif t in [FunctionType, BuiltinFunctionType]:
         arguments = value.func_code.co_argcount
         if arguments == 1:
-            return Foreign(
-                value.func_code.co_name,
-                lambda x: value(x)
-            )
+            return Foreign(value.func_code.co_name, lambda x: value(x))
         elif arguments == 2:
-            return Foreign(
-                value.func_code.co_name,
+            return Foreign(value.func_code.co_name,
                 lambda x: Foreign(
                     "%s (%s)" % (value.func_code.co_name, x.__repr__()),
                     lambda y: value(x, y)
@@ -88,7 +74,7 @@ foreign = {
         'foldlArray': with_interpreter(foldl_array),
     },
     'Data.Function.Uncurried': {
-        'runFn2': to_foreign(run_fn_2),
+        'runFn2': to_foreign(lambda a: a),
     },
     'Data.Semigroup': {
         'concatString': to_foreign(concat_string),
