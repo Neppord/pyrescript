@@ -9,7 +9,7 @@ from foreign.data_semigroup import concat_string
 from foreign.data_semiring import int_add, int_mul
 from foreign.effect import bindE
 from foreign.effect_console import log
-from foreign.util import to_foreign, with_interpreter
+from foreign.util import to_foreign
 
 """
 Foreign functions can take any Box type as arguments.

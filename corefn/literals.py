@@ -5,7 +5,7 @@ from corefn.expression import Expression
 
 class Box(Expression):
 
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         return self
 
 
@@ -13,8 +13,8 @@ class Object(Box):
     def __init__(self, obj):
         self.obj = obj
 
-    def interpret(self, interpreter, frame):
-        return Object({k: e.interpret(interpreter, frame) for k, e in self.obj.items()})
+    def eval(self, interpreter, frame):
+        return Object({k: e.eval(interpreter, frame) for k, e in self.obj.items()})
 
     def __repr__(self):
         key_value_pairs = []
@@ -33,8 +33,8 @@ class Array(Box):
     def __repr__(self):
         return "[" + ", ".join([a.__repr__() for a in self.array]) + "]"
 
-    def interpret(self, interpreter, frame):
-        return Array([e.interpret(interpreter, frame) for e in self.array])
+    def eval(self, interpreter, frame):
+        return Array([e.eval(interpreter, frame) for e in self.array])
 
 
 class Int(Box):
@@ -95,7 +95,7 @@ class Effect(Box):
         self.effect = effect
 
     def run_effect(self, interpreter):
-        return self.effect.interpret(interpreter, {})
+        return self.effect.eval(interpreter, {})
 
     def __repr__(self):
         return "Effect (%s)" % self.effect.__repr__()
@@ -106,7 +106,7 @@ class Bound(Box):
         assert isinstance(function, FunctionType)
         self.function = function
 
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         return self.function()
 
     def __repr__(self):

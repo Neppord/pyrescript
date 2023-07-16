@@ -1,5 +1,5 @@
 class Expression(object):
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         raise NotImplementedError("%s have yet to implement interpret" % type(self))
 
     def __repr__(self):
@@ -35,14 +35,14 @@ class App(Expression):
         else:
             return on_oneline
 
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         from corefn.abs import AbsInterface
 
         assert all([isinstance(f, Expression) for f in frame.values()])
-        abstraction = self.abstraction.interpret(interpreter, frame)
+        abstraction = self.abstraction.eval(interpreter, frame)
 
         if isinstance(abstraction, AbsInterface):
-            argument = self.argument.interpret(interpreter, frame)
+            argument = self.argument.eval(interpreter, frame)
             result = abstraction.call_abs(interpreter, argument)
             return result
         else:
@@ -55,9 +55,9 @@ class Accessor(Expression):
         assert isinstance(field_name, str)
         self.field_name = field_name
 
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         from corefn.literals import Object
-        record = self.expression.interpret(interpreter, frame)
+        record = self.expression.eval(interpreter, frame)
         if isinstance(record, Object):
             return record.obj[self.field_name]
         else:
@@ -73,11 +73,11 @@ class Let(Expression):
         self.binds = binds
         self.expression = expression
 
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         new_frame = {}
         new_frame.update(frame)
         for k, v in self.binds.items():
-            new_frame[k] = v.interpret(interpreter, frame)
+            new_frame[k] = v.eval(interpreter, frame)
         return interpreter.expression(self.expression, new_frame)
 
     def __repr__(self):

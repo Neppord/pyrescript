@@ -2,12 +2,15 @@ class Binder(object):
     def __repr__(self):
         raise NotImplementedError()
 
+    def eval(self, interpreter, to_match, frame):
+        raise NotImplementedError()
+
 
 class VarBinder(Binder):
     def __init__(self, name):
         self.name = name
 
-    def interpret(self, interpreter, to_match, frame):
+    def eval(self, interpreter, to_match, frame):
         return True, {self.name: to_match}
 
     def __repr__(self):
@@ -18,8 +21,8 @@ class StringLiteralBinder(Binder):
     def __init__(self, value):
         self.value = value
 
-    def interpret(self, interpreter, to_match, frame):
-        return self.value == to_match.interpret(interpreter, frame).value, {}
+    def eval(self, interpreter, to_match, frame):
+        return self.value == to_match.eval(interpreter, frame).value, {}
 
     def __repr__(self):
         return str(self.value)
@@ -29,8 +32,8 @@ class IntBinder(Binder):
     def __init__(self, value):
         self.value = value
 
-    def interpret(self, interpreter, to_match, frame):
-        return self.value == to_match.interpret(interpreter, frame).value, {}
+    def eval(self, interpreter, to_match, frame):
+        return self.value == to_match.eval(interpreter, frame).value, {}
 
     def __repr__(self):
         return str(self.value)
@@ -40,7 +43,7 @@ class FloatBinder(Binder):
     def __init__(self, value):
         self.value = value
 
-    def interpret(self, interpreter, to_match, frame):
+    def eval(self, interpreter, to_match, frame):
         return self.value == interpreter.expression(to_match, frame).value, {}
 
     def __repr__(self):
@@ -51,7 +54,7 @@ class BoolBinder(Binder):
     def __init__(self, value):
         self.value = value
 
-    def interpret(self, interpreter, to_match, frame):
+    def eval(self, interpreter, to_match, frame):
         return self.value == interpreter.expression(to_match, frame).value, {}
 
     def __repr__(self):
@@ -65,7 +68,7 @@ class ObjectBinder(Binder):
     def __init__(self, value):
         self.value = value
 
-    def interpret(self, interpreter, to_match, frame):
+    def eval(self, interpreter, to_match, frame):
         return self.value == interpreter.expression(to_match, frame).value, {}
 
     def __repr__(self):
@@ -76,7 +79,7 @@ class ArrayLiteralBinder(Binder):
     def __init__(self, value):
         self.value = value
 
-    def interpret(self, interpreter, to_match, frame):
+    def eval(self, interpreter, to_match, frame):
         return self.value == interpreter.expression(to_match, frame).value, {}
 
     def __repr__(self):
@@ -87,8 +90,8 @@ class ConstructorBinder(Binder):
     def __init__(self, binders):
         self.binders = binders
 
-    def interpret(self, interpreter, to_match, frame):
-        frames = [b.interpret(interpreter, to_match, frame) for b in self.binders]
+    def eval(self, interpreter, to_match, frame):
+        frames = [b.eval(interpreter, to_match, frame) for b in self.binders]
         new_frame = {}
         for r, f in frames:
             if r:
@@ -102,7 +105,7 @@ class ConstructorBinder(Binder):
 
 
 class NullBinder(Binder):
-    def interpret(self, interpreter, to_match, frame):
+    def eval(self, interpreter, to_match, frame):
         return True, {}
 
     def __repr__(self):

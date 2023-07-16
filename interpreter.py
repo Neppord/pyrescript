@@ -19,7 +19,7 @@ class Interpreter(object):
         """
         :type module: Module
         """
-        main = module.decl("main").expression.interpret(self, {})
+        main = module.decl("main").expression.eval(self, {})
         assert isinstance(main, Effect)
         main.run_effect(self)
 
@@ -27,7 +27,7 @@ class Interpreter(object):
         self.run_main(self.get_or_load_module(module_name))
 
     def expression(self, expression, frame):
-        return expression.interpret(self, frame)
+        return expression.eval(self, frame)
 
     def load_decl(self, module_name, identifier):
         if module_name in prim:
@@ -46,7 +46,7 @@ class Interpreter(object):
                 return foreign
 
     def accessor(self, expression, field_name, frame):
-        record = expression.interpret(interpreter, frame)
+        record = expression.eval(interpreter, frame)
         assert isinstance(record, Expression)
         return record[field_name]
 

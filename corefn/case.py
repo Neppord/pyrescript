@@ -33,12 +33,12 @@ class Case(Expression):
         self.expressions = expressions
         self.alternatives = alternatives
 
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         to_match, = self.expressions
         for alternative in self.alternatives:
             if isinstance(alternative, Alternative):
                 binder, = alternative.binders
-                result, new_frame = binder.interpret(interpreter, to_match, frame)
+                result, new_frame = binder.eval(interpreter, to_match, frame)
                 if result:
                     next_frame = {}
                     next_frame.update(frame)

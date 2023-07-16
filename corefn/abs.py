@@ -27,7 +27,7 @@ class Abs(AbsInterface):
         self.argument = argument
         self.body = body
 
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         return AbsWithFrame(self, frame)
 
     def call_abs(self, interpreter, expression):
@@ -49,9 +49,9 @@ class AbsWithFrame(AbsInterface):
         new_frame = {}
         new_frame.update(self.frame)
         new_frame[self.abs.argument] = expression
-        return self.abs.body.interpret(interpreter, new_frame)
+        return self.abs.body.eval(interpreter, new_frame)
 
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         return self
 
     def __repr__(self):
@@ -68,7 +68,7 @@ class Foreign(AbsInterface):
         self.repr = repr_
         self.function = function
 
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         return self
 
     def call_abs(self, interpreter, expression):
@@ -85,7 +85,7 @@ class Dynamic(Expression):
     def __init__(self, function):
         self.function = function
 
-    def interpret(self, interpreter, frame):
+    def eval(self, interpreter, frame):
         return self.function(interpreter)
 
     def __repr__(self):
