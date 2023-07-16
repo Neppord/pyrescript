@@ -11,7 +11,6 @@ class Box(Expression):
 
 class Object(Box):
     def __init__(self, obj):
-        assert isinstance(obj, dict)
         self.obj = obj
 
     def interpret(self, interpreter, frame):
