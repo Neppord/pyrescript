@@ -40,7 +40,7 @@ class Interpreter(object):
             module = self.get_or_load_module(module_name)
             if module.has_decl(identifier):
                 decl = module.decl(identifier)
-                return decl.expression.evel(self, {})
+                return decl.expression.eval(self, {})
             else:
                 foreign = interpret_foreign(module_name, identifier)
                 assert isinstance(foreign, Expression)

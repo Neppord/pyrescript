@@ -1,3 +1,6 @@
+from corefn.literals import Boolean
+
+
 class Binder(object):
     def __repr__(self):
         raise NotImplementedError()
@@ -55,9 +58,11 @@ class BoolBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        result = self.value == to_match.value
-        return result, {}
-
+        if isinstance(to_match, Boolean):
+            result = self.value == to_match.value
+            return result, {}
+        else:
+            raise TypeError("expected Boolean got: " + to_match.__repr__())
     def __repr__(self):
         if self.value:
             return "True"
