@@ -1,5 +1,5 @@
-from corefn.literals import BoolLiteral
+from corefn.literals import Boolean
 
 
 def eq_int_impl(a, b):
-    return BoolLiteral(a.value == b.value)
+    return Boolean(a.value == b.value)

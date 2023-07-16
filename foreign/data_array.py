@@ -1,9 +1,9 @@
-from corefn.literals import ArrayLiteral, IntLiteral
+from corefn.literals import Array, Int
 
 
 def range_impl(start, end):
     """
-    :type start: IntLiteral
-    :type end: IntLiteral
+    :type start: Int
+    :type end: Int
     """
-    return ArrayLiteral([IntLiteral(x) for x in range(start.value, end.value + 1)])
+    return Array([Int(x) for x in range(start.value, end.value + 1)])

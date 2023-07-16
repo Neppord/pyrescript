@@ -1,12 +1,12 @@
 from functools import reduce
 
 from corefn.abs import Foreign
-from corefn.literals import ArrayLiteral
+from corefn.literals import Array
 
 
 def foldr_array_(interpreter, f, b, arr):
     """foldr :: forall a b. (a -> b -> b) -> b -> f a -> b"""
-    if isinstance(arr, ArrayLiteral):
+    if isinstance(arr, Array):
         acc = b
         array = arr.array
         length = len(array)

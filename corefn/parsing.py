@@ -4,8 +4,8 @@ from corefn.binders import VarBinder, ConstructorBinder, NullBinder, NamedBinder
 from corefn.case import Alternative, GuardedAlternative, Case
 from corefn.expression import App, Accessor, Let
 from corefn.abs import Abs
-from corefn.literals import ObjectLiteral, ArrayLiteral, StringLiteral, IntLiteral, FloatLiteral, \
-    BoolLiteral, nullLiteral
+from corefn.literals import Object, Array, String, Int, Float, \
+    Boolean, nullLiteral
 from corefn.var import LocalVar, ExternalVar
 from rjson import raw_loads
 from rpython.rlib.parsing.tree import Nonterminal
@@ -82,24 +82,24 @@ def expression_(node):
             obj = {}
             for k, v in iter_object(value_):
                 obj[k] = expression_(v)
-            return ObjectLiteral(obj)
+            return Object(obj)
         elif literal_type == "ArrayLiteral":
             value_ = value["value"]  # type: Nonterminal
             array = [expression_(v) for v in value_.children]
-            return ArrayLiteral(array)
+            return Array(array)
         else:
             value_ = value["value"]  # type: Symbol
             symbol = value_.symbol
             if symbol == "STRING":
-                return StringLiteral(str_(value_))
+                return String(str_(value_))
             elif symbol == "INTEGER":
-                return IntLiteral(int(value_.token.source))
+                return Int(int(value_.token.source))
             elif symbol == "FLOAT":
-                return FloatLiteral(float(value_.token.source))
+                return Float(float(value_.token.source))
             elif "true" in symbol:
-                return BoolLiteral(True)
+                return Boolean(True)
             elif "false" in symbol:
-                return BoolLiteral(False)
+                return Boolean(False)
             else:
                 msg = "not implemented literal for symbol: " + symbol
                 raise NotImplementedError(msg)

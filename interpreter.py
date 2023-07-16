@@ -1,6 +1,6 @@
 from corefn import interpret_foreign
 from corefn.expression import Expression
-from corefn.literals import ObjectLiteral, StringLiteral
+from corefn.literals import Object, String
 from prim import prim
 from corefn.parsing import load_module, expression_
 

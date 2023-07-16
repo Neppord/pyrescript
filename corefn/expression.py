@@ -55,9 +55,9 @@ class Accessor(Expression):
         self.field_name = field_name
 
     def interpret(self, interpreter, frame):
-        from corefn.literals import ObjectLiteral
+        from corefn.literals import Object
         record = self.expression.interpret(interpreter, frame)
-        if isinstance(record, ObjectLiteral):
+        if isinstance(record, Object):
             return record.obj[self.field_name]
         else:
             raise ValueError("%s was not a record" % record.__repr__())

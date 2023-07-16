@@ -1,5 +1,5 @@
 from corefn.expression import Expression
-from corefn.literals import StringLiteral
+from corefn.literals import String
 
 
 class AbsInterface(Expression):

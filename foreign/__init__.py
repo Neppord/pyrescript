@@ -1,7 +1,7 @@
 from types import FunctionType, BuiltinFunctionType
 
 from corefn.abs import Foreign, ForeignUsingInterpreter
-from corefn.literals import StringLiteral
+from corefn.literals import String
 from foreign.data_array import range_impl
 from foreign.data_eq import eq_int_impl
 from foreign.data_euclidean_ring import int_degree, int_div, int_mod
@@ -35,7 +35,7 @@ def bindE(interpreter, a):
 def to_foreign(value):
     t = type(value)
     if t == str:
-        return StringLiteral(value)
+        return String(value)
     elif t in [FunctionType, BuiltinFunctionType]:
         arguments = value.func_code.co_argcount
         if arguments == 1:
@@ -104,7 +104,7 @@ foreign = {
         'intMul': to_foreign(int_mul),
     },
     'Data.Show': {
-        'showIntImpl': to_foreign(lambda e: StringLiteral(str(e.value)))
+        'showIntImpl': to_foreign(lambda e: String(str(e.value)))
     },
     'Data.Unit': {
         'unit': to_foreign("unit")

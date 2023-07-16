@@ -1,5 +1,5 @@
-from corefn.literals import StringLiteral
+from corefn.literals import String
 
 
 def concat_string(a, b):
-    return StringLiteral(a.value + b.value)
+    return String(a.value + b.value)

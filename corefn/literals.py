@@ -1,18 +1,18 @@
 from corefn.expression import Expression
 
 
-class Literal(Expression):
+class Box(Expression):
 
     def interpret(self, interpreter, frame):
         return self
 
 
-class ObjectLiteral(Literal):
+class Object(Box):
     def __init__(self, obj):
         self.obj = obj
 
     def interpret(self, interpreter, frame):
-        return ObjectLiteral({k: e.interpret(interpreter, frame) for k, e in self.obj.items()})
+        return Object({k: e.interpret(interpreter, frame) for k, e in self.obj.items()})
     def __repr__(self):
         key_value_pairs = []
         for field_name, expression in self.obj.items():
@@ -22,7 +22,7 @@ class ObjectLiteral(Literal):
         return "{" + ", ".join(key_value_pairs) + "}"
 
 
-class ArrayLiteral(Literal):
+class Array(Box):
     def __init__(self, array):
         self.array = array
 
@@ -30,10 +30,10 @@ class ArrayLiteral(Literal):
         return "[" + ", ".join([a.__repr__() for a in self.array]) + "]"
 
     def interpret(self, interpreter, frame):
-        return ArrayLiteral([ e.interpret(interpreter, frame) for e in self.array])
+        return Array([e.interpret(interpreter, frame) for e in self.array])
 
 
-class IntLiteral(Literal):
+class Int(Box):
     def __init__(self, value):
         """:type value: int"""
         self.value = value
@@ -42,7 +42,7 @@ class IntLiteral(Literal):
         return str(self.value)
 
 
-class StringLiteral(Literal):
+class String(Box):
     def __init__(self, value):
         assert isinstance(value, str)
         self.value = value
@@ -54,7 +54,7 @@ class StringLiteral(Literal):
             return '"' + self.value + '"'
 
 
-class FloatLiteral(Literal):
+class Float(Box):
     def __init__(self, value):
         self.value = value
 
@@ -62,7 +62,7 @@ class FloatLiteral(Literal):
         return str(self.value)
 
 
-class BoolLiteral(Literal):
+class Boolean(Box):
     def __init__(self, value):
         self.value = value
 
@@ -70,7 +70,7 @@ class BoolLiteral(Literal):
         return "true" if self.value else "false"
 
 
-class NullLiteral(Literal):
+class Null(Box):
     def __init__(self):
         pass
 
@@ -78,4 +78,4 @@ class NullLiteral(Literal):
         return "null"
 
 
-nullLiteral = NullLiteral()
+nullLiteral = Null()
