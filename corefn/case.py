@@ -43,7 +43,7 @@ class Case(Expression):
                     next_frame = {}
                     next_frame.update(frame)
                     next_frame.update(new_frame)
-                    return interpreter.expression(alternative.expression, next_frame)
+                    return alternative.expression.eval(interpreter, next_frame)
             else:
                 raise NotImplementedError("do not support %r yet" % alternative)
         raise NotImplementedError

@@ -1,6 +1,6 @@
 from corefn import interpret_foreign
 from corefn.expression import Expression
-from corefn.literals import Object, String, Effect
+from corefn.literals import Record, String, Effect
 from prim import prim
 from corefn.parsing import load_module, expression_
 
@@ -19,7 +19,8 @@ class Interpreter(object):
         """
         :type module: Module
         """
-        main = module.decl("main").expression.eval(self, {})
+        decl = module.decl("main")  # type: Expression
+        main = decl.expression.eval(self, {})
         assert isinstance(main, Effect)
         main.run_effect(self)
 
@@ -39,7 +40,7 @@ class Interpreter(object):
             module = self.get_or_load_module(module_name)
             if module.has_decl(identifier):
                 decl = module.decl(identifier)
-                return self.expression(decl.expression, {})
+                return decl.expression.evel(self, {})
             else:
                 foreign = interpret_foreign(module_name, identifier)
                 assert isinstance(foreign, Expression)

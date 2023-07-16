@@ -44,7 +44,7 @@ class FloatBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame).value, {}
+        return self.value == to_match.eval(interpreter, frame).value, {}
 
     def __repr__(self):
         raise NotImplementedError()
@@ -55,7 +55,7 @@ class BoolBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame).value, {}
+        return self.value == to_match.eval(interpreter, frame).value, {}
 
     def __repr__(self):
         if self.value:
@@ -69,7 +69,7 @@ class ObjectBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame).value, {}
+        return self.value == to_match.eval(interpreter, frame).value, {}
 
     def __repr__(self):
         raise NotImplementedError()
@@ -80,7 +80,7 @@ class ArrayLiteralBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame).value, {}
+        return self.value == to_match.eval(interpreter, frame).value, {}
 
     def __repr__(self):
         raise NotImplementedError()

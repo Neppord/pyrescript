@@ -9,12 +9,15 @@ class Box(Expression):
         return self
 
 
-class Object(Box):
+class Record(Box):
     def __init__(self, obj):
         self.obj = obj
 
     def eval(self, interpreter, frame):
-        return Object({k: e.eval(interpreter, frame) for k, e in self.obj.items()})
+        new_obj = {}
+        for k, e in self.obj.items():
+            new_obj[k] = e.eval(interpreter, frame)
+        return Record(new_obj)
 
     def __repr__(self):
         key_value_pairs = []

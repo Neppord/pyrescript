@@ -4,7 +4,7 @@ from corefn.binders import VarBinder, ConstructorBinder, NullBinder, NamedBinder
 from corefn.case import Alternative, GuardedAlternative, Case
 from corefn.expression import App, Accessor, Let
 from corefn.abs import Abs
-from corefn.literals import Object, Array, String, Int, Float, \
+from corefn.literals import Record, Array, String, Int, Float, \
     Boolean, unit
 from corefn.var import LocalVar, ExternalVar
 from rjson import raw_loads
@@ -82,7 +82,7 @@ def expression_(node):
             obj = {}
             for k, v in iter_object(value_):
                 obj[k] = expression_(v)
-            return Object(obj)
+            return Record(obj)
         elif literal_type == "ArrayLiteral":
             value_ = value["value"]  # type: Nonterminal
             array = [expression_(v) for v in value_.children]

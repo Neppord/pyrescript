@@ -56,9 +56,9 @@ class Accessor(Expression):
         self.field_name = field_name
 
     def eval(self, interpreter, frame):
-        from corefn.literals import Object
+        from corefn.literals import Record
         record = self.expression.eval(interpreter, frame)
-        if isinstance(record, Object):
+        if isinstance(record, Record):
             return record.obj[self.field_name]
         else:
             raise ValueError("%s was not a record" % record.__repr__())
@@ -78,7 +78,7 @@ class Let(Expression):
         new_frame.update(frame)
         for k, v in self.binds.items():
             new_frame[k] = v.eval(interpreter, frame)
-        return interpreter.expression(self.expression, new_frame)
+        return self.expression.eval(interpreter, new_frame)
 
     def __repr__(self):
         binds = '  ' + '\n  '.join([k + " = " + b.__repr__() for k, b in self.binds.items()])
