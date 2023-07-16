@@ -35,6 +35,7 @@ class Case(Expression):
 
     def eval(self, interpreter, frame):
         to_match, = self.expressions
+        to_match = to_match.eval(interpreter, frame)
         for alternative in self.alternatives:
             if isinstance(alternative, Alternative):
                 binder, = alternative.binders
