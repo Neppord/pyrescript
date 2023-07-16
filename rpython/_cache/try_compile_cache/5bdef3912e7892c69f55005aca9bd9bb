@@ -1,4 +1,0 @@
-platcheck_4.obj : error LNK2019: unresolved external symbol getpgrp referenced in function main
-c:\users\neppord\appdata\local\temp\usession-main-91\platcheck_4.exe : fatal error LNK1120: 1 unresolved externals
-platcheck_4.obj : error LNK2019: unresolved external symbol getpgrp referenced in function main
-c:\users\neppord\appdata\local\temp\usession-main-91\platcheck_4.exe : fatal error LNK1120: 1 unresolved externals

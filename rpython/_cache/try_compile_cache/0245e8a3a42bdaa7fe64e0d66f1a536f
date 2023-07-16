@@ -1,4 +1,0 @@
-platcheck_7.c
-c:\users\neppord\appdata\local\temp\usession-main-91\platcheck_7.c(108): error C2065: 'posix_fallocate': undeclared identifier
-platcheck_7.c
-c:\users\neppord\appdata\local\temp\usession-main-91\platcheck_7.c(108): error C2065: 'posix_fallocate': undeclared identifier
