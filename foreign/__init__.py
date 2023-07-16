@@ -1,21 +1,18 @@
 from types import FunctionType, BuiltinFunctionType
 
 from corefn.abs import Foreign, ForeignUsingInterpreter
-from corefn.literals import String
+from corefn.expression import App
+from corefn.literals import String, Effect
 from foreign.data_array import range_impl
 from foreign.data_eq import eq_int_impl
 from foreign.data_euclidean_ring import int_degree, int_div, int_mod
 from foreign.data_foldable import foldr_array, foldl_array
 from foreign.data_semigroup import concat_string
 from foreign.data_semiring import int_add, int_mul
+from foreign.effect import bindE
 from foreign.effect_console import log
 
 from rpython.rlib.objectmodel import not_rpython
-
-
-def pure(x):
-    return x
-
 
 def apply(f):
     def apply2(a):
@@ -27,9 +24,6 @@ def run_fn_2(fn):
     """noop all functions are curried by default"""
     return fn
 
-
-def bindE(interpreter, a):
-    return Foreign("bindE", lambda atob: atob.call_abs(interpreter, a))
 
 @not_rpython
 def to_foreign(value):
@@ -72,11 +66,11 @@ def with_interpreter(f):
 
 foreign = {
     'Effect': {
-        'pureE': to_foreign(pure),
-        'bindE': to_foreign(bindE)
+        'pureE': to_foreign(lambda x: Effect(x)),
+        'bindE': with_interpreter(bindE)
     },
     'Effect.Console': {
-        'log': to_foreign(log)
+        'log': Foreign("log", lambda x: Effect(App(Foreign("log", log), x)))
     },
     'Data.Array': {
         'rangeImpl': to_foreign(range_impl),

@@ -1,4 +1,4 @@
-from corefn.literals import Null, nullLiteral
+from corefn.literals import Null, nullLiteral, Effect
 
 
 def log(x):
