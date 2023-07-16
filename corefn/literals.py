@@ -9,6 +9,7 @@ class Box(Expression):
 
 class Object(Box):
     def __init__(self, obj):
+        assert isinstance(obj, dict)
         self.obj = obj
 
     def interpret(self, interpreter, frame):
@@ -24,6 +25,7 @@ class Object(Box):
 
 class Array(Box):
     def __init__(self, array):
+        assert isinstance(array, list)
         self.array = array
 
     def __repr__(self):
@@ -36,6 +38,7 @@ class Array(Box):
 class Int(Box):
     def __init__(self, value):
         """:type value: int"""
+        assert isinstance(value, int)
         self.value = value
 
     def __repr__(self):
@@ -56,6 +59,7 @@ class String(Box):
 
 class Float(Box):
     def __init__(self, value):
+        assert isinstance(value, float)
         self.value = value
 
     def __repr__(self):
@@ -64,6 +68,7 @@ class Float(Box):
 
 class Boolean(Box):
     def __init__(self, value):
+        assert isinstance(value, bool)
         self.value = value
 
     def __repr__(self):
