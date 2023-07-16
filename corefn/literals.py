@@ -14,6 +14,7 @@ class Object(Box):
 
     def interpret(self, interpreter, frame):
         return Object({k: e.interpret(interpreter, frame) for k, e in self.obj.items()})
+
     def __repr__(self):
         key_value_pairs = []
         for field_name, expression in self.obj.items():
@@ -84,3 +85,12 @@ class Null(Box):
 
 
 nullLiteral = Null()
+
+
+class Effect(Box):
+
+    def __init__(self, effect):
+        self.effect = effect
+
+    def __repr__(self):
+        return "<Effect>"
