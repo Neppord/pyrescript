@@ -155,7 +155,7 @@ class Native3(AbsInterface):
         return self
 
     def call_abs(self, interpreter, expression):
-        return BoundNative2(self.native, expression)
+        return BoundNative3(self.native, expression)
 
     def __repr__(self):
         return "<placeholder>"
