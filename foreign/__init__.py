@@ -37,7 +37,7 @@ foreign = {
     },
     'Data.Foldable': {
         'foldrArray': foldr_array,
-        'foldlArray': Dynamic(foldl_array),
+        'foldlArray': unit,
     },
     'Data.Function.Uncurried': {
         'runFn2': to_foreign(lambda i, a: a),
