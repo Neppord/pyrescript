@@ -93,4 +93,4 @@ class Effect(Box):
         self.effect = effect
 
     def __repr__(self):
-        return "<Effect>"
+        return self.effect.__repr__()
