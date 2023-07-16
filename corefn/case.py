@@ -1,3 +1,4 @@
+from corefn.binders import Match
 from corefn.expression import Expression
 
 
@@ -39,11 +40,11 @@ class Case(Expression):
         for alternative in self.alternatives:
             if isinstance(alternative, Alternative):
                 binder, = alternative.binders
-                result, new_frame = binder.eval(interpreter, to_match, frame)
-                if result:
+                match = binder.eval(interpreter, to_match, frame)
+                if isinstance(match, Match):
                     next_frame = {}
                     next_frame.update(frame)
-                    next_frame.update(new_frame)
+                    next_frame.update(match.frame)
                     return alternative.expression.eval(interpreter, next_frame)
             else:
                 raise NotImplementedError("do not support %r yet" % alternative)

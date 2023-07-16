@@ -14,7 +14,7 @@ class VarBinder(Binder):
         self.name = name
 
     def eval(self, interpreter, to_match, frame):
-        return True, {self.name: to_match}
+        return Match({self.name: to_match})
 
     def __repr__(self):
         return str(self.name)
@@ -25,11 +25,12 @@ class StringLiteralBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        if isinstance(to_match, String):
-            return self.value == to_match.value, {}
-        else:
+        if not isinstance(to_match, String):
             raise TypeError("Expected String got: " + to_match.__repr__())
-
+        if self.value == to_match.value:
+            return empty_match
+        else:
+            return no_match
 
     def __repr__(self):
         return str(self.value)
@@ -40,11 +41,12 @@ class IntBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        if isinstance(to_match, Int):
-            return self.value == to_match.value, {}
-        else:
+        if not isinstance(to_match, Int):
             raise TypeError("Expected Int got: " + to_match.__repr__())
-
+        elif self.value == to_match.value:
+            return empty_match
+        else:
+            return no_match
 
     def __repr__(self):
         return str(self.value)
@@ -55,10 +57,12 @@ class FloatBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        if isinstance(to_match, Float):
-            return self.value == to_match.value, {}
-        else:
+        if not isinstance(to_match, Float):
             raise TypeError("Expected Float got: " + to_match.__repr__())
+        elif self.value == to_match.value:
+            return empty_match
+        else:
+            return no_match
 
     def __repr__(self):
         raise NotImplementedError()
@@ -69,11 +73,13 @@ class BoolBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        if isinstance(to_match, Boolean):
-            result = self.value == to_match.value
-            return result, {}
-        else:
+        if not isinstance(to_match, Boolean):
             raise TypeError("expected Boolean got: " + to_match.__repr__())
+        elif self.value == to_match.value:
+            return empty_match
+        else:
+            return no_match
+
     def __repr__(self):
         if self.value:
             return "True"
@@ -108,14 +114,14 @@ class ConstructorBinder(Binder):
         self.binders = binders
 
     def eval(self, interpreter, to_match, frame):
-        frames = [b.eval(interpreter, to_match, frame) for b in self.binders]
+        matches = [b.eval(interpreter, to_match, frame) for b in self.binders]
         new_frame = {}
-        for r, f in frames:
-            if r:
-                new_frame.update(f)
+        for match in matches:
+            if isinstance(match, Match):
+                new_frame.update(match.frame)
             else:
-                return False, {}
-        return True, new_frame
+                return no_match
+        return Match(new_frame)
 
     def __repr__(self):
         return "<ConstructorBinder>"
@@ -123,7 +129,7 @@ class ConstructorBinder(Binder):
 
 class NullBinder(Binder):
     def eval(self, interpreter, to_match, frame):
-        return True, {}
+        return empty_match
 
     def __repr__(self):
         return "_"
@@ -141,3 +147,21 @@ class NamedBinder(Binder):
 
     def __repr__(self):
         raise NotImplementedError()
+
+
+class MatchInterface(object):
+    pass
+
+
+class Match(MatchInterface):
+    def __init__(self, frame):
+        self.frame = frame
+
+
+class NoMatch(MatchInterface):
+    def __init__(self):
+        pass
+
+
+no_match = NoMatch()
+empty_match = Match({})
