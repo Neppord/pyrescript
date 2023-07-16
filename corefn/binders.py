@@ -1,4 +1,4 @@
-from corefn.literals import Boolean
+from corefn.literals import Boolean, Float, Int, String
 
 
 class Binder(object):
@@ -25,7 +25,11 @@ class StringLiteralBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == to_match.value, {}
+        if isinstance(to_match, String):
+            return self.value == to_match.value, {}
+        else:
+            raise TypeError("Expected String got: " + to_match.__repr__())
+
 
     def __repr__(self):
         return str(self.value)
@@ -36,7 +40,11 @@ class IntBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == to_match.value, {}
+        if isinstance(to_match, Int):
+            return self.value == to_match.value, {}
+        else:
+            raise TypeError("Expected Int got: " + to_match.__repr__())
+
 
     def __repr__(self):
         return str(self.value)
@@ -47,7 +55,10 @@ class FloatBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == to_match.value, {}
+        if isinstance(to_match, Float):
+            return self.value == to_match.value, {}
+        else:
+            raise TypeError("Expected Float got: " + to_match.__repr__())
 
     def __repr__(self):
         raise NotImplementedError()
@@ -75,7 +86,7 @@ class RecordBinder(Binder):
         self.record = record
 
     def eval(self, interpreter, to_match, frame):
-        return self.record == to_match.obj, {}
+        raise NotImplementedError()
 
     def __repr__(self):
         raise NotImplementedError()
@@ -86,7 +97,7 @@ class ArrayLiteralBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == to_match.eval(interpreter, frame).value, {}
+        raise NotImplementedError()
 
     def __repr__(self):
         raise NotImplementedError()
