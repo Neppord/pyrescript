@@ -10,6 +10,7 @@ from foreign.data_semiring import int_add, int_mul
 from foreign.effect import bindE, pureE
 from foreign.effect_console import log
 from foreign.util import to_foreign
+from foreign.data_show import show_int_impl
 
 """
 Foreign functions can take any Box type as arguments.
@@ -50,7 +51,7 @@ foreign = {
         'intMul': to_foreign(int_mul),
     },
     'Data.Show': {
-        'showIntImpl': to_foreign(lambda i, e: String(str(e.value)))
+        'showIntImpl': show_int_impl
     },
     'Data.Unit': {
         'unit': unit
