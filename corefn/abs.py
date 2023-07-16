@@ -10,6 +10,7 @@ more then one argument is represented by nesting multiple Abs, one returning
 
 """
 
+
 class AbsInterface(Expression):
 
     def call_abs(self, interpreter, expression):
@@ -38,22 +39,6 @@ class Abs(AbsInterface):
         return "\\" + argument + " -> " + body
 
 
-class Foreign(AbsInterface):
-    def __init__(self, repr_, function):
-        self.repr = repr_
-        self.function = function
-
-    def interpret(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        ret = self.function(expression)
-        assert isinstance(ret, Expression)
-        return ret
-
-    def __repr__(self):
-        return self.repr
-
 class AbsWithFrame(AbsInterface):
 
     def __init__(self, abs, frame):
@@ -78,6 +63,23 @@ class AbsWithFrame(AbsInterface):
             return "\\" + self.abs.argument + " -> " + body_repr
 
 
+class Foreign(AbsInterface):
+    def __init__(self, repr_, function):
+        self.repr = repr_
+        self.function = function
+
+    def interpret(self, interpreter, frame):
+        return self
+
+    def call_abs(self, interpreter, expression):
+        ret = self.function(expression)
+        assert isinstance(ret, Expression)
+        return ret
+
+    def __repr__(self):
+        return self.repr
+
+
 class Dynamic(Expression):
 
     def __init__(self, function):
@@ -85,5 +87,6 @@ class Dynamic(Expression):
 
     def interpret(self, interpreter, frame):
         return self.function(interpreter)
+
     def __repr__(self):
         return "<dynamic>"
