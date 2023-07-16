@@ -1,5 +1,5 @@
 from corefn.abs import Foreign, AbsInterface
-from corefn.literals import Effect, Lazy
+from corefn.literals import Effect, Bound
 
 
 def bindE(interpreter, a):
@@ -9,7 +9,7 @@ def bindE(interpreter, a):
 def bindE_(interpreter, a, atob):
     if isinstance(a, Effect):
         if isinstance(atob, AbsInterface):
-            return Effect(Lazy(lambda : atob.call_abs(interpreter, a.run_effect(interpreter)).run_effect(interpreter)))
+            return Effect(Bound(lambda : atob.call_abs(interpreter, a.run_effect(interpreter)).run_effect(interpreter)))
         else:
             raise TypeError("expected Abs got: " + atob.__repr__())
     else:
