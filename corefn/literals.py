@@ -101,6 +101,7 @@ class Effect(Box):
     def __repr__(self):
         return "Effect (%s)" % self.effect.__repr__()
 
+
 class Native0(Box):
     def __init__(self, function):
         assert isinstance(function, FunctionType)
@@ -111,6 +112,8 @@ class Native0(Box):
 
     def __repr__(self):
         return "<native>"
+
+
 class Native1(Box):
     def __init__(self, function, x1):
         assert isinstance(function, FunctionType)
@@ -122,6 +125,8 @@ class Native1(Box):
 
     def __repr__(self):
         return "<native> (%s)" % self.x1.__repr__()
+
+
 class Native2(Box):
     def __init__(self, function, x1, x2):
         assert isinstance(function, FunctionType)
