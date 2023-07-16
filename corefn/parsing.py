@@ -1,5 +1,5 @@
 from corefn import Declaration, Module
-from corefn.binders import VarBinder, ConstructorBinder, NullBinder, NamedBinder, ObjectBinder, \
+from corefn.binders import VarBinder, ConstructorBinder, NullBinder, NamedBinder, RecordBinder, \
     StringLiteralBinder, IntBinder, FloatBinder, BoolBinder, ArrayLiteralBinder
 from corefn.case import Alternative, GuardedAlternative, Case
 from corefn.expression import App, Accessor, Let
@@ -170,7 +170,7 @@ def binder_(node):
             value = {}
             for k, v in iter_object(literal['value']):
                 value[k] = binder_(v)
-            return ObjectBinder(value)
+            return RecordBinder(value)
         elif type_ == "ArrayLiteral":
             return ArrayLiteralBinder( [binder_(b) for b in value_.children])
         elif type_ == "StringLiteral":

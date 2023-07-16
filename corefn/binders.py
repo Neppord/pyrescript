@@ -55,7 +55,8 @@ class BoolBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == to_match.eval(interpreter, frame).value, {}
+        result = self.value == to_match.value
+        return result, {}
 
     def __repr__(self):
         if self.value:
@@ -64,15 +65,15 @@ class BoolBinder(Binder):
             return "False"
 
 
-class ObjectBinder(Binder):
-    def __init__(self, value):
-        self.value = value
+class RecordBinder(Binder):
+    def __init__(self, record):
+        self.record = record
 
     def eval(self, interpreter, to_match, frame):
-        return self.value == to_match.eval(interpreter, frame).value, {}
+        return self.record.obj == to_match.obj, {}
 
     def __repr__(self):
-        raise NotImplementedError()
+        return self.record.__repr__()
 
 
 class ArrayLiteralBinder(Binder):

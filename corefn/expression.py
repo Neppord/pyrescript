@@ -38,8 +38,6 @@ class App(Expression):
 
     def eval(self, interpreter, frame):
         from corefn.abs import AbsInterface
-
-        assert all([isinstance(f, Expression) for f in frame.values()])
         abstraction = self.abstraction.eval(interpreter, frame)
 
         if isinstance(abstraction, AbsInterface):
