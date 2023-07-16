@@ -1,5 +1,5 @@
 from corefn.expression import Expression
-from corefn.literals import String
+from corefn.literals import Bound
 
 """
 Abs aka Lambda, Callable etc.
@@ -92,3 +92,4 @@ class AbsWithFrame(AbsInterface):
             return "\\" + self.abs.argument + " -> let " + frame_repr + " in " + body_repr
         else:
             return "\\" + self.abs.argument + " -> " + body_repr
+

@@ -111,31 +111,3 @@ class Bound(Box):
 
     def __repr__(self):
         return "<native>"
-
-
-class Bound1(Box):
-    def __init__(self, function, x1):
-        assert isinstance(function, FunctionType)
-        self.function = function
-        self.x1 = x1
-
-    def interpret(self, interpreter, frame):
-        return self.function(self.x1)
-
-    def __repr__(self):
-        return "<native> (%s)" % self.x1.__repr__()
-
-
-class Bound2(Box):
-    def __init__(self, function, x1, x2):
-        assert isinstance(function, FunctionType)
-        self.function = function
-        self.x1 = x1
-        self.x2 = x2
-
-    def interpret(self, interpreter, frame):
-        return self.function(self.x1, self.x2)
-
-    def __repr__(self):
-        return "<native> (%s) (%a)" % (self.x1.__repr__(), self.x2.__repre__())
-
