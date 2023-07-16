@@ -134,6 +134,19 @@ class BoundNative2(AbsInterface):
         return "<placeholder>"
 
 
+class BoundBoundNative2(Expression):
+    def __init__(self, native, bound1, bound2):
+        self.native = native
+        self.bound1 = bound1
+        self.bound2 = bound2
+
+    def eval(self, interpreter, frame):
+        return self.native(interpreter, self.bound1, self.bound2)
+
+    def __repr__(self):
+        return "<placeholder>"
+
+
 class Native3(AbsInterface):
     def __init__(self, native):
         self.native = native

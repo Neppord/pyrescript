@@ -1,17 +1,17 @@
-from corefn.abs import Foreign, AbsInterface, Native2, Native1
+from corefn.abs import Foreign, AbsInterface, Native2, Native1, BoundNative2, BoundBoundNative2
 from corefn.literals import Effect, Bound
 
 
+def bindE__(i, a, atob):
+    return atob.call_abs(i, a.run_effect(i)).run_effect(i)
 
 
 def bindE_(interpreter, a, atob):
-    if isinstance(a, Effect):
-        if isinstance(atob, AbsInterface):
-            return Effect(Bound(lambda : atob.call_abs(interpreter, a.run_effect(interpreter)).run_effect(interpreter)))
-        else:
-            raise TypeError("expected Abs got: " + atob.__repr__())
-    else:
+    if not isinstance(a, Effect):
         raise TypeError("expected Effect got: " + a.__repr__())
+    if not isinstance(atob, AbsInterface):
+        raise TypeError("expected Abs got: " + atob.__repr__())
+    return Effect(BoundBoundNative2(bindE__, a, atob))
 
 
 bindE = Native2(bindE_)
