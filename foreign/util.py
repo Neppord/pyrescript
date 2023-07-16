@@ -1,6 +1,6 @@
 from types import FunctionType, BuiltinFunctionType
 
-from corefn.abs import Foreign, ForeignUsingInterpreter
+from corefn.abs import Foreign
 from corefn.literals import String
 from rpython.rlib.objectmodel import not_rpython
 
@@ -38,5 +38,3 @@ def to_foreign(value):
         NotImplementedError("cant translate %r of type %r" % (value, t))
 
 
-def with_interpreter(f):
-    return ForeignUsingInterpreter(f)

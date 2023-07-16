@@ -54,22 +54,6 @@ class Foreign(AbsInterface):
     def __repr__(self):
         return self.repr
 
-class ForeignUsingInterpreter(AbsInterface):
-    def __init__(self, function):
-        self.function = function
-
-    def interpret(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        abs = self.function(interpreter, expression)
-        assert isinstance(abs, Expression)
-        return abs
-
-    def __repr__(self):
-        return "<ForeignUsingInterpreter>"
-
-
 class AbsWithFrame(AbsInterface):
 
     def __init__(self, abs, frame):
@@ -93,3 +77,13 @@ class AbsWithFrame(AbsInterface):
         else:
             return "\\" + self.abs.argument + " -> " + body_repr
 
+
+class Dynamic(Expression):
+
+    def __init__(self, function):
+        self.function = function
+
+    def interpret(self, interpreter, frame):
+        return self.function(interpreter)
+    def __repr__(self):
+        return "<dynamic>"

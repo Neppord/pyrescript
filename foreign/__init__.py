@@ -1,4 +1,4 @@
-from corefn.abs import Foreign
+from corefn.abs import Foreign, Dynamic
 from corefn.expression import App
 from corefn.literals import String, Effect
 from foreign.data_array import range_impl
@@ -19,7 +19,7 @@ Taking functions (Abs) as arguments complicates things since you cant call one w
 foreign = {
     'Effect': {
         'pureE': to_foreign(lambda x: Effect(x)),
-        'bindE': with_interpreter(bindE)
+        'bindE': Dynamic(bindE)
     },
     'Effect.Console': {
         'log': Foreign("log", lambda x: Effect(App(Foreign("log", log), x)))
@@ -36,8 +36,8 @@ foreign = {
         'intMod': to_foreign(int_mod),
     },
     'Data.Foldable': {
-        'foldrArray': with_interpreter(foldr_array),
-        'foldlArray': with_interpreter(foldl_array),
+        'foldrArray': Dynamic(foldr_array),
+        'foldlArray': Dynamic(foldl_array),
     },
     'Data.Function.Uncurried': {
         'runFn2': to_foreign(lambda a: a),

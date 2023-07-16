@@ -2,8 +2,8 @@ from corefn.abs import Foreign, AbsInterface
 from corefn.literals import Effect, Bound
 
 
-def bindE(interpreter, a):
-    return Foreign("bindE", lambda atob: bindE_(interpreter, a, atob))
+def bindE(interpreter):
+    return Foreign("bindE", lambda a: Foreign("bindE", lambda atob: bindE_(interpreter, a, atob)))
 
 
 def bindE_(interpreter, a, atob):

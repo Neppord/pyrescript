@@ -17,8 +17,8 @@ def foldr_array_(interpreter, f, b, arr):
         raise ValueError("arr was not an array")
 
 
-def foldr_array(interpreter, f):
-    return Foreign("foldr_array1", lambda b: Foreign("foldr_array2", lambda arr: foldr_array_(interpreter, f, b, arr)))
+def foldr_array(interpreter):
+    return Foreign("foldr_array", lambda f: Foreign("foldr_array1", lambda b: Foreign("foldr_array2", lambda arr: foldr_array_(interpreter, f, b, arr))))
 
 
 def foldl_array(interpreter, f):
