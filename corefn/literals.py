@@ -101,7 +101,7 @@ class Effect(Box):
         return "Effect (%s)" % self.effect.__repr__()
 
 
-class Native0(Box):
+class Lazy(Box):
     def __init__(self, function):
         assert isinstance(function, FunctionType)
         self.function = function
@@ -113,7 +113,7 @@ class Native0(Box):
         return "<native>"
 
 
-class Native1(Box):
+class Lazy1(Box):
     def __init__(self, function, x1):
         assert isinstance(function, FunctionType)
         self.function = function
@@ -126,7 +126,7 @@ class Native1(Box):
         return "<native> (%s)" % self.x1.__repr__()
 
 
-class Native2(Box):
+class Lazy2(Box):
     def __init__(self, function, x1, x2):
         assert isinstance(function, FunctionType)
         self.function = function
@@ -138,3 +138,4 @@ class Native2(Box):
 
     def __repr__(self):
         return "<native> (%s) (%a)" % (self.x1.__repr__(), self.x2.__repre__())
+

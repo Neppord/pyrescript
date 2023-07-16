@@ -1,5 +1,5 @@
 from corefn.abs import Foreign
-from corefn.literals import Effect, Int, Native2, Native1
+from corefn.literals import Effect, Int, Lazy2, Lazy1
 from foreign.effect import bindE_
 
 
