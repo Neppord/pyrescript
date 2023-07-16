@@ -90,6 +90,7 @@ nullLiteral = Null()
 class Effect(Box):
 
     def __init__(self, effect):
+        assert isinstance(effect, Expression)
         self.effect = effect
 
     def __repr__(self):
