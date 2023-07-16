@@ -43,7 +43,8 @@ class App(Expression):
 
         if isinstance(abstraction, AbsInterface):
             argument = self.argument.interpret(interpreter, frame)
-            return abstraction.call_abs(interpreter, argument)
+            result = abstraction.call_abs(interpreter, argument)
+            return result
         else:
             raise ValueError("%s is not callable" % abstraction.__repr__())
 

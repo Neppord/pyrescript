@@ -19,7 +19,7 @@ class StringLiteralBinder(Binder):
         self.value = value
 
     def interpret(self, interpreter, to_match, frame):
-        return self.value == to_match.interpret(interpreter, frame), {}
+        return self.value == to_match.interpret(interpreter, frame).value, {}
 
     def __repr__(self):
         return str(self.value)
@@ -30,7 +30,7 @@ class IntBinder(Binder):
         self.value = value
 
     def interpret(self, interpreter, to_match, frame):
-        return self.value == to_match.interpret(interpreter, frame), {}
+        return self.value == to_match.interpret(interpreter, frame).value, {}
 
     def __repr__(self):
         return str(self.value)
@@ -41,7 +41,7 @@ class FloatBinder(Binder):
         self.value = value
 
     def interpret(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame), {}
+        return self.value == interpreter.expression(to_match, frame).value, {}
 
     def __repr__(self):
         raise NotImplementedError()
@@ -52,7 +52,7 @@ class BoolBinder(Binder):
         self.value = value
 
     def interpret(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame), {}
+        return self.value == interpreter.expression(to_match, frame).value, {}
 
     def __repr__(self):
         if self.value:
@@ -66,7 +66,7 @@ class ObjectBinder(Binder):
         self.value = value
 
     def interpret(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame), {}
+        return self.value == interpreter.expression(to_match, frame).value, {}
 
     def __repr__(self):
         raise NotImplementedError()
@@ -77,7 +77,7 @@ class ArrayLiteralBinder(Binder):
         self.value = value
 
     def interpret(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame), {}
+        return self.value == interpreter.expression(to_match, frame).value, {}
 
     def __repr__(self):
         raise NotImplementedError()

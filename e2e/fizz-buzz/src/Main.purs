@@ -23,5 +23,19 @@ fizzbuzz n =
     else show n
 
 main :: Effect Unit
-main = for_ (1 .. 15) \n -> do
-    log (fizzbuzz n)
+main = do
+    log (fizzbuzz 1)
+    log (fizzbuzz 2)
+    log (fizzbuzz 3)
+    log (fizzbuzz 4)
+    log (fizzbuzz 5)
+    log (fizzbuzz 6)
+    log (fizzbuzz 7)
+    log (fizzbuzz 8)
+    log (fizzbuzz 9)
+    log (fizzbuzz 10)
+    log (fizzbuzz 11)
+    log (fizzbuzz 12)
+    log (fizzbuzz 13)
+    log (fizzbuzz 14)
+    log (fizzbuzz 15)
