@@ -70,10 +70,10 @@ class RecordBinder(Binder):
         self.record = record
 
     def eval(self, interpreter, to_match, frame):
-        return self.record.obj == to_match.obj, {}
+        return self.record == to_match.obj, {}
 
     def __repr__(self):
-        return self.record.__repr__()
+        raise NotImplementedError()
 
 
 class ArrayLiteralBinder(Binder):
