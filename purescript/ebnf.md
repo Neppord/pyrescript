@@ -1,7 +1,7 @@
 ## Tokens
 these are the tokens that needs regexp the tokens that are string constants can be found within the grammar. The current lexer don't seam to understand unicode groups, therefore they are only kept as comments.
 ```ebnf
-LINE_INDENT: "\n\w*";
+LINE_INDENT: "\n[ \t]*";
 IGNORE: "[ \t\f\r\n]";
 PROPER_NAME
     : "[A-Z]([A-Za-z0-9_'])*"
@@ -14,12 +14,13 @@ STRING: "\"[^\"]*\"";
 ```
 ## Grammar
 ```ebnf
-module: <moduel_header> <module_body>?;
-moduel_header
-    : ["module"] module_name export_list? ["where"] [SEP] 
-        import_declarations?
+module
+    : ["module"] module_name export_list? ["where"] [SEP]
+        (import_declaration [SEP])*
+        (declaration [SEP]?)*
+    [EOF]?
     ;
-module_name: (PROPER_NAME <".">)* PROPER_NAME;
+module_name: (PROPER_NAME ["."])* PROPER_NAME;
 export_list: "(" (exported_item ",")* exported_item ")";
 exported_item
     : ["class"] PROPER_NAME
@@ -30,7 +31,6 @@ exported_item
     | identifier
     ;
     
-import_declarations: (<import_declaration> [SEP])* <import_declaration>;
 import_declaration: ["import"] module_name "hiding"? import_list? (["as"] module_name)?;
 import_list: ["("] ( import_item [","])* import_item [")"];
 import_item
@@ -39,14 +39,13 @@ import_item
     | symbol
     | identifier
     | PROPER_NAME ["("] members [")"]
+    | PROPER_NAME
     ;
-symbol: "(" <OPERATOR> ")" ;
+symbol: "(" OPERATOR ")" ;
 members
     : ".."
     | (PROPER_NAME [","])* PROPER_NAME
     ;
-
-module_body: (declaration [SEP])* declaration;
 
 declaration
     : data_declaration
@@ -54,8 +53,8 @@ declaration
 #   | type_role_declaration
 #   | type_signature_declaration
 #   | type_declaration
-    | value_signature
-    | value_declaration
+    | <value_signature>
+    | <value_declaration>
 #   | foreign_declaration
 #   | class_declaration
 #   | derive_declaration
@@ -66,7 +65,7 @@ value_signature
     ;
 type: "Effect Unit";
 value_declaration
-    : identifier binder_atom* guard_declaration 
+    : identifier binder_atom* guard_declaration
     ; 
 
 binder_atom
@@ -74,7 +73,7 @@ binder_atom
     ;
  
 guard_declaration
-    : "=" where_expression
+    : ["="] where_expression
 #   | guarded_declaration_expression
     ;
 where_expression
@@ -104,13 +103,10 @@ expression_atom
     ;
 
 do_block
-    : "do" [INDENT]
-          (do_statement [SEP])+
-      [DEDENT]
+    : ["do"] do_statement
+    | ["do"] [INDENT] (do_statement [SEP])+ [DEDENT]
     ;
-do_statement
-    : expression
-    ;
+do_statement : expression ;
 
 backtick_expression: "`" identifier "`";
 qual_op: (module_name ["."])? OPERATOR;
@@ -124,7 +120,7 @@ type_parameter: identifier ;
 data_constructor: PROPER_NAME type_atom* ;
 type_atom
     : "_"
-    | "?" <identifier>
+    | "?" identifier
     ;
-identifier: <LOWER>;
+identifier: LOWER;
 ```
