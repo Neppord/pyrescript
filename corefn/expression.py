@@ -19,14 +19,15 @@ class App(Expression):
             current = current.abstraction
         arguments.reverse()
 
-        def repr_arg(arg):
+        arguments_ = []
+
+        for arg in arguments:
             from corefn.var import LocalVar, ExternalVar
             if isinstance(arg, LocalVar) or isinstance(arg, ExternalVar):
-                return arg.__repr__()
+                arguments_.append(arg.__repr__())
             else:
-                return "(%s)" % arg.__repr__()
+                arguments_.append("(%s)" % arg.__repr__())
 
-        arguments_ = [repr_arg(a) for a in arguments]
         arguments_repr = " ".join(arguments_)
         current_repr = current.__repr__()
         on_oneline = "%s %s" % (current_repr, arguments_repr)
