@@ -14,6 +14,10 @@ from foreign.effect_console import log
 
 from rpython.rlib.objectmodel import not_rpython
 
+"""
+Foreign functions can take any Box type as arguments.
+Taking functions (Abs) as arguments complicates things since you cant call one without referencing a interpreter.
+"""
 
 @not_rpython
 def to_foreign(value):
