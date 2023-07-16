@@ -22,7 +22,7 @@ class TestMath(BaseRtypingTest):
         def next_test(self):
             def f(x):
                 return fn(x)
-            res = self.interpret(f, [value])
+            res = self.interpret(interpreter, [value])
             if assert_exact:
                 assert res == f(value)
             else:
@@ -33,7 +33,7 @@ class TestMath(BaseRtypingTest):
         def next_test(self):
             def f(x, y):
                 return getattr(math, name)(x, y)
-            assert self.interpret(f, [0.3, 0.4]) == f(0.3, 0.4)
+            assert self.interpret(interpreter, [0.3, 0.4]) == f(0.3, 0.4)
         return next_test
 
     for name in ll_math.unary_math_functions + ['log', 'log10', 'log1p', 'sin', 'cos', 'sqrt']:

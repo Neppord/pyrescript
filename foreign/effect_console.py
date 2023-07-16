@@ -1,3 +1,10 @@
+from corefn.literals import NullLiteral, nullLiteral
+
 
 def log(x):
-    print x
+    """
+
+    :type x: corefn.literals.StringLiteral
+    """
+    print x.value
+    return nullLiteral

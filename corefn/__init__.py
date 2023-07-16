@@ -1,7 +1,7 @@
-from foreign import foreign
 
 
 def interpret_foreign(module_name, identifier):
+    from foreign import foreign
     if module_name in foreign and identifier in foreign[module_name]:
         return foreign[module_name][identifier]
     else:

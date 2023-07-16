@@ -1,5 +1,7 @@
+from corefn.literals import StringLiteral
+
 prim = {
     'Prim': {
-        'undefined': "undefined"
+        'undefined': StringLiteral("undefined")
     }
 }

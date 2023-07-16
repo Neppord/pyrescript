@@ -1,9 +1,6 @@
-
-
-
 class Expression(object):
     def interpret(self, interpreter, frame):
-        raise NotImplementedError
+        raise NotImplementedError("%s have yet to implement interpret" % type(self))
 
     def __repr__(self):
         raise NotImplementedError
@@ -21,6 +18,7 @@ class App(Expression):
             arguments.append(current.argument)
             current = current.abstraction
         arguments.reverse()
+
         def repr_arg(arg):
             from corefn.var import LocalVar, ExternalVar
             if isinstance(arg, LocalVar) or isinstance(arg, ExternalVar):
@@ -38,61 +36,34 @@ class App(Expression):
             return on_oneline
 
     def interpret(self, interpreter, frame):
-        function = self.abstraction.interpret(interpreter, frame)
-        while isinstance(function, Expression):
-            function = function.interpret(interpreter, frame)
-        argument = self.argument.interpret(interpreter, frame)
-        while isinstance(argument, Expression):
-            argument = argument.interpret(interpreter, frame)
-        return function(argument)
+        from corefn.abs import AbsInterface
 
+        assert all([isinstance(f, Expression) for f in frame.values()])
+        abstraction = self.abstraction.interpret(interpreter, frame)
 
-class Abs(Expression):
-    def __init__(self, argument, body):
-        self.argument = argument
-        self.body = body
-
-    def interpret(self, interpreter, frame):
-        return AbsWithFrame(interpreter, self, frame)
-
-    def __repr__(self):
-        argument = self.argument
-        body = self.body.__repr__()
-        return "\\" + argument + " -> " + body
-
-
-class AbsWithFrame:
-
-    def __init__(self, interpreter, abs, frame):
-        self.interpreter = interpreter
-        self.abs = abs
-        self.frame = frame
-
-    def __call__(self, x, **kwargs):
-        new_frame = {}
-        new_frame.update(self.frame)
-        new_frame[self.abs.argument] = x
-        return self.interpreter.expression(self.abs.body, new_frame)
-
-    def __repr__(self):
-        body_repr = self.abs.body.__repr__()
-        if self.frame:
-            frame_repr = "; ".join([k + " = " + v.__repr__() for k, v in self.frame.items()])
-            return "\\" + self.abs.argument + " -> let " + frame_repr + " in " + body_repr
+        if isinstance(abstraction, AbsInterface):
+            argument = self.argument.interpret(interpreter, frame)
+            return abstraction.call_abs(interpreter, argument)
         else:
-            return "\\" + self.abs.argument + " -> " + body_repr
+            raise ValueError("%s is not callable" % abstraction.__repr__())
 
 
 class Accessor(Expression):
-    def __init__(self, expression, fieldName):
+    def __init__(self, expression, field_name):
         self.expression = expression
-        self.fieldName = fieldName
+        assert isinstance(field_name, str)
+        self.field_name = field_name
 
     def interpret(self, interpreter, frame):
-        return interpreter.accessor(self.expression, self.fieldName, frame)
+        from corefn.literals import ObjectLiteral
+        record = self.expression.interpret(interpreter, frame)
+        if isinstance(record, ObjectLiteral):
+            return record.obj[self.field_name]
+        else:
+            raise ValueError("%s was not a record" % record.__repr__())
 
     def __repr__(self):
-        return "<Accessor>"
+        return "%s.%s" % (self.expression.__repr__(), self.field_name)
 
 
 class Let(Expression):
@@ -104,7 +75,8 @@ class Let(Expression):
     def interpret(self, interpreter, frame):
         new_frame = {}
         new_frame.update(frame)
-        new_frame.update({k: v.interpret(interpreter, frame) for k, v in self.binds.items()})
+        for k, v in self.binds.items():
+            new_frame[k] = v.interpret(interpreter, frame)
         return interpreter.expression(self.expression, new_frame)
 
     def __repr__(self):

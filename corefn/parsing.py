@@ -2,7 +2,8 @@ from corefn import Declaration, Module
 from corefn.binders import VarBinder, ConstructorBinder, NullBinder, NamedBinder, ObjectBinder, \
     StringLiteralBinder, IntBinder, FloatBinder, BoolBinder, ArrayLiteralBinder
 from corefn.case import Alternative, GuardedAlternative, Case
-from corefn.expression import App, Abs, Accessor, Let
+from corefn.expression import App, Accessor, Let
+from corefn.abs import Abs
 from corefn.literals import ObjectLiteral, ArrayLiteral, StringLiteral, IntLiteral, FloatLiteral, \
     BoolLiteral, nullLiteral
 from corefn.var import LocalVar, ExternalVar

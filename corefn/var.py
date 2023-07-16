@@ -9,7 +9,9 @@ class LocalVar(Expression):
         return self.name
 
     def interpret(self, interpreter, frame):
-        return frame[self.name]
+        value = frame[self.name]
+        assert isinstance(value, Expression)
+        return value.interpret(interpreter, frame)
 
 
 class ExternalVar(Expression):
@@ -21,4 +23,6 @@ class ExternalVar(Expression):
         return self.module_name + "." + self.name
 
     def interpret(self, interpreter, frame):
-        return interpreter.load_decl(self.module_name, self.name)
+        value = interpreter.load_decl(self.module_name, self.name)
+        assert isinstance(value, Expression)
+        return value.interpret(interpreter, {})

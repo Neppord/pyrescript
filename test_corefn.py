@@ -1,11 +1,7 @@
 from corefn.parsing import load_module
-from foreign import curry
 from interpreter import Interpreter
 from subprocess import check_call
 
-
-def test_curry():
-    assert curry(lambda a, b: a - b, 2)(2)(1) == 1
 
 def test_e2e_fizz_buzz(monkeypatch, capsys):
     monkeypatch.chdir("e2e/fizz-buzz")

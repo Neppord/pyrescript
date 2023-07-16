@@ -1,3 +1,7 @@
+from types import FunctionType, BuiltinFunctionType
+
+from corefn.abs import Foreign, ForeignUsingInterpreter
+from corefn.literals import StringLiteral
 from foreign.data_array import range_impl
 from foreign.data_eq import eq_int_impl
 from foreign.data_euclidean_ring import int_degree, int_div, int_mod
@@ -5,7 +9,8 @@ from foreign.data_foldable import foldr_array, foldl_array
 from foreign.data_semigroup import concat_string
 from foreign.data_semiring import int_add, int_mul
 from foreign.effect_console import log
-from functools import wraps
+
+from rpython.rlib.objectmodel import not_rpython
 
 
 def pure(x):
@@ -15,66 +20,93 @@ def pure(x):
 def apply(f):
     def apply2(a):
         return f(a)
-
     return apply2
 
 
 def run_fn_2(fn):
-    return curry(fn, 2)
+    """noop all functions are curried by default"""
+    return fn
 
 
-def curry(fn, n):
-    if n == 1:
-        return fn
-    elif n == 2:
-        return wraps(fn)(lambda x: wraps(fn)(lambda y: fn(x, y)))
-    elif n == 3:
-        return wraps(fn)(lambda x: wraps(fn)(lambda y: wraps(fn)(lambda z: fn(x, y, z))))
+def bindE(interpreter, a):
+    return Foreign("bindE", lambda atob: atob.call_abs(interpreter, a))
+
+@not_rpython
+def to_foreign(value):
+    t = type(value)
+    if t == str:
+        return StringLiteral(value)
+    elif t in [FunctionType, BuiltinFunctionType]:
+        arguments = value.func_code.co_argcount
+        if arguments == 1:
+            return Foreign(
+                value.func_code.co_name,
+                lambda x: value(x)
+            )
+        elif arguments == 2:
+            return Foreign(
+                value.func_code.co_name,
+                lambda x: Foreign(
+                    "%s (%s)" % (value.func_code.co_name, x.__repr__()),
+                    lambda y: value(x, y)
+              )
+            )
+        elif arguments == 3:
+            return Foreign(
+                value.func_code.co_name,
+                lambda x: Foreign(
+                    "%s (%s)" % (value.func_code.co_name, x.__repr__()),
+                    lambda y: Foreign(
+                    "%s (%s) (%s)" % (value.func_code.co_name, x.__repr__(), y.__repr__()),
+                        lambda z: value(x, y, z)
+                    )
+                )
+            )
+        else:
+            NotImplementedError("dont support %s number of arguments" % arguments)
     else:
-        raise NotImplementedError
+        NotImplementedError("cant translate %r of type %r" % (value, t))
 
-
-def bindE(a, atob):
-    return atob(a)
-
+def with_interpreter(f):
+    return ForeignUsingInterpreter(f)
 
 foreign = {
     'Effect': {
-        'pureE': pure,
-        'bindE': curry(bindE, 2)
+        'pureE': to_foreign(pure),
+        'bindE': to_foreign(bindE)
     },
     'Effect.Console': {
-        'log': log
+        'log': to_foreign(log)
     },
     'Data.Array': {
-        'rangeImpl': range_impl,
+        'rangeImpl': to_foreign(range_impl),
     },
     'Data.Eq': {
-        'eqIntImpl': curry(eq_int_impl, 2),
+        'eqIntImpl': to_foreign(eq_int_impl),
     },
     'Data.EuclideanRing': {
-        'intDegree': int_degree,
-        'intDiv': curry(int_div, 2),
-        'intMod': curry(int_mod, 2),
+        'intDegree': to_foreign(int_degree),
+        'intDiv': to_foreign(int_div),
+        'intMod': to_foreign(int_mod),
     },
     'Data.Foldable': {
-        'foldrArray': curry(foldr_array, 3),
-        'foldlArray': curry(foldl_array, 3),
+        'foldrArray': with_interpreter(foldr_array),
+        'foldlArray': with_interpreter(foldl_array),
     },
     'Data.Function.Uncurried': {
-        'runFn2': run_fn_2,
+        'runFn2': to_foreign(run_fn_2),
     },
     'Data.Semigroup': {
-        'concatString': curry(concat_string, 2)
+        'concatString': to_foreign(concat_string),
     },
     'Data.Semiring': {
-        'intAdd': curry(int_add, 2),
-        'intMul': curry(int_mul, 2),
+        'intAdd': to_foreign(int_add),
+        'intMul': to_foreign(int_mul),
     },
     'Data.Show': {
-        'showIntImpl': str
+        'showIntImpl': to_foreign(lambda e: StringLiteral(str(e.value)))
     },
     'Data.Unit': {
-        'unit': "unit"
+        'unit': to_foreign("unit")
     },
 }

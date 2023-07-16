@@ -19,7 +19,7 @@ class StringLiteralBinder(Binder):
         self.value = value
 
     def interpret(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame), {}
+        return self.value == to_match.interpret(interpreter, frame), {}
 
     def __repr__(self):
         return str(self.value)
@@ -30,7 +30,7 @@ class IntBinder(Binder):
         self.value = value
 
     def interpret(self, interpreter, to_match, frame):
-        return self.value == interpreter.expression(to_match, frame), {}
+        return self.value == to_match.interpret(interpreter, frame), {}
 
     def __repr__(self):
         return str(self.value)
@@ -98,7 +98,7 @@ class ConstructorBinder(Binder):
         return True, new_frame
 
     def __repr__(self):
-        raise NotImplementedError()
+        return "<ConstructorBinder>"
 
 
 class NullBinder(Binder):
