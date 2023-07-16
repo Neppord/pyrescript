@@ -77,15 +77,15 @@ class Boolean(Box):
         return "true" if self.value else "false"
 
 
-class Null(Box):
+class Unit(Box):
     def __init__(self):
         pass
 
     def __repr__(self):
-        return "null"
+        return "unit"
 
 
-nullLiteral = Null()
+unit = Unit()
 
 
 class Effect(Box):

@@ -1,6 +1,6 @@
 from functools import reduce
 
-from corefn.abs import Foreign
+from corefn.abs import Foreign, Native3
 from corefn.literals import Array
 
 
@@ -17,9 +17,7 @@ def foldr_array_(interpreter, f, b, arr):
         raise ValueError("arr was not an array")
 
 
-def foldr_array(interpreter):
-    return Foreign("foldr_array", lambda f: Foreign("foldr_array1", lambda b: Foreign("foldr_array2", lambda arr: foldr_array_(interpreter, f, b, arr))))
-
+foldr_array = Native3(foldr_array_)
 
 def foldl_array(interpreter, f):
     raise NotImplementedError()

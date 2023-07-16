@@ -5,7 +5,7 @@ from corefn.case import Alternative, GuardedAlternative, Case
 from corefn.expression import App, Accessor, Let
 from corefn.abs import Abs
 from corefn.literals import Object, Array, String, Int, Float, \
-    Boolean, nullLiteral
+    Boolean, unit
 from corefn.var import LocalVar, ExternalVar
 from rjson import raw_loads
 from rpython.rlib.parsing.tree import Nonterminal

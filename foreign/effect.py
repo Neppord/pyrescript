@@ -1,9 +1,7 @@
-from corefn.abs import Foreign, AbsInterface
+from corefn.abs import Foreign, AbsInterface, Native2, Native1
 from corefn.literals import Effect, Bound
 
 
-def bindE(interpreter):
-    return Foreign("bindE", lambda a: Foreign("bindE", lambda atob: bindE_(interpreter, a, atob)))
 
 
 def bindE_(interpreter, a, atob):
@@ -14,3 +12,7 @@ def bindE_(interpreter, a, atob):
             raise TypeError("expected Abs got: " + atob.__repr__())
     else:
         raise TypeError("expected Effect got: " + a.__repr__())
+
+
+bindE = Native2(bindE_)
+pureE = Native1(lambda i, x: Effect(x))

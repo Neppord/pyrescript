@@ -1,5 +1,4 @@
 from corefn.expression import Expression
-from corefn.literals import Bound
 
 """
 Abs aka Lambda, Callable etc.
@@ -78,6 +77,106 @@ class Foreign(AbsInterface):
 
     def __repr__(self):
         return self.repr
+
+
+class Native1(AbsInterface):
+    def __init__(self, native):
+        self.native = native
+
+    def eval(self, interpreter, frame):
+        return self
+
+    def call_abs(self, interpreter, expression):
+        return self.native(interpreter, expression)
+
+    def __repr__(self):
+        return "<placeholder>"
+
+
+class BoundNative1(Expression):
+    def __init__(self, native, bound):
+        self.bound = bound
+        self.native = native
+
+    def eval(self, interpreter, frame):
+        return self.native(interpreter, self.bound)
+
+    def __repr__(self):
+        return "<placeholder>"
+
+
+class Native2(AbsInterface):
+    def __init__(self, native):
+        self.native = native
+
+    def eval(self, interpreter, frame):
+        return self
+
+    def call_abs(self, interpreter, expression):
+        return BoundNative2(self.native, expression)
+
+    def __repr__(self):
+        return "<placeholder>"
+
+
+class BoundNative2(AbsInterface):
+    def __init__(self, native, bound):
+        self.native = native
+        self.bound = bound
+
+    def eval(self, interpreter, frame):
+        return self
+
+    def call_abs(self, interpreter, expression):
+        return self.native(interpreter, self.bound, expression)
+
+    def __repr__(self):
+        return "<placeholder>"
+
+
+class Native3(AbsInterface):
+    def __init__(self, native):
+        self.native = native
+
+    def eval(self, interpreter, frame):
+        return self
+
+    def call_abs(self, interpreter, expression):
+        return BoundNative2(self.native, expression)
+
+    def __repr__(self):
+        return "<placeholder>"
+
+
+class BoundNative3(AbsInterface):
+    def __init__(self, native, bound):
+        self.native = native
+        self.bound = bound
+
+    def eval(self, interpreter, frame):
+        return self
+
+    def call_abs(self, interpreter, expression):
+        return BoundBoundNative3(self.native, self.bound, expression)
+
+    def __repr__(self):
+        return "<placeholder>"
+
+
+class BoundBoundNative3(AbsInterface):
+    def __init__(self, native, bound1, bound2):
+        self.native = native
+        self.bound1 = bound1
+        self.bound2 = bound2
+
+    def eval(self, interpreter, frame):
+        return self
+
+    def call_abs(self, interpreter, expression):
+        return self.native(interpreter, self.bound1, self.bound2, expression)
+
+    def __repr__(self):
+        return "<placeholder>"
 
 
 class Dynamic(Expression):

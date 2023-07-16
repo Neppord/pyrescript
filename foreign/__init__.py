@@ -7,7 +7,7 @@ from foreign.data_euclidean_ring import int_degree, int_div, int_mod
 from foreign.data_foldable import foldr_array, foldl_array
 from foreign.data_semigroup import concat_string
 from foreign.data_semiring import int_add, int_mul
-from foreign.effect import bindE
+from foreign.effect import bindE, pureE
 from foreign.effect_console import log
 from foreign.util import to_foreign
 
@@ -18,11 +18,11 @@ Taking functions (Abs) as arguments complicates things since you cant call one w
 
 foreign = {
     'Effect': {
-        'pureE': to_foreign(lambda x: Effect(x)),
-        'bindE': Dynamic(bindE)
+        'pureE': pureE,
+        'bindE': bindE
     },
     'Effect.Console': {
-        'log': Foreign("log", lambda x: Effect(App(Foreign("log", log), x)))
+        'log': log
     },
     'Data.Array': {
         'rangeImpl': to_foreign(range_impl),
@@ -36,7 +36,7 @@ foreign = {
         'intMod': to_foreign(int_mod),
     },
     'Data.Foldable': {
-        'foldrArray': Dynamic(foldr_array),
+        'foldrArray': foldr_array,
         'foldlArray': Dynamic(foldl_array),
     },
     'Data.Function.Uncurried': {

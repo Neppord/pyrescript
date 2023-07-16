@@ -1,10 +1,12 @@
-from corefn.literals import Null, nullLiteral, Effect
+from corefn.abs import Native1, BoundNative1
+from corefn.literals import Unit, unit, Effect, Bound
 
 
-def log(x):
-    """
+def print_(i, s):
+    print s.value
+    return unit
 
-    :type x: corefn.literals.String
-    """
-    print x.value
-    return nullLiteral
+def log_(i, x):
+    return Effect(BoundNative1(print_, x))
+
+log = Native1(log_)
