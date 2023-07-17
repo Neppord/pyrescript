@@ -109,19 +109,23 @@ def test_parse_module_with_do():
     property_name, = module_name.children
     assert property_name.token.source == "Main"
 
-skip = [
-    os.path.join("e2e", "acme", ".spago", "deku", "v0.9.23", "src", "Deku", "Pursx.purs")
-]
+
 files = [os.path.relpath(f) for glob_expression in [
     os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*.purs"),
     os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*", "*.purs"),
     os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*", "*", "*.purs"),
     os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*", "*", "*", "*.purs"),
     os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*", "*", "*", "*", "*.purs"),
-    os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*", "*", "*", "*", "*", "*.purs"),
+    os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "test", "*.purs"),
+    os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "test", "*", "*.purs"),
+    os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "test", "*", "*", "*.purs"),
+    os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "test", "*", "*", "*", "*.purs"),
+    os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "test", "*", "*", "*", "*", "*.purs"),
 ] for f in glob.glob(glob_expression)]
 
 assert files
+
+
 @pytest.mark.parametrize("file_path", files)
 def test_e2e(file_path):
     with open(file_path) as source_file:

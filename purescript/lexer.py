@@ -25,8 +25,8 @@ class NiceLexerError(Exception):
         result.append("context %r" % (self.input[i - 2:i + 3],))
         result.append("state: %r" % (self.state,))
         tokens = self.tokens
-        if tokens and len(tokens) >= 2:
-            result.append("last tokens: %r" % ([t.name for t in tokens[-2:]],))
+        if tokens and len(tokens) >= 5:
+            result.append("last tokens: %r" % ([t.name for t in tokens[-5:]],))
         return "\n".join(result)
 
 

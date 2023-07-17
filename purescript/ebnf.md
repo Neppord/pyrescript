@@ -21,7 +21,7 @@ STRING
 MULTILINE_STRING: "\"{3}.*\"{3}";
 INTEGER: "\d+";
 NUMBER: "\d+\.\d+";
-CHAR: "'(\\x[^']{1,2}|\\\\'|\\\\|\\.|[^']{1,2})'";
+CHAR: "'(\\x[^']{1,4}|\\\\'|\\\\|\\.|[^']{1,2})'";
 FORALL: "forall|∀";
 DUBBLE_ARROW: "=>|⇒";
 ARROW: "->|→";
