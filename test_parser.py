@@ -2,6 +2,8 @@ import codecs
 import glob
 import os
 
+import pytest
+
 from purescript.parser import lexer, to_ast, module_parser, expression_parser, do_block_parser
 from rpython.rlib.parsing.parsing import ParseError
 
@@ -107,22 +109,23 @@ def test_parse_module_with_do():
     property_name, = module_name.children
     assert property_name.token.source == "Main"
 
+skip = [
+    os.path.join("e2e", "acme", ".spago", "deku", "v0.9.23", "src", "Deku", "Pursx.purs")
+]
+files = [os.path.relpath(f) for glob_expression in [
+    os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*.purs"),
+    os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*", "*.purs"),
+    os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*", "*", "*.purs"),
+] for f in glob.glob(glob_expression)]
 
-def test_e2e():
-    files = [f for glob_expression in [
-        os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*.purs"),
-        os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*", "*.purs"),
-        os.path.join(os.path.dirname(__file__), "e2e", "acme", ".spago", "*", "*", "src", "*", "*", "*.purs"),
-    ] for f in glob.glob(glob_expression)]
-    assert files
-    for file_path in files:
-        print "parsing file at:", file_path
-        with open(file_path) as source_file:
-            source = source_file.read()
-        long_name = os.path.relpath(file_path)
-        tokens = lexer.tokenize_with_name(long_name, source)
-        try:
-            module_parser.parse(tokens)
-        except ParseError as e:
-            message = e.nice_error_message(long_name, source, tokens)
-            raise ValueError(message)
+assert files
+@pytest.mark.parametrize("file_path", files)
+def test_e2e(file_path):
+    with open(file_path) as source_file:
+        source = source_file.read()
+    tokens = lexer.tokenize_with_name(file_path, source)
+    try:
+        module_parser.parse(tokens)
+    except ParseError as e:
+        message = e.nice_error_message(file_path, source, tokens)
+        raise ValueError(message)

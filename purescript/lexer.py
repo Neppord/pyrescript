@@ -9,13 +9,17 @@ class NiceLexerError(LexerError):
 
     def __str__(self):
         # + 1 is because source_pos is 0-based and humans 1-based
-        column = self.source_pos.columnno
-        line_number = self.source_pos.lineno
+        columnno = self.source_pos.columnno
+        lineno = self.source_pos.lineno
+        i = self.source_pos.i
         lines = self.input.split("\n")
-        result = ["%s:%s:%s" % (self.filename, line_number + 1, column + 1)]
-        line = lines[line_number]
+        result = ['"%s:%s:%s"' % (self.filename, lineno + 1, columnno + 1)]
+        line = lines[lineno]
+        result.append(repr(line))
         result.append(line)
-        result.append("found %r" % (self.input[self.source_pos.i],))
+        result.append(" " * columnno + "^")
+        result.append("found %r" % (self.input[i],))
+        result.append("state: %r" % (self.state,))
         return "\n".join(result)
 
 
@@ -34,7 +38,8 @@ class IndentLexer(Lexer):
         stack = []
         for token in tokens:
             if token.name == "LINE_INDENT":
-                level = len(token.source) - 1
+                source = token.source  # type: str
+                level = len(source) - source.rindex("\n") - 1
                 if level > current_level:
                     token.name = "INDENT"
                     out.append(token)
@@ -46,7 +51,7 @@ class IndentLexer(Lexer):
                     out.append(Token("SEP",'',token.source_pos))
                     out.append(token)
                 elif last_token and last_token.name == "SEP":
-                    last_token.source += token.source
+                    last_token.source += source
                     continue
                 else:
                     token.name = "SEP"

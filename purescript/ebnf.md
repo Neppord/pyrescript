@@ -4,18 +4,18 @@ these are the tokens that needs regexp the tokens that are string constants can 
 lexer don't seam to understand unicode groups, therefore they are only kept as comments.
 
 ```ebnf
-LINE_COMMENT: "--[^\n]*\n";
+LINE_COMMENT: "--[^\n]*\n?";
 MULTILINE_COMMENT: "{-([^-]*(-[^}])?)*-}";
-LINE_INDENT: "\n[ \t]*";
-IGNORE: "[ \t\f\r\n]";
+LINE_INDENT: "\n[\s]*";
+IGNORE: "\s|\n";
 PROPER_NAME
     : "[A-Z]([A-Za-z0-9_'])*"
 #    : "\p{Uppercase_Letter}(\p{Letter}|\p{Mark}|\p{Number}|[_'])*"
     ;
-LOWER: "[a-z_]([A-Za-z0-9_'])*";
+LOWER: "[a-z_η]([A-Za-z0-9_'])*";
 #LOWER: "\p{Ll}_(p{L}|\p{M}|\p{N}[_'])*";
-OPERATOR: "\p{Symbol}|[\:\!#\$%&*<=>?@\\\^\|\-~/+⊕⊖⊗⊘µαεBℏ]+";
-STRING: "\"[^\"]*\"";
+OPERATOR: "[?:\!#\$%&*<=>@\\\^\|\-~/+⊕⊖⊗⊘µαεℏ.🌱🌸🍒]+";
+STRING: "\"[^\"]*\"|\"[^\"]*\"";
 INTEGER: "\d+";
 NUMBER: "\d+\.\d+";
 CHAR: "'.|\\n'";
@@ -23,6 +23,7 @@ FORALL: "forall|∀";
 DUBBLE_ARROW: "=>|⇒";
 ARROW: "->|→";
 LEFT_ARROW: "<-|←";
+LEFT_DOUBLE_ARROW: "<=|⇐";
 ```
 
 ## Grammar
@@ -31,7 +32,7 @@ Order matter, this grammar will select the first match if multiple may match
 
 ```ebnf
 module
-    : [SEP]? ["module"] module_name [INDENT]? export_list? [SEP]? [DEDENT]? ["where"] [SEP]
+    : [SEP]? ["module"] [whitespace]? module_name [SEP]? [INDENT]? export_list? [whitespace]* ["where"] [whitespace]*
         (import_declaration [SEP])*
         (declaration [SEP]?)*
     [EOF]?
@@ -39,9 +40,12 @@ module
 module_name: (PROPER_NAME ["."])* PROPER_NAME;
 export_list
     : ["("] [")"]
-    | ["("] [INDENT] (exported_item [SEP]?[","] [SEP]?)* exported_item [SEP]? [DEDENT] [")"]
-    | ["("] (exported_item [SEP]?[","] [SEP]?)* exported_item [SEP]? [")"]
+    | ["("] [whitespace]* 
+        (exported_item [whitespace]* [","] [whitespace]*)* 
+        exported_item [whitespace]* 
+    [")"]
     ;
+whitespace: SEP | INDENT | DEDENT;
 exported_item
     : ["class"] PROPER_NAME
     | PROPER_NAME (["("] members? [")"])? 
@@ -60,7 +64,8 @@ import_item
     | PROPER_NAME ["("] members [")"]
     | PROPER_NAME
     ;
-symbol: "(" OPERATOR ")" ;
+operator: OPERATOR | ".." | ":" | "-" | "?";
+symbol: "(" operator ")" ;
 qualified_symbol: module_name ["."] symbol ;
 members
     : ".."
@@ -195,5 +200,5 @@ type_2
     | type_3
     ;
 type_3: type_atom;
-identifier: LOWER;
+identifier: <LOWER> | <"as"> ;
 ```
