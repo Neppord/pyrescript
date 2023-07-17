@@ -76,6 +76,11 @@ do_expression = """\
 do
     %s
 """ % call_expression.strip()
+ado_expression = """\
+ado
+    a <- x
+in a
+"""
 
 
 def test_parse_call_expression():
@@ -99,14 +104,30 @@ def test_parse_do_block():
         "do expression",
         do_expression
     )
-    layout = [t.name for t in tokens if t.name in ["SEP", "INDENT", "DEDENT"] ]
+    layout = [t.name for t in tokens if t.name in ["SEP", "INDENT", "DEDENT"]]
     assert layout == ["INDENT", "SEP", "DEDENT", "SEP"]
     do_block_parser.parse(tokens)
+
+def test_parse_ado_block_expression():
+    tokens = lexer.tokenize_with_name(
+        "ado expression",
+        ado_expression
+    )
+    expression_parser.parse(tokens)
+
 
 def test_parse_do_expression():
     tokens = lexer.tokenize_with_name(
         "do expression",
         do_expression
+    )
+    expression_parser.parse(tokens)
+
+
+def test_parse_if_then_else_expression():
+    tokens = lexer.tokenize_with_name(
+        "if_then_else",
+        "if a then b else c"
     )
     expression_parser.parse(tokens)
 

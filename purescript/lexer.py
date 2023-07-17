@@ -23,15 +23,15 @@ class IndentLexer(Lexer):
         out = []
         last_token = None
         current_level = 0
-        stack = [current_level]
+        stack = []
         for token in tokens:
             if token.name == "LINE_INDENT":
                 level = len(token.source) - 1
                 if level > current_level:
                     token.name = "INDENT"
                     out.append(token)
-                    current_level = level
                     stack.append(current_level)
+                    current_level = level
                 elif level < current_level:
                     token.name = "DEDENT"
                     current_level = stack.pop()
@@ -49,7 +49,7 @@ class IndentLexer(Lexer):
         eof = out[-1]
         if out[-2].name != "SEP":
             out.insert(-1, Token("SEP", "", eof.source_pos))
-        for level in stack[1:]:
+        for level in stack:
             out.insert(-1, Token("DEDENT", "", eof.source_pos))
             out.insert(-1, Token("SEP", "", eof.source_pos))
         return out

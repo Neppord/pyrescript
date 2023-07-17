@@ -13,6 +13,9 @@ OPERATOR: "\p{S}+";
 STRING: "\"[^\"]*\"";
 ```
 ## Grammar
+
+Order matter, this grammar will select the first match if multiple may match
+
 ```ebnf
 module
     : ["module"] module_name export_list? ["where"] [SEP]
@@ -92,12 +95,15 @@ expression_3
     | "-" expression_4
     ;
 expression_4
-    : expression_5+
+    : (expression_5 ("@" type_atom)?)+
     ;
 expression_5
-    : expression_7
+    : expression_6
+    | ["if"] expression ["then"] expression ["else"] expression
     | do_block
+    | ado_block
     ;
+expression_6: expression_7;
 expression_7: expression_atom ("." identifier)*;
 expression_atom
     : identifier
@@ -109,7 +115,18 @@ do_block
         [INDENT] (do_statement [SEP])+
         [DEDENT]
     ;
-do_statement : expression ;
+ado_block
+    : ["ado"] 
+        [INDENT] (do_statement [SEP])+
+        [DEDENT]
+        ["in"] expression
+    ;
+do_statement 
+    : binder "<-" expression
+    | expression
+    ;
+
+binder: identifier ;
 
 backtick_expression: "`" identifier "`";
 qual_op: (module_name ["."])? OPERATOR;
