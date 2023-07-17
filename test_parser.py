@@ -78,6 +78,8 @@ do
 """ % call_expression.strip()
 ado_expression = """\
 ado
+    let
+        x = l
     a <- x
 in a
 """

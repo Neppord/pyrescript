@@ -112,18 +112,23 @@ expression_atom
 
 do_block
     : ["do"] 
-        [INDENT] (do_statement [SEP])+
+        [INDENT] do_statement+
         [DEDENT]
     ;
 ado_block
     : ["ado"] 
-        [INDENT] (do_statement [SEP])+
+        [INDENT] do_statement+
         [DEDENT]
         ["in"] expression
     ;
 do_statement 
-    : binder "<-" expression
-    | expression
+    : binder "<-" expression [SEP]
+    | ["let"] [INDENT] (let_binder [SEP])+ [DEDENT]
+    | expression [SEP]
+    ;
+
+let_binder
+    : value_declaration
     ;
 
 binder: identifier ;
