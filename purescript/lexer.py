@@ -35,6 +35,7 @@ class IndentLexer(Lexer):
                 elif level < current_level:
                     token.name = "DEDENT"
                     current_level = stack.pop()
+                    out.append(Token("SEP",'',token.source_pos))
                     out.append(token)
                 elif last_token and last_token.name == "SEP":
                     last_token.source += token.source

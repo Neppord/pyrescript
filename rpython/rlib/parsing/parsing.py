@@ -102,6 +102,11 @@ class LazyParseTable(object):
         self.errorinformation = {}
 
     def match_symbol(self, i, symbol):
+        """
+        :type i: int
+        :type i: str
+        :rtype tuple
+        """
         #print i, symbol
         #print self.matched.keys()
         if (i, symbol) in self.matched:
@@ -176,11 +181,10 @@ class PackratParser(object):
         else:
             input = list(tokeniterator)
         table = self.parsetablefactory(input, self)
-        result = table.match_symbol(0, self.startsymbol)
-        if result[0] is None:
-            error = result[2]
+        node, index, error = table.match_symbol(0, self.startsymbol)
+        if node is None:
             raise ParseError(input[error.pos].source_pos, error)
-        return result[0]
+        return node
 
     @not_rpython
     def has_left_recursion(self):

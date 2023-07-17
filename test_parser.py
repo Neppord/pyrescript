@@ -1,6 +1,6 @@
 import os
 
-from purescript.parser import lexer, to_ast, parser
+from purescript.parser import lexer, to_ast, module_parser, expression_parser, do_block_parser
 from rpython.rlib.parsing.lexer import SourcePos, Token
 
 
@@ -53,7 +53,7 @@ def test_pars_simple():
     with open(os.path.join("test-data", name)) as source_file:
         source = source_file.read()
     tokens = lexer.tokenize_with_name(name, source)
-    tree = parser.parse(tokens)
+    tree = module_parser.parse(tokens)
     ast = to_ast.transform(tree)
     assert ast.symbol == "module"
     assert len([token for token in tokens if token.name == "SEP"]) == 6
@@ -64,12 +64,59 @@ def test_pars_simple():
     assert property_name.token.source == "Main"
 
 
-def test_pars_do():
+call_expression = """\
+log "hello world"
+"""
+
+call_declaration = """\
+main = %s
+""" % call_expression
+
+do_expression = """\
+do
+    %s
+""" % call_expression.strip()
+
+
+def test_parse_call_expression():
+    tokens = lexer.tokenize_with_name(
+        "call_expression",
+        call_expression
+    )
+    expression_parser.parse(tokens)
+
+
+def test_parse_call_declaration():
+    tokens = lexer.tokenize_with_name(
+        "call_declaration",
+        call_declaration
+    )
+    expression_parser.parse(tokens)
+
+
+def test_parse_do_block():
+    tokens = lexer.tokenize_with_name(
+        "do expression",
+        do_expression
+    )
+    layout = [t.name for t in tokens if t.name in ["SEP", "INDENT", "DEDENT"] ]
+    assert layout == ["INDENT", "SEP", "DEDENT", "SEP"]
+    do_block_parser.parse(tokens)
+
+def test_parse_do_expression():
+    tokens = lexer.tokenize_with_name(
+        "do expression",
+        do_expression
+    )
+    expression_parser.parse(tokens)
+
+
+def test_parse_module_with_do():
     name = "MainWithDo.purs"
     with open(os.path.join("test-data", name)) as source_file:
         source = source_file.read()
     tokens = lexer.tokenize_with_name(name, source)
-    tree = parser.parse(tokens)
+    tree = module_parser.parse(tokens)
     ast = to_ast.transform(tree)
     assert ast.symbol == "module"
     assert len(ast.children) == 6

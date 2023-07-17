@@ -30,7 +30,6 @@ exported_item
     | ["type"] symbol
     | identifier
     ;
-    
 import_declaration: ["import"] module_name "hiding"? import_list? (["as"] module_name)?;
 import_list: ["("] ( import_item [","])* import_item [")"];
 import_item
@@ -48,7 +47,7 @@ members
     ;
 
 declaration
-    : data_declaration
+    : <data_declaration>
 #   | newtype_declaration
 #   | type_role_declaration
 #   | type_signature_declaration
@@ -89,9 +88,12 @@ expression_2
     :(expression_3 backtick_expression)* expression_3
     ;
 expression_3
-    : "-"? expression_4
+    : expression_4
+    | "-" expression_4
     ;
-expression_4: expression_5* expression_5;
+expression_4
+    : expression_5+
+    ;
 expression_5
     : expression_7
     | do_block
@@ -103,8 +105,9 @@ expression_atom
     ;
 
 do_block
-    : ["do"] do_statement
-    | ["do"] [INDENT] (do_statement [SEP])+ [DEDENT]
+    : ["do"] 
+        [INDENT] (do_statement [SEP])+
+        [DEDENT]
     ;
 do_statement : expression ;
 
