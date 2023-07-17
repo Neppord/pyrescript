@@ -5,6 +5,7 @@ lexer don't seam to understand unicode groups, therefore they are only kept as c
 
 ```ebnf
 LINE_COMMENT: "--[^\n]*\n";
+MULTILINE_COMMENT: "{-([^-]*(-[^}])?)*-}";
 LINE_INDENT: "\n[ \t]*";
 IGNORE: "[ \t\f\r\n]";
 PROPER_NAME
@@ -13,14 +14,15 @@ PROPER_NAME
     ;
 LOWER: "[a-z_]([A-Za-z0-9_'])*";
 #LOWER: "\p{Ll}_(p{L}|\p{M}|\p{N}[_'])*";
-OPERATOR: "\p{S}|[\:\!#\$%&*<=>?@\\\^\|\-~/+]+";
+OPERATOR: "\p{Symbol}|[\:\!#\$%&*<=>?@\\\^\|\-~/+⊕⊖⊗⊘µαεBℏ]+";
 STRING: "\"[^\"]*\"";
 INTEGER: "\d+";
 NUMBER: "\d+\.\d+";
-CHAR: "'.'";
+CHAR: "'.|\\n'";
 FORALL: "forall|∀";
 DUBBLE_ARROW: "=>|⇒";
 ARROW: "->|→";
+LEFT_ARROW: "<-|←";
 ```
 
 ## Grammar
@@ -37,7 +39,9 @@ module
 module_name: (PROPER_NAME ["."])* PROPER_NAME;
 export_list
     : ["("] [")"]
-    | ["("] (exported_item [SEP]?[","])* exported_item [SEP]? [")"];
+    | ["("] [INDENT] (exported_item [SEP]?[","] [SEP]?)* exported_item [SEP]? [DEDENT] [")"]
+    | ["("] (exported_item [SEP]?[","] [SEP]?)* exported_item [SEP]? [")"]
+    ;
 exported_item
     : ["class"] PROPER_NAME
     | PROPER_NAME (["("] members? [")"])? 
@@ -153,7 +157,7 @@ do_block : ["do"] do_statements ;
 ado_block : ["ado"] do_statements ["in"] expression ;
 do_statements: [INDENT] do_statement+ [DEDENT];
 do_statement 
-    : binder "<-" expression [SEP]
+    : binder [LEFT_ARROW] expression [SEP]
     | ["let"] [INDENT] (let_binder [SEP])+ [DEDENT]
     | expression [SEP]
     ;

@@ -1,3 +1,4 @@
+import codecs
 import glob
 import os
 
@@ -118,7 +119,6 @@ def test_e2e():
         print "parsing file at:", file_path
         with open(file_path) as source_file:
             source = source_file.read()
-        file_name = os.path.basename(file_path)
         long_name = os.path.relpath(file_path)
         tokens = lexer.tokenize_with_name(long_name, source)
         try:
