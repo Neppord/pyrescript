@@ -29,7 +29,7 @@ Order matter, this grammar will select the first match if multiple may match
 
 ```ebnf
 module
-    : [SEP]? ["module"] module_name [INDENT]? export_list? ["where"] [SEP]
+    : [SEP]? ["module"] module_name [INDENT]? export_list? [SEP]? [DEDENT]? ["where"] [SEP]
         (import_declaration [SEP])*
         (declaration [SEP]?)*
     [EOF]?
@@ -40,7 +40,7 @@ export_list
     | ["("] (exported_item [SEP]?[","])* exported_item [SEP]? [")"];
 exported_item
     : ["class"] PROPER_NAME
-    | PROPER_NAME (["("] members [")"])? 
+    | PROPER_NAME (["("] members? [")"])? 
     | ["module"] module_name
     | symbol
     | ["type"] symbol
