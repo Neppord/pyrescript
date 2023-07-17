@@ -39,7 +39,7 @@ class IndentLexer(Lexer):
 
     def tokenize(self, text, eof=False):
         # tokens = super(IndentLexer, self).tokenize(text, True)
-        r = self.get_runner(text, eof)
+        r = self.get_runner(text, True)
         result = []
         while 1:
             try:
@@ -83,9 +83,9 @@ class IndentLexer(Lexer):
                 out.append(token)
             last_token = token
         eof = out.pop()
-        if out[-1].name != "SEP":
+        if out and out[-1].name != "SEP":
             out.append(Token("SEP", "", eof.source_pos))
-        for level in stack:
+        for _ in stack:
             out.append(Token("DEDENT", "", eof.source_pos))
             out.append(Token("SEP", "", eof.source_pos))
         out.append(eof)
