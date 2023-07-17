@@ -124,5 +124,5 @@ def test_e2e():
         try:
             module_parser.parse(tokens)
         except ParseError as e:
-            message = e.nice_error_message(file_name, source, tokens)
+            message = e.nice_error_message(long_name, source, tokens)
             raise ValueError(message)

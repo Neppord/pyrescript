@@ -60,4 +60,19 @@ class IndentLexer(Lexer):
         for level in stack:
             out.insert(-1, Token("DEDENT", "", eof.source_pos))
             out.insert(-1, Token("SEP", "", eof.source_pos))
+        # remove empty lines
+        i = 0
+        while (i + 2) < len(out):
+            t1, t2 = out[i: i + 2]
+            if t1.name == "DEDENT" and t2.name == "INDENT":
+                t1.name = "SEP"
+                t1.source += t2.source
+                del out[i + 1]
+                i -= 1
+            elif t1.name == "SEP" and t2.name == "SEP":
+                t1.source += t2.source
+                del out[i + 1]
+            else:
+                i += 1
+
         return out

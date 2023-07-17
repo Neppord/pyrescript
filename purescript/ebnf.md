@@ -17,6 +17,7 @@ OPERATOR: "\p{S}|[\:\!#\$%&*<=>?@\\\^\|\-~/+]+";
 STRING: "\"[^\"]*\"";
 INTEGER: "\d+";
 NUMBER: "\d+\.\d+";
+CHAR: "'\w'";
 FORALL: "forall|∀";
 DUBBLE_ARROW: "=>|⇒";
 ARROW: "->|→";
@@ -129,6 +130,7 @@ expression_atom
     | boolean
     | INTEGER
     | NUMBER
+    | CHAR
     | ["["] ["]"]
     | ["["] (expression [","])* expression ["]"]
     | ["{"] ["}"]

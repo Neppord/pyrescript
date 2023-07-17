@@ -49,10 +49,12 @@ class ParseError(Exception):
 
     def nice_error_message(self, filename="<unknown>", source="", tokens=[]):
         # + 1 is because source_pos is 0-based and humans 1-based
-        result = ["  File %s, line %s" % (filename, self.source_pos.lineno + 1)]
+        columnno = self.source_pos.columnno
+        lineno = self.source_pos.lineno
+        result = ['  File "%s:%s:%s"' % (filename, lineno + 1, columnno + 1)]
         if source:
-            result.append(source.split("\n")[self.source_pos.lineno])
-            result.append(" " * self.source_pos.columnno + "^")
+            result.append(source.split("\n")[lineno])
+            result.append(" " * columnno + "^")
         else:
             result.append("<couldn't get source>")
         if self.errorinformation:
