@@ -22,11 +22,11 @@ class NiceLexerError(Exception):
         result.append(line)
         result.append(" " * columnno + "^")
         result.append("found %r" % (self.input[i],))
-        result.append("context %r" % (self.input[i - 2:i + 3],))
+        result.append("context %r" % (self.input[max(0, i - 5):i + 3],))
         result.append("state: %r" % (self.state,))
         tokens = self.tokens
-        if tokens and len(tokens) >= 5:
-            result.append("last tokens: %r" % ([t.name for t in tokens[-5:]],))
+        if tokens and len(tokens) >= 3:
+            result.append("last tokens: %r" % ([t.name for t in tokens[-3:]],))
         return "\n".join(result)
 
 
