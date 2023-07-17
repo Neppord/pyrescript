@@ -17,7 +17,7 @@ OPERATOR: "\p{S}|[\:\!#\$%&*<=>?@\\\^\|\-~/+]+";
 STRING: "\"[^\"]*\"";
 INTEGER: "\d+";
 NUMBER: "\d+\.\d+";
-CHAR: "'\w'";
+CHAR: "'.'";
 FORALL: "forall|∀";
 DUBBLE_ARROW: "=>|⇒";
 ARROW: "->|→";
