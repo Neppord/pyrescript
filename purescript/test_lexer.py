@@ -1,3 +1,5 @@
+import pytest
+
 from purescript.parser import lexer
 
 almost_empty = """\
@@ -20,7 +22,7 @@ empty_line = """\
 
 def test_empty_line():
     layout = [t.name for t in lexer.tokenize(empty_line)]
-    assert layout == ['SEP', 'INDENT', 'SEP', 'DEDENT', 'SEP', 'EOF']
+    assert layout == ['SEP', 'EOF']
 
 
 export_list = """\
@@ -53,3 +55,12 @@ def test_export_list():
         'DEDENT',
         'SEP',
         'EOF']
+
+
+@pytest.mark.parametrize("text", [
+    r'''"\""''',
+    r'''"h"''',
+    r'''"\n"''',
+])
+def test_strings(text):
+    assert [t.name for t in lexer.tokenize(text)] == ['STRING', 'SEP', 'EOF']

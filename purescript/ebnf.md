@@ -12,10 +12,10 @@ PROPER_NAME
     : "[A-Z]([A-Za-z0-9_'])*"
 #    : "\p{Uppercase_Letter}(\p{Letter}|\p{Mark}|\p{Number}|[_'])*"
     ;
-LOWER: "[a-z_η]([A-Za-z0-9_'])*";
+LOWER: "[a-z_ηℏ]([A-Za-z0-9_'])*";
 #LOWER: "\p{Ll}_(p{L}|\p{M}|\p{N}[_'])*";
-OPERATOR: "[?:\!#\$%&*<=>@\\\^\|\-~/+⊕⊖⊗⊘µαεℏ.🌱🌸🍒]+";
-STRING: "\"[^\"]*\"|\"[^\"]*\"";
+OPERATOR: "[?:\!#\$%&*<=>@\\\^\|\-~/+⊕⊖⊗⊘µαε.🌱🌸🍒≅⤓⇥⋈]+";
+STRING: "\"([^\\\"]*(\\.)?)*\"";
 INTEGER: "\d+";
 NUMBER: "\d+\.\d+";
 CHAR: "'.|\\n'";
@@ -37,7 +37,7 @@ module
         (declaration [SEP]?)*
     [EOF]?
     ;
-module_name: (PROPER_NAME ["."])* PROPER_NAME;
+module_name: (proper_name ["."])* proper_name;
 export_list
     : ["("] [")"]
     | ["("] [whitespace]* 
@@ -47,8 +47,8 @@ export_list
     ;
 whitespace: SEP | INDENT | DEDENT;
 exported_item
-    : ["class"] PROPER_NAME
-    | PROPER_NAME (["("] members? [")"])? 
+    : ["class"] proper_name
+    | proper_name (["("] members? [")"])? 
     | ["module"] module_name
     | symbol
     | ["type"] symbol
@@ -58,18 +58,18 @@ import_declaration: ["import"] module_name "hiding"? import_list? (["as"] module
 import_list: ["("] ( import_item [","])* import_item [")"];
 import_item
     : "type" symbol
-    | "class" PROPER_NAME
+    | "class" proper_name
     | symbol
     | identifier
-    | PROPER_NAME ["("] members [")"]
-    | PROPER_NAME
+    | proper_name ["("] members [")"]
+    | proper_name
     ;
 operator: OPERATOR | ".." | ":" | "-" | "?";
 symbol: "(" operator ")" ;
 qualified_symbol: module_name ["."] symbol ;
 members
     : ".."
-    | (PROPER_NAME [","])* PROPER_NAME
+    | (proper_name [","])* proper_name
     ;
 
 declaration
@@ -180,10 +180,10 @@ where
     : "where"
     ;
 
-data_declaration: ["data"] PROPER_NAME type_parameter* ["="]
+data_declaration: ["data"] proper_name type_parameter* ["="]
     (data_constructor ["|"])* data_constructor ;
 type_parameter: identifier ;
-data_constructor: PROPER_NAME type_atom* ;
+data_constructor: proper_name type_atom* ;
 type_atom
     : "_"
     | "?" identifier
@@ -201,4 +201,5 @@ type_2
     ;
 type_3: type_atom;
 identifier: <LOWER> | <"as"> ;
+proper_name: <PROPER_NAME> | <"True"> | <"False">;
 ```
