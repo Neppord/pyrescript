@@ -70,6 +70,8 @@ class ParseError(Exception):
             if tokens:
                 got = tokens[error_position]
                 result.append("ParseError: got %r expected %s" % (got, expected))
+                context = tokens[max(0, error_position - 3): error_position]
+                result.append("  around 3 previous: %r " % (["%r:%r" % (t.name, t.source) for t in context],))
             else:
                 result.append("ParseError: expected %s" % (expected,))
         else:
