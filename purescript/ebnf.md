@@ -120,7 +120,8 @@ do_statement
     ;
 
 let_binder
-    : value_declaration
+    : value_signature
+    | value_declaration 
     ;
 
 binder: identifier ;
