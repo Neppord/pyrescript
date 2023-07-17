@@ -110,17 +110,9 @@ expression_atom
     | STRING
     ;
 
-do_block
-    : ["do"] 
-        [INDENT] do_statement+
-        [DEDENT]
-    ;
-ado_block
-    : ["ado"] 
-        [INDENT] do_statement+
-        [DEDENT]
-        ["in"] expression
-    ;
+do_block : ["do"] do_statements ;
+ado_block : ["ado"] do_statements ["in"] expression ;
+do_statements: [INDENT] do_statement+ [DEDENT];
 do_statement 
     : binder "<-" expression [SEP]
     | ["let"] [INDENT] (let_binder [SEP])+ [DEDENT]
