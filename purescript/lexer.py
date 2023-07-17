@@ -2,11 +2,13 @@ from rpython.rlib.parsing.deterministic import LexerError
 from rpython.rlib.parsing.lexer import Lexer, Token, SourcePos
 
 
-class NiceLexerError(LexerError):
+class NiceLexerError(Exception):
     def __init__(self, tokens, filename, input, state, source_pos):
-        super(NiceLexerError, self).__init__(input, state, source_pos)
         self.tokens = tokens
         self.filename = filename
+        self.input = input
+        self.state = state
+        self.source_pos = source_pos
 
     def __str__(self):
         # + 1 is because source_pos is 0-based and humans 1-based
@@ -20,7 +22,7 @@ class NiceLexerError(LexerError):
         result.append(line)
         result.append(" " * columnno + "^")
         result.append("found %r" % (self.input[i],))
-        result.append("context %r" % (self.input[i-2:i+3],))
+        result.append("context %r" % (self.input[i - 2:i + 3],))
         result.append("state: %r" % (self.state,))
         tokens = self.tokens
         if tokens and len(tokens) >= 2:
@@ -46,7 +48,7 @@ class IndentLexer(Lexer):
             except StopIteration:
                 break
             except LexerError as e:
-                raise NiceLexerError(result, None, text, e.state, e.source_pos)
+                raise NiceLexerError(result, "<None>", text, e.state, e.source_pos)
 
         tokens = result
         out = []
@@ -55,8 +57,12 @@ class IndentLexer(Lexer):
         stack = []
         for token in tokens:
             if token.name == "LINE_INDENT":
-                source = token.source  # type: str
-                level = len(source) - source.rindex("\n") - 1
+                source = token.source
+                level = 0
+                for char in source:
+                    level += 1
+                    if char == '\n':
+                        level = 0
                 if level > current_level:
                     token.name = "INDENT"
                     out.append(token)
@@ -65,7 +71,7 @@ class IndentLexer(Lexer):
                 elif level < current_level:
                     token.name = "DEDENT"
                     current_level = stack.pop()
-                    out.append(Token("SEP",'',token.source_pos))
+                    out.append(Token("SEP", '', token.source_pos))
                     out.append(token)
                 elif last_token and last_token.name == "SEP":
                     last_token.source += source
@@ -76,16 +82,18 @@ class IndentLexer(Lexer):
             else:
                 out.append(token)
             last_token = token
-        eof = out[-1]
-        if out[-2].name != "SEP":
-            out.insert(-1, Token("SEP", "", eof.source_pos))
+        eof = out.pop()
+        if out[-1].name != "SEP":
+            out.append(Token("SEP", "", eof.source_pos))
         for level in stack:
-            out.insert(-1, Token("DEDENT", "", eof.source_pos))
-            out.insert(-1, Token("SEP", "", eof.source_pos))
+            out.append(Token("DEDENT", "", eof.source_pos))
+            out.append(Token("SEP", "", eof.source_pos))
+        out.append(eof)
         # remove empty lines
         i = 0
         while (i + 2) < len(out):
-            t1, t2 = out[i: i + 2]
+            t1 = out[i]
+            t2 = out[i + 1]
             if t1.name == "DEDENT" and t2.name == "INDENT":
                 t1.name = "SEP"
                 t1.source += t2.source

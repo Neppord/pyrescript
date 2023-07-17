@@ -3,7 +3,7 @@ from purescript.parser import module_parser, lexer
 
 
 def entry_point(argv):
-    files_to_parse, = argv[1:]
+    files_to_parse = argv[1:]
     for file_to_parse in files_to_parse:
         print "parsing file:", file_to_parse
         with open(file_to_parse) as f:
