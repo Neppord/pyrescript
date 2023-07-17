@@ -3,8 +3,9 @@ from rpython.rlib.parsing.lexer import Lexer, Token, SourcePos
 
 
 class NiceLexerError(LexerError):
-    def __init__(self, filename, input, state, source_pos):
+    def __init__(self, tokens, filename, input, state, source_pos):
         super(NiceLexerError, self).__init__(input, state, source_pos)
+        self.tokens = tokens
         self.filename = filename
 
     def __str__(self):
@@ -19,7 +20,11 @@ class NiceLexerError(LexerError):
         result.append(line)
         result.append(" " * columnno + "^")
         result.append("found %r" % (self.input[i],))
+        result.append("context %r" % (self.input[i-2:i+3],))
         result.append("state: %r" % (self.state,))
+        tokens = self.tokens
+        if tokens and len(tokens) >= 2:
+            result.append("last tokens: %r" % ([t.name for t in tokens[-2:]],))
         return "\n".join(result)
 
 
@@ -27,11 +32,23 @@ class IndentLexer(Lexer):
     def tokenize_with_name(self, name, text):
         try:
             return self.tokenize(text, True)
-        except LexerError as e:
-            raise NiceLexerError(name, e.input, e.state, e.source_pos)
+        except NiceLexerError as e:
+            raise NiceLexerError(e.tokens, name, e.input, e.state, e.source_pos)
 
     def tokenize(self, text, eof=False):
-        tokens = super(IndentLexer, self).tokenize(text, True)
+        # tokens = super(IndentLexer, self).tokenize(text, True)
+        r = self.get_runner(text, eof)
+        result = []
+        while 1:
+            try:
+                tok = r.find_next_token()
+                result.append(tok)
+            except StopIteration:
+                break
+            except LexerError as e:
+                raise NiceLexerError(result, None, text, e.state, e.source_pos)
+
+        tokens = result
         out = []
         last_token = None
         current_level = 0

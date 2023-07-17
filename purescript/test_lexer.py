@@ -61,6 +61,7 @@ def test_export_list():
     r'''"\""''',
     r'''"h"''',
     r'''"\n"''',
+    r'''"""\n"""''',
 ])
 def test_strings(text):
     assert [t.name for t in lexer.tokenize(text)] == ['STRING', 'SEP', 'EOF']
