@@ -31,7 +31,7 @@ names, regexs = zip(*regexes)
 to_ast = _to_ast()
 all_names = list(names) + ["EOF", "SEP", "INDENT", "DEDENT"]
 check_for_missing_names(all_names, regexs, rules)
-lexer = IndentLexer(list(regexs), all_names, ignore=["IGNORE"])
+lexer = IndentLexer(list(regexs), all_names, ignore=["IGNORE", "LINE_COMMENT"])
 module_parser = PackratParser(rules, "module")
 declaration_parser = PackratParser(rules, "declaration")
 expression_parser = PackratParser(rules, "expression")

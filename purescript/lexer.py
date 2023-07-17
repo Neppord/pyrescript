@@ -8,7 +8,15 @@ class NiceLexerError(LexerError):
         self.filename = filename
 
     def __str__(self):
-        return self.nice_error_message(filename=self.filename)
+        # + 1 is because source_pos is 0-based and humans 1-based
+        column = self.source_pos.columnno
+        line_number = self.source_pos.lineno
+        lines = self.input.split("\n")
+        result = ["%s:%s:%s" % (self.filename, line_number + 1, column + 1)]
+        line = lines[line_number]
+        result.append(line)
+        result.append("found %r" % (self.input[self.source_pos.i],))
+        return "\n".join(result)
 
 
 class IndentLexer(Lexer):

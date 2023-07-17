@@ -47,7 +47,7 @@ class ParseError(Exception):
         self.errorinformation = errorinformation
         self.args = (source_pos, errorinformation)
 
-    def nice_error_message(self, filename="<unknown>", source=""):
+    def nice_error_message(self, filename="<unknown>", source="", tokens=[]):
         # + 1 is because source_pos is 0-based and humans 1-based
         result = ["  File %s, line %s" % (filename, self.source_pos.lineno + 1)]
         if source:
@@ -64,7 +64,12 @@ class ParseError(Exception):
                     ", ".join(["'%s'" % e for e in all_but_one]), last)
             else:
                 expected = failure_reasons[0]
-            result.append("ParseError: expected %s" % (expected, ))
+            error_position = self.errorinformation.pos
+            if tokens:
+                got = tokens[error_position]
+                result.append("ParseError: got %r expected %s" % (got, expected))
+            else:
+                result.append("ParseError: expected %s" % (expected,))
         else:
             result.append("ParseError")
         return "\n".join(result)
@@ -76,6 +81,9 @@ class ErrorInformation(object):
             failure_reasons = []
         self.failure_reasons = failure_reasons
         self.pos = pos
+
+    def __repr__(self):
+        return "ErrorInformation(%r, %r)" % (self.pos, self.failure_reasons)
 
 def combine_errors(self, other):
     if self is None:

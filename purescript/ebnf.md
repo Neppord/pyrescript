@@ -1,6 +1,10 @@
 ## Tokens
-these are the tokens that needs regexp the tokens that are string constants can be found within the grammar. The current lexer don't seam to understand unicode groups, therefore they are only kept as comments.
+
+these are the tokens that needs regexp the tokens that are string constants can be found within the grammar. The current
+lexer don't seam to understand unicode groups, therefore they are only kept as comments.
+
 ```ebnf
+LINE_COMMENT: "--[^\n]*\n";
 LINE_INDENT: "\n[ \t]*";
 IGNORE: "[ \t\f\r\n]";
 PROPER_NAME
@@ -9,25 +13,33 @@ PROPER_NAME
     ;
 LOWER: "[a-z_]([A-Za-z0-9_'])*";
 #LOWER: "\p{Ll}_(p{L}|\p{M}|\p{N}[_'])*";
-OPERATOR: "\p{S}+";
+OPERATOR: "\p{S}|[\:\!#\$%&*<=>?@\\\^\|\-~/+]+";
 STRING: "\"[^\"]*\"";
+INTEGER: "\d+";
+NUMBER: "\d+\.\d+";
+FORALL: "forall|∀";
+DUBBLE_ARROW: "=>|⇒";
+ARROW: "->|→";
 ```
+
 ## Grammar
 
 Order matter, this grammar will select the first match if multiple may match
 
 ```ebnf
 module
-    : ["module"] module_name export_list? ["where"] [SEP]
+    : [SEP]? ["module"] module_name [INDENT]? export_list? ["where"] [SEP]
         (import_declaration [SEP])*
         (declaration [SEP]?)*
     [EOF]?
     ;
 module_name: (PROPER_NAME ["."])* PROPER_NAME;
-export_list: "(" (exported_item ",")* exported_item ")";
+export_list
+    : ["("] [")"]
+    | ["("] (exported_item [SEP]?[","])* exported_item [SEP]? [")"];
 exported_item
     : ["class"] PROPER_NAME
-    | PROPER_NAME ["("] members [")"] 
+    | PROPER_NAME (["("] members [")"])? 
     | ["module"] module_name
     | symbol
     | ["type"] symbol
@@ -44,6 +56,7 @@ import_item
     | PROPER_NAME
     ;
 symbol: "(" OPERATOR ")" ;
+qualified_symbol: module_name ["."] symbol ;
 members
     : ".."
     | (PROPER_NAME [","])* PROPER_NAME
@@ -62,10 +75,10 @@ declaration
 #   | derive_declaration
 #   | instance_declaration
     ;
+double_colon: "::" | "∷";
 value_signature
-    : identifier "::" type
+    : identifier [double_colon] type
     ;
-type: "Effect Unit";
 value_declaration
     : identifier binder_atom* guard_declaration
     ; 
@@ -106,9 +119,33 @@ expression_5
 expression_6: expression_7;
 expression_7: expression_atom ("." identifier)*;
 expression_atom
-    : identifier
+    : "_"
+    | hole
+    | qualified_identifier
+    | identifier
+    | symbol
+    | qualified_symbol
     | STRING
+    | boolean
+    | INTEGER
+    | NUMBER
+    | ["["] ["]"]
+    | ["["] (expression [","])* expression ["]"]
+    | ["{"] ["}"]
+    | ["{"] (record_label [","])* record_label ["}"]
+    | ["("] expression [")"]
     ;
+
+record_label: identifier [":"] expression ;
+
+boolean
+    : "True"
+    | "False"
+    ;
+
+qualified_identifier: module_name ["."] identifier;
+
+hole: ["?"] <identifier>;
 
 do_block : ["do"] do_statements ;
 ado_block : ["ado"] do_statements ["in"] expression ;
@@ -139,6 +176,18 @@ data_constructor: PROPER_NAME type_atom* ;
 type_atom
     : "_"
     | "?" identifier
+    | "Effect Unit"
     ;
+type_var: identifier;
+type: type_1 ("::" type)?;
+type_1: [FORALL] type_var+ "." type_2
+    | type_2
+    ;
+type_2
+    : type_3 ARROW type_1
+    | type_3 DUBBLE_ARROW type_1
+    | type_3
+    ;
+type_3: type_atom;
 identifier: LOWER;
 ```
