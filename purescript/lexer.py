@@ -30,6 +30,48 @@ class NiceLexerError(Exception):
         return "\n".join(result)
 
 
+join_both_names = ["=", ","]
+join_right_names = ["(", "[", "{"] + join_both_names
+join_left_names = [")", "]", "}"] + join_both_names
+
+
+def add_join_line(tokens):
+    out = []
+    for token in tokens:
+        name = token.name.lstrip("_0123456789")
+        if name in join_left_names:
+            pos = token.source_pos
+            out.append(Token("JLL", "", pos))
+        out.append(token)
+        if name in join_right_names:
+            pos = token.source_pos
+            offset = len(token.source)
+            after_pos = SourcePos(
+                pos.i + offset,
+                pos.lineno,
+                pos.columnno + offset,
+            )
+            out.append(Token("JLR", "", after_pos))
+    return out
+
+
+def join_lines(tokens):
+    i = 0
+    while i < len(tokens) - 1:
+        t1 = tokens[i]
+        t2 = tokens[i + 1]
+        if t1.name == "JLR" and t2.name == "LINE_INDENT":
+            del tokens[i + 1]
+        elif t1.name == "LINE_INDENT" and t2.name == "JLL":
+            del tokens[i]
+            i = max(i - 1, 0)
+        elif t1.name in ["JLL", "JLR"]:
+            del tokens[i]
+        else:
+            i += 1
+    return tokens
+
+
 class IndentLexer(Lexer):
     def tokenize_with_name(self, name, text):
         try:
@@ -50,9 +92,9 @@ class IndentLexer(Lexer):
             except LexerError as e:
                 raise NiceLexerError(result, "<None>", text, e.state, e.source_pos)
 
-        tokens = result
+        tokens = add_join_line(result)
+        tokens = join_lines(tokens)
         out = []
-        last_token = None
         current_level = 0
         stack = []
         for token in tokens:

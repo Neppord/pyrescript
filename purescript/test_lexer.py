@@ -1,6 +1,8 @@
 import pytest
 
+from purescript.lexer import add_join_line
 from purescript.parser import lexer
+from rpython.rlib.parsing.lexer import Token, SourcePos
 
 almost_empty = """\
 
@@ -66,10 +68,25 @@ a''',
      [
          'LOWER', 'SEP',
          'INDENT', 'LOWER', 'SEP',
-            'INDENT', 'LOWER', 'SEP', 'DEDENT', 'SEP',
+         'INDENT', 'LOWER', 'SEP', 'DEDENT', 'SEP',
          'DEDENT', 'SEP', 'LOWER', 'SEP',
          'EOF'
      ]),
 ])
 def test_layout(text, layout):
     assert [t.name for t in lexer.tokenize(text)] == layout
+
+
+def test_add_join_line():
+    pos = SourcePos(0, 0, 0)
+    pos_after = SourcePos(1, 0, 1)
+    assert add_join_line([Token("=", "=", pos)]) == [
+        Token("JLL", "", pos),
+        Token("=", "=", pos),
+        Token("JLR", "", pos_after),
+    ]
+    assert add_join_line([Token("__1_=", "=", pos)]) == [
+        Token("JLL", "", pos),
+        Token("__1_=", "=", pos),
+        Token("JLR", "", pos_after),
+    ]

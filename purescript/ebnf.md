@@ -66,7 +66,7 @@ qualified_proper_name
     | proper_name
     ;
 qual_op: (module_name ["."])? OPERATOR;
-qualified_identifier: module_name ["."] identifier;
+qualified_identifier: (module_name ["."])? identifier;
 hole: ["?"] <identifier>;
 ```
 ## Module Layout
@@ -177,19 +177,20 @@ expression_atom
     : "_"
     | hole
     | qualified_identifier
-    | identifier
-    | symbol
     | qualified_symbol
-    | STRING
+# qualified_proper_name matches the beginning of 
+# all qualified so it must apear after
+    | qualified_proper_name
     | boolean
+    | CHAR
+    | STRING
     | INTEGER
     | NUMBER
-    | CHAR
-    | ["["] layout* ["]"]
-    | ["["] layout* (expression layout* [","] layout* )* expression layout* ["]"]
-    | ["{"] layout* ["}"]
-    | ["{"] layout* (record_label [","]) *layout* record_label layout* ["}"]
-    | ["("] layout* expression layout* [")"]
+    | ["["] ["]"]
+    | ["["] (expression [","] )* expression ["]"]
+    | ["{"] ["}"]
+    | ["{"] (record_label [","]) * record_label ["}"]
+    | ["("] expression [")"]
     | ["("] expression [")"]
     ;
 
