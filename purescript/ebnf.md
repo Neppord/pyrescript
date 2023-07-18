@@ -103,6 +103,8 @@ type_atom
     | ["("] type_1 [")"]
     | ["{"] row ["}"]
     | ["{"] ["}"]
+    | ["("] row [")"]
+    | ["("] [")"]
     ;
 row
     : (row_lable [","])* row_lable ("|" type)?
