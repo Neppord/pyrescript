@@ -262,9 +262,10 @@ declaration
     | <foreign_data_declaration>
     | <class_declaration>
 #    | <class_signature_declaration>
-#   | derive_declaration
+    | <derive_declaration>
     | <instance_declaration>
     ;
+derive_declaration: ["derive"] ["instance"] identifier double_colon type;
 instance_declaration: ["instance"] proper_name type_atom*  ["where"] 
     [SEP] [INDENT] (value_declaration [SEP])+
     [DEDENT]
