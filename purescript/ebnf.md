@@ -95,6 +95,7 @@ qualified_proper_name
 qual_op: (module_name ["."])? OPERATOR;
 qualified_identifier: (module_name ["."])? identifier;
 hole: ["?"] <identifier>;
+number: INTEGER | NUMBER;
 ```
 ## Module Layout
 ```ebnf
@@ -330,10 +331,8 @@ binder_atom
     | MULTILINE_STRING
     | ["{"] (record_binder [","])* record_binder ["}"]
     ;
-record_binder
-    : identifier [":"] binder
-    | identifier
-    ;
- 
-binder: binder_atom ;
+record_binder : identifier ([":"] binder)? ;
+binder: binder_1 (double_colon type)? ;
+binder_1: (binder_2 qual_op)* binder_2 ;
+binder_2: "-" number | binder_atom+ ;
 ```

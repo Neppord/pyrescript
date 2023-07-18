@@ -31,7 +31,7 @@ class NiceLexerError(Exception):
 
 
 join_both_names = ["=", ",", "|"]
-join_right_names = ["(", "[", "{"] + join_both_names
+join_right_names = ["(", "[", "{", "ARROW", "OPERATOR"] + join_both_names
 join_left_names = [")", "]", "}"] + join_both_names
 
 
