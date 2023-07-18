@@ -247,15 +247,12 @@ let_binding
 
 
 backtick_expression: "`" identifier "`";
-where: "where" ;
-expression_where
-    : 
-    ;
 guarded_declaration_expression
     : guard ["="] expression_where
     ;
-expression_where: expression (["where"] [SEP] 
+expression_where: expression ([SEP] [INDENT] ["where"] [SEP] 
     [INDENT] (let_binding [SEP])+
+    [DEDENT] [SEP]
     [DEDENT]
     )?;
 guard: ["|"] (pattern_guard [","])* pattern_guard; 
@@ -281,7 +278,7 @@ declaration
     | <instance_declaration>
     ;
 derive_declaration: ["derive"] ["instance"] identifier double_colon type;
-instance_declaration: ["instance"] ([identifier] double_colon)? proper_name type_atom*  ["where"] 
+instance_declaration: ["instance"] ([identifier] double_colon)? proper_name type_atom* ["where"] 
     [SEP] [INDENT] (value_declaration [SEP])+
     [DEDENT]
     ;
@@ -318,14 +315,11 @@ value_signature
         [DEDENT]
     ;
 value_declaration 
-    : identifier binder_atom* ["="] expression where?
+    : identifier binder_atom* ["="] expression_where?
     | identifier binder_atom* ["="]
         [SEP] [INDENT] expression [SEP]
         [DEDENT]
-    | identifier binder_atom* 
-        [SEP] [INDENT] ["="] [SEP]? expression [SEP]
-        [DEDENT]
-    ; 
+    ;
 
 data_head_declaration: ["data"] proper_name type_parameter*;
 data_declaration: ["data"] proper_name type_parameter* ["="]

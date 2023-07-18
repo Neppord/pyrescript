@@ -28,3 +28,8 @@ layout3
 user = Just 1
 
 update_name n r = r { name = n }
+
+value_from_where =
+    x
+    where
+        x = 1
