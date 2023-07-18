@@ -45,6 +45,10 @@ boolean: "True" | "False" ;
 double_colon: "::" | "∷";
 identifier: <LOWER> | <"as">;
 proper_name: <PROPER_NAME> | <"True"> | <"False">;
+qualified_proper_name
+    : module_name
+    | proper_name
+    ;
 qual_op: (module_name ["."])? OPERATOR;
 qualified_identifier: module_name ["."] identifier;
 hole: ["?"] <identifier>;
@@ -98,7 +102,7 @@ type_parameter: identifier ;
 type_atom
     : "_"
     | "?" identifier
-    | proper_name
+    | qualified_proper_name
     | identifier
     | ["("] type_1 [")"]
     | ["{"] row ["}"]
