@@ -100,7 +100,11 @@ type_atom
     | proper_name
     | identifier
     | ["("] type_1 [")"]
+    | ["{"] row ["}"]
+    | ["{"] ["}"]
     ;
+row: (row_lable [","])* row_lable;
+row_lable: identifier double_colon type;
 type_var: identifier;
 type: type_1 ("::" type)?;
 type_1: ([FORALL] type_var+ ".")? type_2 ;
