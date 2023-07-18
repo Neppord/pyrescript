@@ -35,6 +35,7 @@ lexer = IndentLexer(list(regexs), all_names, ignore=["IGNORE", "LINE_COMMENT", "
 module_parser = PackratParser(rules, "module")
 declaration_parser = PackratParser(rules, "declaration")
 expression_parser = PackratParser(rules, "expression")
+type_parser = PackratParser(rules, "type")
 do_block_parser = PackratParser(rules, "do_block")
 
 

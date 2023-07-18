@@ -12,8 +12,6 @@ PROPER_NAME
     : "[A-Z]([A-Za-z0-9_'])*"
 #    : "\p{Uppercase_Letter}(\p{Letter}|\p{Mark}|\p{Number}|[_'])*"
     ;
-LOWER: "[a-z_ηℏεµα]([A-Za-z0-9_ηℏεµα']|\xca\x94)*";
-#LOWER: "\p{Ll}_(p{L}|\p{M}|\p{N}[_'])*";
 ARROW: "->|→";
 STRING
     : "\"([^\\\"]*(\\.)?)*\""
@@ -28,6 +26,9 @@ LEFT_ARROW: "<-|←";
 LEFT_DOUBLE_ARROW: "<=|⇐";
 # let operators match last and then read them in the `operator` definition
 OPERATOR: "([?:\!#\$%&*<=>@\\\^\|\-~/+⊕⊖⊗⊘.🌱🌸🍒≅⤓⇥⋈]|\xe2\x8a\xa0)+";
+# let lower match after all keywords and ad them back efter
+LOWER: "[a-z_ηℏεµα]([A-Za-z0-9_ηℏεµα']|\xca\x94)*";
+#LOWER: "\p{Ll}_(p{L}|\p{M}|\p{N}[_'])*";
 ```
 
 ## Grammar
@@ -42,7 +43,7 @@ symbol: "(" operator ")" ;
 qualified_symbol: module_name ["."] symbol ;
 boolean: "True" | "False" ;
 double_colon: "::" | "∷";
-identifier: <LOWER> | <"as"> ;
+identifier: <LOWER> | <"as">;
 proper_name: <PROPER_NAME> | <"True"> | <"False">;
 qual_op: (module_name ["."])? OPERATOR;
 qualified_identifier: module_name ["."] identifier;
@@ -103,11 +104,14 @@ type_atom
     | ["{"] row ["}"]
     | ["{"] ["}"]
     ;
-row: (row_lable [","])* row_lable;
+row
+    : (row_lable [","])* row_lable ("|" type)?
+    | "|" type
+    ;
 row_lable: identifier double_colon type;
 type_var: identifier;
 type: type_1 ("::" type)?;
-type_1: ([FORALL] type_var+ ".")? type_2 ;
+type_1: ([FORALL] type_var+ ["."])? type_2 ;
 type_2
     : type_3 ARROW type_1
     | type_3 DUBBLE_ARROW type_1

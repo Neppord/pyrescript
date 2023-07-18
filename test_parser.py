@@ -4,9 +4,8 @@ import os
 
 import pytest
 
-from purescript.parser import lexer, to_ast, module_parser, expression_parser, do_block_parser
+from purescript.parser import lexer, to_ast, module_parser, expression_parser, do_block_parser, type_parser
 from rpython.rlib.parsing.parsing import ParseError
-
 
 call_expression = """\
 log "hello world"
@@ -27,6 +26,13 @@ ado
     a <- x
 in a
 """
+
+@pytest.mark.parametrize("expression", [
+    """forall a. a -> a""",
+])
+def test_parse_type(expression):
+    tokens = lexer.tokenize_with_name("type", expression)
+    assert type_parser.parse(tokens).symbol == "type"
 
 
 def test_parse_call_expression():
@@ -78,9 +84,10 @@ def test_parse_if_then_else_expression():
     )
     expression_parser.parse(tokens)
 
+
 files = [os.path.relpath(f) for glob_expression in [
     os.path.join(os.path.dirname(__file__), "test-data", "*.purs"),
-    ] for f in glob.glob(glob_expression)]
+] for f in glob.glob(glob_expression)]
 
 assert files
 
