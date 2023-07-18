@@ -202,7 +202,11 @@ declaration
     | <foreign_declaration>
     | <class_declaration>
 #   | derive_declaration
-#   | instance_declaration
+    | <instance_declaration>
+    ;
+instance_declaration: ["instance"] proper_name type_atom*  ["where"] 
+    [INDENT] (value_declaration [SEP])+
+    [DEDENT]
     ;
 class_declaration: ["class"] proper_name type_var*  ["where"] 
     [INDENT] (class_member [SEP])+
