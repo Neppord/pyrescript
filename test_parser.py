@@ -8,22 +8,6 @@ from purescript.parser import lexer, to_ast, module_parser, expression_parser, d
 from rpython.rlib.parsing.parsing import ParseError
 
 
-def test_pars_simple():
-    name = "Main.purs"
-    with open(os.path.join("test-data", name)) as source_file:
-        source = source_file.read()
-    tokens = lexer.tokenize_with_name(name, source)
-    tree = module_parser.parse(tokens)
-    ast = to_ast.transform(tree)
-    assert ast.symbol == "module"
-    assert len([token for token in tokens if token.name == "SEP"]) == 6
-    assert len(ast.children) == 6
-    module_name, prelude, effect, effect_console, signature, main = ast.children
-    assert module_name.symbol == "module_name"
-    property_name, = module_name.children
-    assert property_name.token.source == "Main"
-
-
 call_expression = """\
 log "hello world"
 """
@@ -94,18 +78,20 @@ def test_parse_if_then_else_expression():
     )
     expression_parser.parse(tokens)
 
+files = [os.path.relpath(f) for glob_expression in [
+    os.path.join(os.path.dirname(__file__), "test-data", "*.purs"),
+    ] for f in glob.glob(glob_expression)]
 
-def test_parse_module_with_do():
-    name = "MainWithDo.purs"
-    with open(os.path.join("test-data", name)) as source_file:
+assert files
+
+
+@pytest.mark.parametrize("file_path", files)
+def test_test_data(file_path):
+    with open(file_path) as source_file:
         source = source_file.read()
-    tokens = lexer.tokenize_with_name(name, source)
-    tree = module_parser.parse(tokens)
-    ast = to_ast.transform(tree)
-    assert ast.symbol == "module"
-    assert len(ast.children) == 6
-    module_name, prelude, effect, effect_console, signature, main = ast.children
-    assert module_name.symbol == "module_name"
-    property_name, = module_name.children
-    assert property_name.token.source == "Main"
-
+    tokens = lexer.tokenize_with_name(file_path, source)
+    try:
+        module_parser.parse(tokens)
+    except ParseError as e:
+        message = e.nice_error_message(file_path, source, tokens)
+        raise ValueError(message)
