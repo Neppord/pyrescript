@@ -205,6 +205,7 @@ where: "where" ;
 ```ebnf
 declaration
     : <data_declaration>
+    | <data_head_declaration>
     | <newtype_declaration>
 #   | type_role_declaration
 #   | type_signature_declaration
@@ -223,7 +224,13 @@ instance_declaration: ["instance"] proper_name type_atom*  ["where"]
     [DEDENT]
     ;
 #class_signature_declaration: ["class"] proper_name [double_colon] type; 
-class_declaration: ["class"] proper_name type_var*  ["where"] 
+class_declaration
+    : ["class"] 
+        # Super class
+        (proper_name type_var* LEFT_DOUBLE_ARROW)?
+        # Class name
+         proper_name type_var*
+    ["where"] 
     [INDENT] (class_member [SEP])+
     [DEDENT]
     ;
@@ -238,6 +245,7 @@ newtype_declaration: ["newtype"] proper_name binder_atom* ["="] proper_name type
 value_signature : identifier [double_colon] type ;
 value_declaration : identifier binder_atom* guard_declaration ; 
 
+data_head_declaration: ["data"] proper_name type_parameter*;
 data_declaration: ["data"] proper_name type_parameter* ["="]
     (data_constructor ["|"])* data_constructor ;
 data_constructor: proper_name type_atom* ;
