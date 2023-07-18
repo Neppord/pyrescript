@@ -202,7 +202,7 @@ expression_5
         [INDENT] ((binder [","])* binder ARROW expression [SEP])+
         [DEDENT]
     ;
-expression_6: expression_7;
+expression_6 : expression_7 ("{" ((record_update [","])* record_update)? "}")? ;
 expression_7: expression_atom ("." identifier)*;
 expression_atom
     : "_"
@@ -226,7 +226,10 @@ expression_atom
     ;
 
 record_label: identifier [":"] expression ;
-
+record_update
+    : identifier ["="] expression
+    | identifier ["{"] (record_update [","])* record_update ["}"]
+    ;
 do_statements
     : [SEP] [INDENT] (do_statement [SEP])+ [DEDENT]
     | do_statement

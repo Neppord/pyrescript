@@ -26,3 +26,5 @@ layout3
   1
 
 user = Just 1
+
+update_name n r = r { name = n }
