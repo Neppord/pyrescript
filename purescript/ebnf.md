@@ -3,7 +3,34 @@
 these are the tokens that needs regexp the tokens that are string constants can be found within the grammar. The current
 lexer don't seam to understand unicode groups, therefore they are only kept as comments.
 
-The tokens for layout are also added `INDENT`, `DEDENT`, and `SEP`.
+## Layout
+
+newlines are tokenized with indentation following it `\n    ` would be parsed as a `LINE_INDENT`.
+then before the layout pass lines are "joined" if they occur before or after specific characters, at the time of writing these are `=`, `,` which joins lines before and after, and `([{` that joins lines after, and `)]}` that joins lines before.
+
+This is done in two passes, one that expands the above tokens to have a Join Line Left `JLL` and Join Line Right `JLR` and then a second pass that removes `LINE_INDENT` tokens before and after respectively.
+
+example:
+```
+f 
+    =
+  1
+```
+would become
+
+```
+f 
+    [JLL]=[JLR]
+  1
+```
+
+and later
+```
+f=1
+```
+
+Then tokens for layout are added `INDENT`, `DEDENT`, and `SEP`.
+
 for a code that looks like this:
 ```
 main = do
@@ -170,6 +197,9 @@ expression_5
     | ["do"] do_statements
     | ["ado"] do_statements [SEP]? ["in"] expression
     | ["let"] [SEP] [INDENT] (let_binding [SEP])+ [DEDENT]
+    | ["case"] (expression [","])* expression ["of"] [SEP]
+        [INDENT] ((binder [","])* binder ARROW expression [SEP])+
+        [DEDENT]
     ;
 expression_6: expression_7;
 expression_7: expression_atom ("." identifier)*;
@@ -291,6 +321,12 @@ binder_atom
     : "_"
     | proper_name
     | identifier
+    | INTEGER
+    | NUMBER
+    | boolean
+    | CHAR
+    | STRING
+    | MULTILINE_STRING
     | ["{"] (record_binder [","])* record_binder ["}"]
     ;
 record_binder

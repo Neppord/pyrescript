@@ -30,7 +30,7 @@ class NiceLexerError(Exception):
         return "\n".join(result)
 
 
-join_both_names = ["=", ","]
+join_both_names = ["=", ",", "|"]
 join_right_names = ["(", "[", "{"] + join_both_names
 join_left_names = [")", "]", "}"] + join_both_names
 
