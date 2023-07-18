@@ -44,6 +44,8 @@ double_colon: "::" | "∷";
 identifier: <LOWER> | <"as"> ;
 proper_name: <PROPER_NAME> | <"True"> | <"False">;
 qual_op: (module_name ["."])? OPERATOR;
+qualified_identifier: module_name ["."] identifier;
+hole: ["?"] <identifier>;
 ```
 ## Module Layout
 ```ebnf
@@ -90,6 +92,7 @@ members
 
 ## Type
 ```ebnf
+type_parameter: identifier ;
 type_atom
     : "_"
     | "?" identifier
@@ -157,6 +160,33 @@ expression_atom
     | ["{"] (record_label [","])* record_label ["}"]
     | ["("] expression [")"]
     ;
+    
+guard_declaration
+    : ["="] where_expression
+#   | guarded_declaration_expression
+    ;
+
+
+record_label: identifier [":"] expression ;
+
+do_block : ["do"] do_statements ;
+ado_block : ["ado"] do_statements ["in"] expression ;
+do_statements: [INDENT] do_statement+ [DEDENT];
+do_statement 
+    : binder [LEFT_ARROW] expression [SEP]
+    | ["let"] [INDENT] (let_binder [SEP])+ [DEDENT]
+    | expression [SEP]
+    ;
+
+let_binder
+    : value_signature
+    | value_declaration 
+    ;
+
+
+backtick_expression: "`" identifier "`";
+where: "where" ;
+
 ```
 
 ## Declarations
@@ -182,13 +212,17 @@ class_member: identifier double_colon type;
 foreign_declaration: "foreign" "import" identifier double_colon type;
 type_declaration: ["type"] proper_name binder_atom* "=" type;
 newtype_declaration: ["newtype"] proper_name binder_atom* "=" proper_name type_atom;
+value_signature : identifier [double_colon] type ;
+value_declaration : identifier binder_atom* guard_declaration ; 
 
-value_signature
-    : identifier [double_colon] type
-    ;
-value_declaration
-    : identifier binder_atom* guard_declaration
-    ; 
+data_declaration: ["data"] proper_name type_parameter* ["="]
+    (data_constructor ["|"])* data_constructor ;
+data_constructor: proper_name type_atom* ;
+```
+
+## Binders
+
+```ebnf
 
 binder_atom
     : "_"
@@ -196,39 +230,5 @@ binder_atom
     | identifier
     ;
  
-guard_declaration
-    : ["="] where_expression
-#   | guarded_declaration_expression
-    ;
-
-
-record_label: identifier [":"] expression ;
-
-qualified_identifier: module_name ["."] identifier;
-
-hole: ["?"] <identifier>;
-
-do_block : ["do"] do_statements ;
-ado_block : ["ado"] do_statements ["in"] expression ;
-do_statements: [INDENT] do_statement+ [DEDENT];
-do_statement 
-    : binder [LEFT_ARROW] expression [SEP]
-    | ["let"] [INDENT] (let_binder [SEP])+ [DEDENT]
-    | expression [SEP]
-    ;
-
-let_binder
-    : value_signature
-    | value_declaration 
-    ;
-
-binder: identifier ;
-
-backtick_expression: "`" identifier "`";
-where: "where" ;
-
-data_declaration: ["data"] proper_name type_parameter* ["="]
-    (data_constructor ["|"])* data_constructor ;
-type_parameter: identifier ;
-data_constructor: proper_name type_atom* ;
+binder: binder_atom ;
 ```
