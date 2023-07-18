@@ -52,19 +52,19 @@ hole: ["?"] <identifier>;
 ## Module Layout
 ```ebnf
 module
-    : [SEP]? ["module"] [whitespace]? module_name [SEP]? [INDENT]? export_list? [whitespace]* ["where"] [whitespace]*
+    : [SEP]? ["module"] [layout]? module_name [SEP]? [INDENT]? export_list? [layout]* ["where"] [layout]*
         (import_declaration [SEP])*
         (declaration [SEP]?)*
     [EOF]
     ;
 export_list
     : ["("] [")"]
-    | ["("] [whitespace]* 
-        (exported_item [whitespace]* [","] [whitespace]*)* 
-        exported_item [whitespace]* 
+    | ["("] [layout]* 
+        (exported_item [layout]* [","] [layout]*)* 
+        exported_item [layout]* 
     [")"]
     ;
-whitespace: SEP | INDENT | DEDENT;
+layout: SEP | INDENT | DEDENT;
 exported_item
     : ["class"] proper_name
     | proper_name (["("] members? [")"])? 
@@ -107,7 +107,7 @@ type_atom
     | ["("] [")"]
     ;
 row
-    : (row_lable [","])* row_lable ("|" type)?
+    : (row_lable [SEP]? [","] [SEP]?)* row_lable [SEP]? ("|" type)?
     | "|" type
     ;
 row_lable: identifier double_colon type;
@@ -166,11 +166,11 @@ expression_atom
     | INTEGER
     | NUMBER
     | CHAR
-    | ["["] ["]"]
-    | ["["] (expression [","])* expression ["]"]
-    | ["{"] ["}"]
-    | ["{"] (record_label [","])* record_label ["}"]
-    | ["("] expression [")"]
+    | ["["] layout* ["]"]
+    | ["["] layout* (expression layout* [","] layout* )* expression layout* ["]"]
+    | ["{"] layout* ["}"]
+    | ["{"] layout* (record_label [","]) *layout* record_label layout* ["}"]
+    | ["("] layout* expression layout* [")"]
     ;
     
 guard_declaration
@@ -214,6 +214,7 @@ declaration
     | <foreign_declaration>
     | <foreign_data_declaration>
     | <class_declaration>
+#    | <class_signature_declaration>
 #   | derive_declaration
     | <instance_declaration>
     ;
@@ -221,6 +222,7 @@ instance_declaration: ["instance"] proper_name type_atom*  ["where"]
     [INDENT] (value_declaration [SEP])+
     [DEDENT]
     ;
+#class_signature_declaration: ["class"] proper_name [double_colon] type; 
 class_declaration: ["class"] proper_name type_var*  ["where"] 
     [INDENT] (class_member [SEP])+
     [DEDENT]
@@ -228,7 +230,10 @@ class_declaration: ["class"] proper_name type_var*  ["where"]
 class_member: identifier [double_colon] type;
 foreign_declaration: ["foreign"] ["import"] identifier [double_colon] type;
 foreign_data_declaration: ["foreign"] ["import"] ["data"] proper_name [double_colon] type;
-type_declaration: ["type"] proper_name binder_atom* ["="] type;
+type_declaration
+    : ["type"] proper_name binder_atom* layout* ["="] [INDENT] type [SEP] [DEDENT]
+    | ["type"] proper_name binder_atom* layout* ["="] type
+    ;
 newtype_declaration: ["newtype"] proper_name binder_atom* ["="] proper_name type_atom;
 value_signature : identifier [double_colon] type ;
 value_declaration : identifier binder_atom* guard_declaration ; 

@@ -69,9 +69,14 @@ class ParseError(Exception):
             error_position = self.errorinformation.pos
             if tokens:
                 got = tokens[error_position]
-                result.append("ParseError: got %r expected %s" % (got, expected))
-                context = tokens[max(0, error_position - 3): error_position]
-                result.append("  around 3 previous: %r " % (["%r:%r" % (t.name, t.source) for t in context],))
+                result.append("ParseError: expected %s" % (expected,))
+                for i, t in enumerate(tokens):
+                    if error_position - 3 < i < error_position + 15:
+                        if i == error_position:
+                            marker = "->"
+                        else:
+                            marker = "  "
+                        result.append("%s%r:%r" % (marker, t.name, t.source))
             else:
                 result.append("ParseError: expected %s" % (expected,))
         else:

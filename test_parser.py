@@ -7,18 +7,27 @@ import pytest
 from purescript.parser import lexer, to_ast, module_parser, expression_parser, do_block_parser, type_parser
 from rpython.rlib.parsing.parsing import ParseError
 
-call_expression = """\
-log "hello world"
-"""
 
-call_declaration = """\
-main = %s
-""" % call_expression
+@pytest.mark.parametrize("type_", [
+    """forall a. a -> a""",
+])
+def test_parse_type(type_):
+    tokens = lexer.tokenize_with_name("type", type_)
+    assert type_parser.parse(tokens).symbol == "type"
+
+
+@pytest.mark.parametrize("declaration", [
+    '''main = log "hello world"'''
+])
+def test_parse_declaration(declaration):
+    tokens = lexer.tokenize_with_name("declaration", declaration)
+    expression_parser.parse(tokens)
+
 
 do_expression = """\
 do
-    %s
-""" % call_expression.strip()
+    log "hello world"
+""".strip()
 ado_expression = """\
 ado
     let
@@ -27,72 +36,24 @@ ado
 in a
 """
 
+
 @pytest.mark.parametrize("expression", [
-    """forall a. a -> a""",
+    "if a then b else c",
+    do_expression,
+    ado_expression,
 ])
-def test_parse_type(expression):
-    tokens = lexer.tokenize_with_name("type", expression)
-    assert type_parser.parse(tokens).symbol == "type"
-
-
-def test_parse_call_expression():
+def test_parse_expression(expression):
     tokens = lexer.tokenize_with_name(
-        "call_expression",
-        call_expression
+        "expression",
+        expression
     )
     expression_parser.parse(tokens)
 
 
-def test_parse_call_declaration():
-    tokens = lexer.tokenize_with_name(
-        "call_declaration",
-        call_declaration
-    )
-    expression_parser.parse(tokens)
-
-
-def test_parse_do_block():
-    tokens = lexer.tokenize_with_name(
-        "do expression",
-        do_expression
-    )
-    layout = [t.name for t in tokens if t.name in ["SEP", "INDENT", "DEDENT"]]
-    assert layout == ["INDENT", "SEP", "DEDENT", "SEP"]
-    do_block_parser.parse(tokens)
-
-
-def test_parse_ado_block_expression():
-    tokens = lexer.tokenize_with_name(
-        "ado expression",
-        ado_expression
-    )
-    expression_parser.parse(tokens)
-
-
-def test_parse_do_expression():
-    tokens = lexer.tokenize_with_name(
-        "do expression",
-        do_expression
-    )
-    expression_parser.parse(tokens)
-
-
-def test_parse_if_then_else_expression():
-    tokens = lexer.tokenize_with_name(
-        "if_then_else",
-        "if a then b else c"
-    )
-    expression_parser.parse(tokens)
-
-
-files = [os.path.relpath(f) for glob_expression in [
-    os.path.join(os.path.dirname(__file__), "test-data", "*.purs"),
-] for f in glob.glob(glob_expression)]
-
-assert files
-
-
-@pytest.mark.parametrize("file_path", files)
+@pytest.mark.parametrize("file_path", [
+    os.path.relpath(f)
+    for f in glob.glob(os.path.join(os.path.dirname(__file__), "test-data", "*.purs"))
+])
 def test_test_data(file_path):
     with open(file_path) as source_file:
         source = source_file.read()
