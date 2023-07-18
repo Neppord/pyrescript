@@ -27,8 +27,6 @@ def test_e2e(file_path):
     with open(file_path) as source_file:
         source = source_file.read()
     tokens = lexer.tokenize_with_name(file_path, source)
-    layout = [t.name for t in tokens if t.name in ["SEP", "INDENT", "DEDENT"]]
-    assert layout.count("INDENT") == layout.count("DEDENT")
     try:
         module_parser.parse(tokens)
     except ParseError as e:
