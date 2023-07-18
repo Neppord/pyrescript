@@ -13,3 +13,11 @@ for_all a = a
 
 needs_name :: forall r. {name :: String | r} -> String
 needs_name r = r.a
+
+layout1 =
+  1
+layout2
+  = 1
+layout3
+  =
+  1

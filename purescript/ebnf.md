@@ -131,9 +131,6 @@ type_5: type_atom+ ;
 
 ## Expression
 ```ebnf
-where_expression
-    : expression where?
-    ;
 expression 
     : expression_1 ("::" type)?
     ;
@@ -177,12 +174,6 @@ expression_atom
     | ["("] layout* expression layout* [")"]
     | ["("] expression [")"]
     ;
-    
-guard_declaration
-    : ["="] where_expression
-#   | guarded_declaration_expression
-    ;
-
 
 record_label: identifier [":"] expression ;
 
@@ -248,7 +239,15 @@ type_declaration
     ;
 newtype_declaration: ["newtype"] proper_name binder_atom* ["="] proper_name type_atom;
 value_signature : identifier [double_colon] type ;
-value_declaration : identifier binder_atom* guard_declaration ; 
+value_declaration 
+    : identifier binder_atom* ["="] expression where?
+    | identifier binder_atom* ["="]
+        [INDENT] expression [SEP]
+        [DEDENT]
+    | identifier binder_atom* 
+        [INDENT] ["="] [SEP]? expression [SEP]
+        [DEDENT]
+    ; 
 
 data_head_declaration: ["data"] proper_name type_parameter*;
 data_declaration: ["data"] proper_name type_parameter* ["="]
