@@ -3,6 +3,22 @@
 these are the tokens that needs regexp the tokens that are string constants can be found within the grammar. The current
 lexer don't seam to understand unicode groups, therefore they are only kept as comments.
 
+The tokens for layout are also added `INDENT`, `DEDENT`, and `SEP`.
+for a code that looks like this:
+```
+main = do
+   log "hello world"
+
+```
+produces layout tokens in this order: `SEP`, `INDENT`, `SEP`, `DEDENT`, `SEP`
+
+here is the annotated code:
+```
+main = do[SEP]
+[INDENT]log "hello world"[SEP]
+[DEDENT][SEP]
+```
+
 ```ebnf
 LINE_COMMENT: "--[^\n]*\n?";
 MULTILINE_COMMENT: "{-([^-]*(-[^}])?)*-}";
@@ -150,8 +166,9 @@ expression_4
 expression_5
     : expression_6
     | ["if"] expression ["then"] expression ["else"] expression
-    | do_block
-    | ado_block
+    | ["do"] do_statements
+    | ["ado"] do_statements [SEP]? ["in"] expression
+    | ["let"] [SEP] [INDENT] (let_binding [SEP])+ [DEDENT]
     ;
 expression_6: expression_7;
 expression_7: expression_atom ("." identifier)*;
@@ -177,16 +194,17 @@ expression_atom
 
 record_label: identifier [":"] expression ;
 
-do_block : ["do"] do_statements ;
-ado_block : ["ado"] do_statements ["in"] expression ;
-do_statements: [INDENT] do_statement+ [DEDENT];
+do_statements
+    : [SEP] [INDENT] (do_statement [SEP])+ [DEDENT]
+    | do_statement
+    ;
 do_statement 
-    : binder [LEFT_ARROW] expression [SEP]
-    | ["let"] [INDENT] (let_binder [SEP])+ [DEDENT]
-    | expression [SEP]
+    : binder [LEFT_ARROW] expression
+    | ["let"] [SEP] [INDENT] (let_binding [SEP])+ [DEDENT]
+    | expression
     ;
 
-let_binder
+let_binding
     : value_signature
     | value_declaration 
     ;
@@ -216,7 +234,7 @@ declaration
     | <instance_declaration>
     ;
 instance_declaration: ["instance"] proper_name type_atom*  ["where"] 
-    [INDENT] (value_declaration [SEP])+
+    [SEP] [INDENT] (value_declaration [SEP])+
     [DEDENT]
     ;
 #class_signature_declaration: ["class"] proper_name [double_colon] type; 
@@ -227,25 +245,33 @@ class_declaration
         # Class name
          proper_name type_var*
     ["where"] 
-    [INDENT] (class_member [SEP])+
+    [SEP] [INDENT] (class_member [SEP])+
     [DEDENT]
     ;
 class_member: identifier [double_colon] type;
 foreign_declaration: ["foreign"] ["import"] identifier [double_colon] type;
 foreign_data_declaration: ["foreign"] ["import"] ["data"] proper_name [double_colon] type;
 type_declaration
-    : ["type"] proper_name binder_atom* layout* ["="] [INDENT] type [SEP] [DEDENT]
+    : ["type"] proper_name binder_atom* layout* ["="] [SEP] [INDENT] type [SEP] [DEDENT]
     | ["type"] proper_name binder_atom* layout* ["="] type
     ;
 newtype_declaration: ["newtype"] proper_name binder_atom* ["="] proper_name type_atom;
-value_signature : identifier [double_colon] type ;
+value_signature 
+    : identifier [double_colon] type
+    | identifier
+        [SEP] [INDENT] [double_colon] [SEP]? type [SEP]
+        [DEDENT]
+    | identifier [double_colon]
+        [SEP] [INDENT] type [SEP]
+        [DEDENT]
+    ;
 value_declaration 
     : identifier binder_atom* ["="] expression where?
     | identifier binder_atom* ["="]
-        [INDENT] expression [SEP]
+        [SEP] [INDENT] expression [SEP]
         [DEDENT]
     | identifier binder_atom* 
-        [INDENT] ["="] [SEP]? expression [SEP]
+        [SEP] [INDENT] ["="] [SEP]? expression [SEP]
         [DEDENT]
     ; 
 

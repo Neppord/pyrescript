@@ -25,38 +25,6 @@ def test_empty_line():
     assert layout == ['SEP', 'EOF']
 
 
-export_list = """\
-module Main
-  ( DBuffer
-  , Offset
-
-  , create
-  )\
-"""
-
-
-def test_export_list():
-    layout = [t.name for t in lexer.tokenize(export_list)]
-    assert layout == [
-        '__0_module',
-        'PROPER_NAME',
-        'INDENT',
-        '__3_(',
-        'PROPER_NAME',
-        'SEP',
-        '__5_,',
-        'PROPER_NAME',
-        'SEP',
-        '__5_,',
-        'LOWER',
-        'SEP',
-        '__4_)',
-        'SEP',
-        'DEDENT',
-        'SEP',
-        'EOF']
-
-
 @pytest.mark.parametrize("text", [
     r'''"\""''',
     r'''"h"''',
@@ -65,9 +33,43 @@ def test_export_list():
 def test_strings(text):
     assert [t.name for t in lexer.tokenize(text)] == ['STRING', 'SEP', 'EOF']
 
+
 @pytest.mark.parametrize("text", [
     r'''"""\n"""''',
     r'''"""""""''',
 ])
 def test_multiline_strings(text):
     assert [t.name for t in lexer.tokenize(text)] == ['MULTILINE_STRING', 'SEP', 'EOF']
+
+
+@pytest.mark.parametrize(("text", "layout"), [
+    (r'''''', ['EOF']),
+    ('''\
+a
+    a
+       a
+    a
+a''',
+     [
+         'LOWER', 'SEP',
+         'INDENT', 'LOWER', 'SEP',
+         'INDENT', 'LOWER', 'SEP',
+         'DEDENT', 'SEP', 'LOWER', 'SEP',
+         'DEDENT', 'SEP', 'LOWER', 'SEP',
+         'EOF'
+     ]),
+    ('''\
+a
+    a
+       a
+a''',
+     [
+         'LOWER', 'SEP',
+         'INDENT', 'LOWER', 'SEP',
+            'INDENT', 'LOWER', 'SEP', 'DEDENT', 'SEP',
+         'DEDENT', 'SEP', 'LOWER', 'SEP',
+         'EOF'
+     ]),
+])
+def test_layout(text, layout):
+    assert [t.name for t in lexer.tokenize(text)] == layout

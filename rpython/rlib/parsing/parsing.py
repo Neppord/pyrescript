@@ -53,8 +53,12 @@ class ParseError(Exception):
         lineno = self.source_pos.lineno
         result = ['  File "%s:%s:%s"' % (filename, lineno + 1, columnno + 1)]
         if source:
-            result.append(source.split("\n")[lineno])
-            result.append(" " * columnno + "^")
+            lines = source.split("\n")
+            for i, line in enumerate(lines):
+                if lineno - 5 < i < lineno + 5:
+                    result.append(line)
+                    if i == lineno:
+                        result.append(" " * columnno + "^")
         else:
             result.append("<couldn't get source>")
         if self.errorinformation:
@@ -68,15 +72,14 @@ class ParseError(Exception):
                 expected = failure_reasons[0]
             error_position = self.errorinformation.pos
             if tokens:
-                got = tokens[error_position]
                 result.append("ParseError: expected %s" % (expected,))
                 for i, t in enumerate(tokens):
-                    if error_position - 3 < i < error_position + 15:
+                    if error_position - 10 < i < error_position + 15:
                         if i == error_position:
                             marker = "->"
                         else:
                             marker = "  "
-                        result.append("%s%r:%r" % (marker, t.name, t.source))
+                        result.append("%s%s(%r)" % (marker, t.name, t.source))
             else:
                 result.append("ParseError: expected %s" % (expected,))
         else:
