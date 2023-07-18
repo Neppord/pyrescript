@@ -33,14 +33,26 @@ LEFT_DOUBLE_ARROW: "<=|⇐";
 
 Order matter, this grammar will select the first match if multiple may match
 
+## Atoms, Literals and Names
+```ebnf
+module_name: (proper_name ["."])* proper_name;
+operator: OPERATOR | ".." | ":" | "-" | "?";
+symbol: "(" operator ")" ;
+qualified_symbol: module_name ["."] symbol ;
+boolean: "True" | "False" ;
+double_colon: "::" | "∷";
+identifier: <LOWER> | <"as"> ;
+proper_name: <PROPER_NAME> | <"True"> | <"False">;
+qual_op: (module_name ["."])? OPERATOR;
+```
+
 ```ebnf
 module
     : [SEP]? ["module"] [whitespace]? module_name [SEP]? [INDENT]? export_list? [whitespace]* ["where"] [whitespace]*
         (import_declaration [SEP])*
         (declaration [SEP]?)*
-    [EOF]?
+    [EOF]
     ;
-module_name: (proper_name ["."])* proper_name;
 export_list
     : ["("] [")"]
     | ["("] [whitespace]* 
@@ -57,6 +69,9 @@ exported_item
     | ["type"] symbol
     | identifier
     ;
+```
+## Import declaration
+```ebnf
 import_declaration: ["import"] module_name "hiding"? import_list? (["as"] module_name)?;
 import_list: ["("] ( import_item [","])* import_item [")"];
 import_item
@@ -67,43 +82,35 @@ import_item
     | proper_name ["("] members [")"]
     | proper_name
     ;
-operator: OPERATOR | ".." | ":" | "-" | "?";
-symbol: "(" operator ")" ;
-qualified_symbol: module_name ["."] symbol ;
 members
     : ".."
     | (proper_name [","])* proper_name
     ;
+```
 
-declaration
-    : <data_declaration>
-#   | newtype_declaration
-#   | type_role_declaration
-#   | type_signature_declaration
-#   | type_declaration
-    | <value_signature>
-    | <value_declaration>
-#   | foreign_declaration
-#   | class_declaration
-#   | derive_declaration
-#   | instance_declaration
-    ;
-double_colon: "::" | "∷";
-value_signature
-    : identifier [double_colon] type
-    ;
-value_declaration
-    : identifier binder_atom* guard_declaration
-    ; 
-
-binder_atom
+## Type
+```ebnf
+type_atom
     : "_"
+    | "?" identifier
+    | proper_name
     ;
- 
-guard_declaration
-    : ["="] where_expression
-#   | guarded_declaration_expression
+type_var: identifier;
+type: type_1 ("::" type)?;
+type_1: [FORALL] type_var+ "." type_2 | type_2 ;
+type_2
+    : type_3 ARROW type_1
+    | type_3 DUBBLE_ARROW type_1
+    | type_3
     ;
+type_3: (type_4 qual_op)* type_4 ;
+type_4: type_5 | "-" INTEGER ;
+type_5: type_atom+ ;
+```
+
+
+## Expression
+```ebnf
 where_expression
     : expression where?
     ;
@@ -149,13 +156,44 @@ expression_atom
     | ["{"] (record_label [","])* record_label ["}"]
     | ["("] expression [")"]
     ;
+```
+
+## Declarations
+```ebnf
+declaration
+    : <data_declaration>
+    | <newtype_declaration>
+#   | type_role_declaration
+#   | type_signature_declaration
+#   | type_declaration
+    | <value_signature>
+    | <value_declaration>
+#   | foreign_declaration
+#   | class_declaration
+#   | derive_declaration
+#   | instance_declaration
+    ;
+newtype_declaration: ["newtype"] proper_name binder_atom* "=" proper_name type_atom;
+
+value_signature
+    : identifier [double_colon] type
+    ;
+value_declaration
+    : identifier binder_atom* guard_declaration
+    ; 
+
+binder_atom
+    : "_"
+    | proper_name
+    ;
+ 
+guard_declaration
+    : ["="] where_expression
+#   | guarded_declaration_expression
+    ;
+
 
 record_label: identifier [":"] expression ;
-
-boolean
-    : "True"
-    | "False"
-    ;
 
 qualified_identifier: module_name ["."] identifier;
 
@@ -178,31 +216,10 @@ let_binder
 binder: identifier ;
 
 backtick_expression: "`" identifier "`";
-qual_op: (module_name ["."])? OPERATOR;
-where
-    : "where"
-    ;
+where: "where" ;
 
 data_declaration: ["data"] proper_name type_parameter* ["="]
     (data_constructor ["|"])* data_constructor ;
 type_parameter: identifier ;
 data_constructor: proper_name type_atom* ;
-type_atom
-    : "_"
-    | "?" identifier
-    | "Effect Unit"
-    ;
-type_var: identifier;
-type: type_1 ("::" type)?;
-type_1: [FORALL] type_var+ "." type_2
-    | type_2
-    ;
-type_2
-    : type_3 ARROW type_1
-    | type_3 DUBBLE_ARROW type_1
-    | type_3
-    ;
-type_3: type_atom;
-identifier: <LOWER> | <"as"> ;
-proper_name: <PROPER_NAME> | <"True"> | <"False">;
 ```
