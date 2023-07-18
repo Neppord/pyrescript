@@ -175,6 +175,7 @@ expression_atom
     | ["{"] layout* ["}"]
     | ["{"] layout* (record_label [","]) *layout* record_label layout* ["}"]
     | ["("] layout* expression layout* [")"]
+    | ["("] expression [")"]
     ;
     
 guard_declaration
@@ -262,6 +263,11 @@ data_constructor: proper_name type_atom* ;
 binder_atom
     : "_"
     | proper_name
+    | identifier
+    | ["{"] (record_binder [","])* record_binder ["}"]
+    ;
+record_binder
+    : identifier [":"] binder
     | identifier
     ;
  

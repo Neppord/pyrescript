@@ -36,6 +36,7 @@ module_parser = PackratParser(rules, "module")
 declaration_parser = PackratParser(rules, "declaration")
 expression_parser = PackratParser(rules, "expression")
 type_parser = PackratParser(rules, "type")
+binder_parser = PackratParser(rules, "binder")
 do_block_parser = PackratParser(rules, "do_block")
 
 

@@ -4,7 +4,8 @@ import os
 
 import pytest
 
-from purescript.parser import lexer, to_ast, module_parser, expression_parser, do_block_parser, type_parser
+from purescript.parser import lexer, to_ast, module_parser, expression_parser, do_block_parser, type_parser, \
+    binder_parser
 from rpython.rlib.parsing.parsing import ParseError
 
 
@@ -39,6 +40,7 @@ in a
 
 @pytest.mark.parametrize("expression", [
     "if a then b else c",
+    "(1)",
     do_expression,
     ado_expression,
 ])
@@ -48,6 +50,19 @@ def test_parse_expression(expression):
         expression
     )
     expression_parser.parse(tokens)
+
+@pytest.mark.parametrize("binder", [
+    "a",
+    "{a}",
+    "{a:b}",
+    "{a, b}",
+])
+def test_parse_binder(binder):
+    tokens = lexer.tokenize_with_name(
+        "binder",
+        binder
+    )
+    binder_parser.parse(tokens)
 
 
 @pytest.mark.parametrize("file_path", [
