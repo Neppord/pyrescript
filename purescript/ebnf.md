@@ -169,11 +169,12 @@ declaration
     | <type_declaration>
     | <value_signature>
     | <value_declaration>
-#   | foreign_declaration
+    | <foreign_declaration>
 #   | class_declaration
 #   | derive_declaration
 #   | instance_declaration
     ;
+foreign_declaration: "foreign" "import" identifier double_colon type;
 type_declaration: ["type"] proper_name binder_atom* "=" type;
 newtype_declaration: ["newtype"] proper_name binder_atom* "=" proper_name type_atom;
 
