@@ -337,15 +337,16 @@ guarded_declaration
 
 binder_atom
     : "_"
-    | proper_name
-    | identifier
-    | INTEGER
-    | NUMBER
+    | identifier ("@" binder_atom)?
+    | qualified_proper_name
     | boolean
     | CHAR
     | STRING
+    | number
     | MULTILINE_STRING
-    | ["{"] (record_binder [","])* record_binder ["}"]
+    | ["{"] ((record_binder [","])* record_binder)? ["}"]
+    | ["["] ((binder [","])* binder)? ["]"]
+    | ["("] binder [")"]
     ;
 record_binder : identifier ([":"] binder)? ;
 binder: binder_1 (double_colon type)? ;
