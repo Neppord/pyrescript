@@ -212,6 +212,7 @@ declaration
     | <value_signature>
     | <value_declaration>
     | <foreign_declaration>
+    | <foreign_data_declaration>
     | <class_declaration>
 #   | derive_declaration
     | <instance_declaration>
@@ -224,10 +225,11 @@ class_declaration: ["class"] proper_name type_var*  ["where"]
     [INDENT] (class_member [SEP])+
     [DEDENT]
     ;
-class_member: identifier double_colon type;
-foreign_declaration: "foreign" "import" identifier double_colon type;
-type_declaration: ["type"] proper_name binder_atom* "=" type;
-newtype_declaration: ["newtype"] proper_name binder_atom* "=" proper_name type_atom;
+class_member: identifier [double_colon] type;
+foreign_declaration: ["foreign"] ["import"] identifier [double_colon] type;
+foreign_data_declaration: ["foreign"] ["import"] ["data"] proper_name [double_colon] type;
+type_declaration: ["type"] proper_name binder_atom* ["="] type;
+newtype_declaration: ["newtype"] proper_name binder_atom* ["="] proper_name type_atom;
 value_signature : identifier [double_colon] type ;
 value_declaration : identifier binder_atom* guard_declaration ; 
 
