@@ -45,7 +45,7 @@ identifier: <LOWER> | <"as"> ;
 proper_name: <PROPER_NAME> | <"True"> | <"False">;
 qual_op: (module_name ["."])? OPERATOR;
 ```
-
+## Module Layout
 ```ebnf
 module
     : [SEP]? ["module"] [whitespace]? module_name [SEP]? [INDENT]? export_list? [whitespace]* ["where"] [whitespace]*
@@ -94,6 +94,7 @@ type_atom
     : "_"
     | "?" identifier
     | proper_name
+    | identifier
     ;
 type_var: identifier;
 type: type_1 ("::" type)?;
@@ -165,7 +166,7 @@ declaration
     | <newtype_declaration>
 #   | type_role_declaration
 #   | type_signature_declaration
-#   | type_declaration
+    | <type_declaration>
     | <value_signature>
     | <value_declaration>
 #   | foreign_declaration
@@ -173,6 +174,7 @@ declaration
 #   | derive_declaration
 #   | instance_declaration
     ;
+type_declaration: ["type"] proper_name binder_atom* "=" type;
 newtype_declaration: ["newtype"] proper_name binder_atom* "=" proper_name type_atom;
 
 value_signature
@@ -185,6 +187,7 @@ value_declaration
 binder_atom
     : "_"
     | proper_name
+    | identifier
     ;
  
 guard_declaration
