@@ -33,3 +33,7 @@ value_from_where =
     x
     where
         x = 1
+value_from_where_same_line =
+    x
+    where
+    x = 1

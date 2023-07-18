@@ -250,11 +250,17 @@ backtick_expression: "`" identifier "`";
 guarded_declaration_expression
     : guard ["="] expression_where
     ;
-expression_where: expression ([SEP] [INDENT] ["where"] [SEP] 
-    [INDENT] (let_binding [SEP])+
-    [DEDENT] [SEP]
-    [DEDENT]
-    )?;
+expression_where
+    : expression [SEP] [INDENT] ["where"] [SEP] 
+        [INDENT] (let_binding [SEP])+
+        [DEDENT] [SEP]
+        [DEDENT]
+        
+    | expression [SEP] 
+        [INDENT] ["where"] [SEP] (let_binding [SEP])+
+        [DEDENT]   
+    | expression
+    ;
 guard: ["|"] (pattern_guard [","])* pattern_guard; 
 pattern_guard:(binder LEFT_ARROW)? expression;
 ```
