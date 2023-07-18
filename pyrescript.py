@@ -5,9 +5,10 @@ from interpreter import Interpreter
 
 
 def entry_point(argv):
-    module_name_argument, = argv[1:1] or ["Main"]
+    module_name_argument, = argv[1:2] or ["Main"]
     Interpreter(load_module).run_main(load_module(module_name_argument))
     return 0
+
 
 def target(*args):
     return entry_point, None
