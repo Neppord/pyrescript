@@ -14,7 +14,7 @@ PROPER_NAME
     ;
 LOWER: "[a-z_ηℏεµα]([A-Za-z0-9_ηℏεµα']|\xca\x94)*";
 #LOWER: "\p{Ll}_(p{L}|\p{M}|\p{N}[_'])*";
-OPERATOR: "([?:\!#\$%&*<=>@\\\^\|\-~/+⊕⊖⊗⊘.🌱🌸🍒≅⤓⇥⋈]|\xe2\x8a\xa0)+";
+ARROW: "->|→";
 STRING
     : "\"([^\\\"]*(\\.)?)*\""
     ;
@@ -24,9 +24,10 @@ NUMBER: "\d+\.\d+";
 CHAR: "'(\\x[^']{1,4}|\\\\'|\\\\|\\.|[^']{1,2}|\xe2\x99\xa5|☺|\xe6\x9c\xac|\xe3\x80\x80|日|２|③|—|語)'";
 FORALL: "forall|∀";
 DUBBLE_ARROW: "=>|⇒";
-ARROW: "->|→";
 LEFT_ARROW: "<-|←";
 LEFT_DOUBLE_ARROW: "<=|⇐";
+# let operators match last and then read them in the `operator` definition
+OPERATOR: "([?:\!#\$%&*<=>@\\\^\|\-~/+⊕⊖⊗⊘.🌱🌸🍒≅⤓⇥⋈]|\xe2\x8a\xa0)+";
 ```
 
 ## Grammar
@@ -36,7 +37,7 @@ Order matter, this grammar will select the first match if multiple may match
 ## Atoms, Literals and Names
 ```ebnf
 module_name: (proper_name ["."])* proper_name;
-operator: OPERATOR | ".." | ":" | "-" | "?";
+operator: OPERATOR | ".." | ":" | "-" | "?" ;
 symbol: "(" operator ")" ;
 qualified_symbol: module_name ["."] symbol ;
 boolean: "True" | "False" ;
@@ -98,6 +99,7 @@ type_atom
     | "?" identifier
     | proper_name
     | identifier
+    | ["("] type_1 [")"]
     ;
 type_var: identifier;
 type: type_1 ("::" type)?;
