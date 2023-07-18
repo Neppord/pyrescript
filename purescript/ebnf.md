@@ -79,10 +79,11 @@ module
     ;
 export_list
     : ["("] [")"]
-    | ["("] [layout]* 
-        (exported_item [layout]* [","] [layout]*)* 
-        exported_item [layout]* 
-    [")"]
+    | ["("] (exported_item [","])* exported_item [")"]
+    | ["("] 
+        [SEP] [INDENT](exported_item [SEP]? [","] [SEP] ?)*
+        exported_item [SEP]?
+        [DEDENT] [SEP] [")"]
     ;
 layout: SEP | INDENT | DEDENT;
 exported_item
