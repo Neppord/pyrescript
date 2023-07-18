@@ -98,7 +98,7 @@ type_atom
     ;
 type_var: identifier;
 type: type_1 ("::" type)?;
-type_1: [FORALL] type_var+ "." type_2 | type_2 ;
+type_1: ([FORALL] type_var+ ".")? type_2 ;
 type_2
     : type_3 ARROW type_1
     | type_3 DUBBLE_ARROW type_1
@@ -170,10 +170,15 @@ declaration
     | <value_signature>
     | <value_declaration>
     | <foreign_declaration>
-#   | class_declaration
+    | <class_declaration>
 #   | derive_declaration
 #   | instance_declaration
     ;
+class_declaration: ["class"] proper_name type_var*  ["where"] 
+    [INDENT] (class_member [SEP])+
+    [DEDENT]
+    ;
+class_member: identifier double_colon type;
 foreign_declaration: "foreign" "import" identifier double_colon type;
 type_declaration: ["type"] proper_name binder_atom* "=" type;
 newtype_declaration: ["newtype"] proper_name binder_atom* "=" proper_name type_atom;
