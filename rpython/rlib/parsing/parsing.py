@@ -152,12 +152,11 @@ class LazyParseTable(object):
                     result = self.inner_match_non_terminal(curr, subsymbol)
                 else:
                     result = self.inner_match_terminal(curr, subsymbol)
-                node, next, error2 = result
+                node, curr, error2 = result
                 if node is None:
                     error = combine_errors(error, error2)
                     break
                 children.append(node)
-                curr = next
             else:
                 assert len(expansion) == len(children)
                 result = (Nonterminal(symbol, children), curr, error)
