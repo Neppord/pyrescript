@@ -5,7 +5,7 @@ import os
 import pytest
 
 from purescript.parser import lexer, to_ast, module_parser, expression_parser, do_block_parser, type_parser, \
-    binder_parser, declaration_parser
+    binder_parser, declaration_parser, compiled_module_parser
 from rpython.rlib.parsing.parsing import ParseError
 
 
@@ -84,7 +84,7 @@ def test_test_data(file_path):
         source = source_file.read()
     tokens = lexer.tokenize_with_name(file_path, source)
     try:
-        module_parser.parse(tokens)
+        compiled_module_parser.parse(tokens)
     except ParseError as e:
         message = e.nice_error_message(file_path, source, tokens)
         raise ValueError(message)

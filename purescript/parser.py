@@ -3,7 +3,7 @@ import os
 
 from purescript.lexer import IndentLexer
 from rpython.rlib.parsing.ebnfparse import parse_ebnf, check_for_missing_names
-from rpython.rlib.parsing.parsing import PackratParser
+from rpython.rlib.parsing.parsing import PackratParser, ParserCompiler
 
 EBNF = "\n"
 with open(os.path.join(os.path.dirname(__file__), "ebnf.md")) as ebnf_file:
@@ -39,5 +39,7 @@ type_parser = PackratParser(rules, "type")
 binder_parser = PackratParser(rules, "binder")
 do_block_parser = PackratParser(rules, "do_block")
 
+module_parser_compiler = ParserCompiler(module_parser)
+compiled_module_parser = module_parser_compiler.compile()()
 
 

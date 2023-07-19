@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from purescript.parser import lexer, module_parser
+from purescript.parser import lexer, module_parser, compiled_module_parser
 from rpython.rlib.parsing.parsing import ParseError
 
 base = os.path.join("e2e", "acme", ".spago")

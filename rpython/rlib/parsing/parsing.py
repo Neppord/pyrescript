@@ -331,7 +331,7 @@ class ParserCompiler(object):
             if expansionindex == %s:""" % (expansionindex,))
             if not expansion:
                 code.append("""\
-                result = (Nonterminal(symbol, []), i)
+                result = (Nonterminal(%(symbol)r, []), i)
                 self.matched_nonterminals%(number)s[i] = result
                 return result""" % vars())
                 continue
