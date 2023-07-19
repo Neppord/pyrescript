@@ -168,22 +168,22 @@ class LazyParseTable(object):
     def inner_match_terminal(self, start_index, symbol):
         try:
             input = self.input[start_index]
-            if self.terminal_equality(symbol, input):
-                result = (Symbol(symbol, input.source, input), start_index + 1, None)
-                self.matched[start_index, symbol] = result
-                return result
-            else:
-                # XXX hack unnice: handles the sort of token names that
-                # ebnfparse produces
-                if (symbol.startswith("__") and
-                        symbol.split("_")[2][0] in "0123456789"):
-                    expected = symbol.split("_")[-1]
-                else:
-                    expected = symbol
-                error = ErrorInformation(start_index, [expected])
-                return None, 0, error
         except IndexError:
             error = ErrorInformation(start_index)
+            return None, 0, error
+        if self.terminal_equality(symbol, input):
+            result = (Symbol(symbol, input.source, input), start_index + 1, None)
+            self.matched[start_index, symbol] = result
+            return result
+        else:
+            # XXX hack unnice: handles the sort of token names that
+            # ebnfparse produces
+            if (symbol.startswith("__") and
+                    symbol.split("_")[2][0] in "0123456789"):
+                expected = symbol.split("_")[-1]
+            else:
+                expected = symbol
+            error = ErrorInformation(start_index, [expected])
             return None, 0, error
 
     def terminal_equality(self, symbol, input):
