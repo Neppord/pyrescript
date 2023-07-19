@@ -140,12 +140,12 @@ class LazyParseTable(object):
         else:
             return self.inner_match_terminal(i, symbol)
 
-    def inner_match_non_terminal(self,i , symbol):
+    def inner_match_non_terminal(self, start_index , symbol):
         rule = self.parser.get_rule(symbol)
         subsymbol = None
         error = None
         for expansion in rule.expansions:
-            curr = i
+            curr = start_index
             children = []
             for subsymbol in expansion:
                 node, next, error2 = self.inner_match_symbol(curr, subsymbol)
@@ -157,17 +157,17 @@ class LazyParseTable(object):
             else:
                 assert len(expansion) == len(children)
                 result = (Nonterminal(symbol, children), curr, error)
-                self.matched[i, symbol] = result
+                self.matched[start_index, symbol] = result
                 return result
-        self.matched[i, symbol] = None, 0, error
+        self.matched[start_index, symbol] = None, 0, error
         return None, 0, error
 
-    def inner_match_terminal(self, i, symbol):
+    def inner_match_terminal(self, start_index, symbol):
         try:
-            input = self.input[i]
+            input = self.input[start_index]
             if self.terminal_equality(symbol, input):
-                result = (Symbol(symbol, input.source, input), i + 1, None)
-                self.matched[i, symbol] = result
+                result = (Symbol(symbol, input.source, input), start_index + 1, None)
+                self.matched[start_index, symbol] = result
                 return result
             else:
                 # XXX hack unnice: handles the sort of token names that
@@ -177,10 +177,10 @@ class LazyParseTable(object):
                     expected = symbol.split("_")[-1]
                 else:
                     expected = symbol
-                error = ErrorInformation(i, [expected])
+                error = ErrorInformation(start_index, [expected])
                 return None, 0, error
         except IndexError:
-            error = ErrorInformation(i)
+            error = ErrorInformation(start_index)
             return None, 0, error
     
     def terminal_equality(self, symbol, input):
