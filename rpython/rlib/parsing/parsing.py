@@ -3,6 +3,7 @@ from rpython.rlib.parsing.lexer import SourcePos
 from rpython.rlib.parsing.tree import Node, Symbol, Nonterminal
 from rpython.rlib.objectmodel import not_rpython
 
+
 class Rule(object):
     def __init__(self, nonterminal, expansions):
         self.nonterminal = nonterminal
@@ -11,8 +12,8 @@ class Rule(object):
     def getkey(self):
         return (self.nonterminal, tuple(self.expansions))
 
-#    def __hash__(self):
-#        return hash(self.getkey())
+    #    def __hash__(self):
+    #        return hash(self.getkey())
 
     def __eq__(self, other):
         return self.getkey() == other.getkey()
@@ -27,6 +28,7 @@ class Rule(object):
     def __repr__(self):
         return "Rule(%r, %r)" % (self.nonterminal, self.expansions)
 
+
 class LazyInputStream(object):
     def __init__(self, iterator):
         self.iterator = iter(iterator)
@@ -40,6 +42,7 @@ class LazyInputStream(object):
             except StopIteration:
                 raise IndexError("index out of range")
         return self.data[index]
+
 
 class ParseError(Exception):
     def __init__(self, source_pos, errorinformation):
@@ -97,11 +100,12 @@ class ErrorInformation(object):
     def __repr__(self):
         return "ErrorInformation(%r, %r)" % (self.pos, self.failure_reasons)
 
+
 def combine_errors(self, other):
     if self is None:
         return other
     if (other is None or self.pos > other.pos or
-        len(other.failure_reasons) == 0):
+            len(other.failure_reasons) == 0):
         return self
     elif other.pos > self.pos or len(self.failure_reasons) == 0:
         return other
@@ -113,6 +117,7 @@ def combine_errors(self, other):
                 already_there[reason] = True
                 failure_reasons.append(reason)
     return ErrorInformation(self.pos, failure_reasons)
+
 
 class LazyParseTable(object):
     def __init__(self, input, parser):
@@ -126,13 +131,14 @@ class LazyParseTable(object):
 
     def inner_match_symbol(self, i, symbol):
         if (i, symbol) in self.matched:
-            return self.matched[i, symbol]
+            result = self.matched[i, symbol]
         elif self.parser.is_nonterminal(symbol):
-            return self.inner_match_non_terminal(i, symbol)
+            result = self.inner_match_non_terminal(i, symbol)
         else:
-            return self.inner_match_terminal(i, symbol)
+            result = self.inner_match_terminal(i, symbol)
+        return result
 
-    def inner_match_non_terminal(self, start_index , symbol):
+    def inner_match_non_terminal(self, start_index, symbol):
         rule = self.parser.get_rule(symbol)
         subsymbol = None
         error = None
@@ -174,7 +180,7 @@ class LazyParseTable(object):
         except IndexError:
             error = ErrorInformation(start_index)
             return None, 0, error
-    
+
     def terminal_equality(self, symbol, input):
         return symbol == input.name
 
@@ -237,7 +243,8 @@ class PackratParser(object):
     def __repr__(self):
         from pprint import pformat
         return "%s%s" % (self.__class__.__name__,
-                         pformat((self.rules, self.startsymbol)), )
+                         pformat((self.rules, self.startsymbol)),)
+
 
 class ParserCompiler(object):
     def __init__(self, parser):
@@ -253,8 +260,8 @@ class ParserCompiler(object):
         self.make_fixed()
         miniglobals = globals().copy()
         miniglobals["baseclass"] = self.parser.__class__
-        #print "\n".join(self.allcode)
-        exec(py.code.Source("\n".join(self.allcode)).compile(), miniglobals)
+        # print "\n".join(self.allcode)
+        exec (py.code.Source("\n".join(self.allcode)).compile(), miniglobals)
         kls = miniglobals["CompileableParser"]
         # XXX
         parsetable = self.parser.parsetablefactory([], self.parser)
@@ -312,7 +319,7 @@ class ParserCompiler(object):
         for expansionindex, expansion in enumerate(rule.expansions):
             nextindex = expansionindex + 1
             code.append("""\
-            if expansionindex == %s:""" % (expansionindex, ))
+            if expansionindex == %s:""" % (expansionindex,))
             if not expansion:
                 code.append("""\
                 result = (Nonterminal(symbol, []), i)
@@ -371,4 +378,3 @@ class ParserCompiler(object):
             raise ParseError(None, self.input[result[1]])
         return result[0]""" % (vars()))
         self.allcode.extend(code)
-
