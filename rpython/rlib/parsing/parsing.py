@@ -125,13 +125,6 @@ class LazyParseTable(object):
         return self.inner_match_symbol(i, symbol)
 
     def inner_match_symbol(self, i, symbol):
-        """
-        :type i: int
-        :type i: str
-        :rtype tuple
-        """
-        #print i, symbol
-        #print self.matched.keys()
         if (i, symbol) in self.matched:
             return self.matched[i, symbol]
         elif self.parser.is_nonterminal(symbol):
