@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from purescript.parser import lexer, module_parser, compiled_module_parser
+from purescript.parser import lexer, module_parser, to_ast
 from rpython.rlib.parsing.parsing import ParseError
 
 base = os.path.join("e2e", "acme", ".spago")
@@ -46,7 +46,8 @@ def test_e2e(file_path):
         source = source_file.read()
     tokens = lexer.tokenize_with_name(file_path, source)
     try:
-        module_parser.parse(tokens)
+        tree = module_parser.parse(tokens)
+        ast = to_ast.visit_module(tree)
     except ParseError as e:
         message = e.nice_error_message(file_path, source, tokens)
         raise ValueError(message)
