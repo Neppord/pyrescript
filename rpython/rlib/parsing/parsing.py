@@ -158,6 +158,7 @@ class LazyParseTable(object):
                     break
                 children.append(node)
             else:
+                # node is not None or expansion is empty
                 assert len(expansion) == len(children)
                 result = (Nonterminal(symbol, children), current_index, error)
                 self.matched[start_index, symbol] = result
