@@ -163,6 +163,8 @@ class LazyParseTable(object):
                 result = (Nonterminal(symbol, children), current_index, error)
                 self.matched[start_index, symbol] = result
                 return result
+
+        # None of the expansions matched, set the symbol as not matching at start index
         self.matched[start_index, symbol] = None, 0, error
         return None, 0, error
 
