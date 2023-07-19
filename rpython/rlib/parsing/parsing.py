@@ -122,6 +122,9 @@ class LazyParseTable(object):
         self.errorinformation = {}
 
     def match_symbol(self, i, symbol):
+        return self.inner_match_symbol(i, symbol)
+
+    def inner_match_symbol(self, i, symbol):
         """
         :type i: int
         :type i: str
@@ -140,7 +143,7 @@ class LazyParseTable(object):
                 curr = i
                 children = []
                 for subsymbol in expansion:
-                    node, next, error2 = self.match_symbol(curr, subsymbol)
+                    node, next, error2 = self.inner_match_symbol(curr, subsymbol)
                     if node is None:
                         error = combine_errors(error, error2)
                         break
