@@ -134,8 +134,7 @@ class LazyParseTable(object):
         #print self.matched.keys()
         if (i, symbol) in self.matched:
             return self.matched[i, symbol]
-        error = None # for the annotator
-        if self.parser.is_nonterminal(symbol):
+        elif self.parser.is_nonterminal(symbol):
             return self.inner_match_non_terminal(i, symbol)
         else:
             return self.inner_match_terminal(i, symbol)
