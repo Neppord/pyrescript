@@ -350,6 +350,7 @@ class ParserCompiler(object):
                     last_failed_position = next
                     expansionindex = %(nextindex)s
                     continue
+                children.append(node)
                 curr = next""" % vars())
             code.append("""\
                 result = (Nonterminal(%(symbol)r, children), curr)
