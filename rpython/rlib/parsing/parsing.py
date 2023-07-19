@@ -146,7 +146,13 @@ class LazyParseTable(object):
             curr = start_index
             children = []
             for subsymbol in expansion:
-                node, next, error2 = self.inner_match_symbol(curr, subsymbol)
+                if (curr, subsymbol) in self.matched:
+                    result = self.matched[curr, subsymbol]
+                elif self.parser.is_nonterminal(subsymbol):
+                    result = self.inner_match_non_terminal(curr, subsymbol)
+                else:
+                    result = self.inner_match_terminal(curr, subsymbol)
+                node, next, error2 = result
                 if node is None:
                     error = combine_errors(error, error2)
                     break
