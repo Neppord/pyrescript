@@ -176,16 +176,17 @@ class LazyParseTable(object):
             self.matched[start_index, symbol] = result
             return result
         else:
-            # XXX hack unnice: handles the sort of token names that
-            # ebnfparse produces
-            if (symbol.startswith("__") and
-                    symbol.split("_")[2][0] in "0123456789"):
-                expected = symbol.split("_")[-1]
-            else:
-                expected = symbol
+            expected = self.human_name(symbol)
             error = ErrorInformation(start_index, [expected])
             return None, 0, error
 
+    def human_name(self, symbol):
+        # XXX hack unnice: handles the sort of token names that
+        # ebnfparse produces
+        if (symbol.startswith("__") and symbol.split("_")[2][0] in "0123456789"):
+            return symbol.split("_")[-1]
+        else:
+            return symbol
     def terminal_equality(self, symbol, input):
         return symbol == input.name
 
