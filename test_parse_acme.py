@@ -15,24 +15,32 @@ slow = {
     os.path.join(base, "css-frameworks", "v1.0.1", "src", "CSSFrameworks", "Primer.purs"),
     os.path.join(base, "css-frameworks", "v1.0.1", "src", "CSSFrameworks", "RemixIcon.purs"),
     os.path.join(base, "css-frameworks", "v1.0.1", "src", "CSSFrameworks", "BootstrapIcons.purs"),
+    os.path.join(base, "css-frameworks", "v1.0.1", "src", "CSSFrameworks", "Bootstrap.purs"),
     os.path.join(base, "css-frameworks", "v1.0.1", "src", "CSSFrameworks", "BoxIcons.purs"),
     os.path.join(base, "react-basic-dom", "v6.1.0", "src", "React", "Basic", "DOM", "Simplified", "Generated.purs"),
     os.path.join(base, "react-basic-dom", "v6.1.0", "src", "React", "Basic", "DOM", "Generated.purs"),
     os.path.join(base, "elmish-html", "v0.8.1", "src", "Elmish", "HTML", "Generated.purs"),
+    os.path.join(base, "abc-parser", "v2.0.0", "test", "Midi.purs"),
+    os.path.join(base, "abc-parser", "v2.0.0", "test", "KeySignature.purs"),
 }
 dirname = os.path.dirname(__file__)
-
-
-@pytest.mark.parametrize("file_path", {
-    pytest.param(os.path.relpath(f), mark=pytest.mark.skipif(os.path.relpath(f) in slow, "slow test"))
-    for glob_expression in [
+glob_expressions = [
         os.path.join(dirname, "e2e", "acme", ".spago", "*", "*", "*", "*.purs"),
         os.path.join(dirname, "e2e", "acme", ".spago", "*", "*", "*", "*", "*.purs"),
         os.path.join(dirname, "e2e", "acme", ".spago", "*", "*", "*", "*", "*", "*.purs"),
         os.path.join(dirname, "e2e", "acme", ".spago", "*", "*", "*", "*", "*", "*", "*.purs"),
         os.path.join(dirname, "e2e", "acme", ".spago", "*", "*", "*", "*", "*", "*", "*", "*.purs"),
-    ] for f in glob.glob(glob_expression)
-})
+    ]
+parameters = []
+for glob_expression in glob_expressions:
+    for f in glob.glob(glob_expression):
+        file_path_ = os.path.relpath(f)
+        parameters.append(pytest.param(
+            file_path_,
+            marks=pytest.mark.skipif(file_path_ in slow, reason="slow test")
+        ))
+
+@pytest.mark.parametrize("file_path", parameters)
 def test_e2e(file_path):
     with open(file_path) as source_file:
         source = source_file.read()
