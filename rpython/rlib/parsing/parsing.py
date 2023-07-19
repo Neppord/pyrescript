@@ -140,18 +140,18 @@ class LazyParseTable(object):
 
     def inner_match_non_terminal(self, start_index, symbol):
         rule = self.parser.get_rule(symbol)
-        subsymbol = None
+        sub_symbol = None
         error = None
         for expansion in rule.expansions:
             current_index = start_index
             children = []
-            for subsymbol in expansion:
-                if (current_index, subsymbol) in self.matched:
-                    result = self.matched[current_index, subsymbol]
-                elif self.parser.is_nonterminal(subsymbol):
-                    result = self.inner_match_non_terminal(current_index, subsymbol)
+            for sub_symbol in expansion:
+                if (current_index, sub_symbol) in self.matched:
+                    result = self.matched[current_index, sub_symbol]
+                elif self.parser.is_nonterminal(sub_symbol):
+                    result = self.inner_match_non_terminal(current_index, sub_symbol)
                 else:
-                    result = self.inner_match_terminal(current_index, subsymbol)
+                    result = self.inner_match_terminal(current_index, sub_symbol)
                 node, current_index, error2 = result
                 if node is None:
                     error = combine_errors(error, error2)
