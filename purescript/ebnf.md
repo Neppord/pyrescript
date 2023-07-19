@@ -223,6 +223,7 @@ expression_atom
     | ["{"] (record_label [","]) * record_label ["}"]
     | ["("] expression [")"]
     | ["("] expression [")"]
+    | [SEP] [INDENT] expression [SEP] [DEDENT]
     ;
 
 record_label: identifier [":"] expression ;
@@ -320,13 +321,7 @@ value_signature
         [SEP] [INDENT] type [SEP]
         [DEDENT]
     ;
-value_declaration 
-    : identifier binder_atom* ["="] expression_where?
-    | identifier binder_atom* ["="]
-        [SEP] [INDENT] expression [SEP]
-        [DEDENT]
-    ;
-
+value_declaration : identifier binder_atom* ["="] expression_where? ;
 data_head_declaration: ["data"] proper_name type_parameter*;
 data_declaration: ["data"] proper_name type_parameter* ["="]
     (data_constructor ["|"])* data_constructor ;

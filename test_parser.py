@@ -5,7 +5,7 @@ import os
 import pytest
 
 from purescript.parser import lexer, to_ast, module_parser, expression_parser, do_block_parser, type_parser, \
-    binder_parser
+    binder_parser, declaration_parser
 from rpython.rlib.parsing.parsing import ParseError
 
 
@@ -22,7 +22,7 @@ def test_parse_type(type_):
 ])
 def test_parse_declaration(declaration):
     tokens = lexer.tokenize_with_name("declaration", declaration)
-    expression_parser.parse(tokens)
+    declaration_parser.parse(tokens)
 
 
 do_expression = """\
@@ -38,6 +38,7 @@ in x
 @pytest.mark.parametrize("expression", [
     "if a then b else c",
     "(1)",
+    """f\n  1""",
     let_expression,
     do_expression,
     """ado a <- x in a""",
