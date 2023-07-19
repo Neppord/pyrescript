@@ -138,7 +138,7 @@ class LazyParseTable(object):
         if self.parser.is_nonterminal(symbol):
             return self.inner_match_non_terminal(i, symbol)
         else:
-            return self.inner_match_terminal(i, symbol, error)
+            return self.inner_match_terminal(i, symbol)
 
     def inner_match_non_terminal(self,i , symbol):
         rule = self.parser.get_rule(symbol)
@@ -162,11 +162,11 @@ class LazyParseTable(object):
         self.matched[i, symbol] = None, 0, error
         return None, 0, error
 
-    def inner_match_terminal(self, i, symbol, error):
+    def inner_match_terminal(self, i, symbol):
         try:
             input = self.input[i]
             if self.terminal_equality(symbol, input):
-                result = (Symbol(symbol, input.source, input), i + 1, error)
+                result = (Symbol(symbol, input.source, input), i + 1, None)
                 self.matched[i, symbol] = result
                 return result
             else:
