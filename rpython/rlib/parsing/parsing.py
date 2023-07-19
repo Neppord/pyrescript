@@ -143,23 +143,23 @@ class LazyParseTable(object):
         subsymbol = None
         error = None
         for expansion in rule.expansions:
-            curr = start_index
+            current_index = start_index
             children = []
             for subsymbol in expansion:
-                if (curr, subsymbol) in self.matched:
-                    result = self.matched[curr, subsymbol]
+                if (current_index, subsymbol) in self.matched:
+                    result = self.matched[current_index, subsymbol]
                 elif self.parser.is_nonterminal(subsymbol):
-                    result = self.inner_match_non_terminal(curr, subsymbol)
+                    result = self.inner_match_non_terminal(current_index, subsymbol)
                 else:
-                    result = self.inner_match_terminal(curr, subsymbol)
-                node, curr, error2 = result
+                    result = self.inner_match_terminal(current_index, subsymbol)
+                node, current_index, error2 = result
                 if node is None:
                     error = combine_errors(error, error2)
                     break
                 children.append(node)
             else:
                 assert len(expansion) == len(children)
-                result = (Nonterminal(symbol, children), curr, error)
+                result = (Nonterminal(symbol, children), current_index, error)
                 self.matched[start_index, symbol] = result
                 return result
         self.matched[start_index, symbol] = None, 0, error
