@@ -136,28 +136,31 @@ class LazyParseTable(object):
             return self.matched[i, symbol]
         error = None # for the annotator
         if self.parser.is_nonterminal(symbol):
-            rule = self.parser.get_rule(symbol)
-            subsymbol = None
-            error = None
-            for expansion in rule.expansions:
-                curr = i
-                children = []
-                for subsymbol in expansion:
-                    node, next, error2 = self.inner_match_symbol(curr, subsymbol)
-                    if node is None:
-                        error = combine_errors(error, error2)
-                        break
-                    children.append(node)
-                    curr = next
-                else:
-                    assert len(expansion) == len(children)
-                    result = (Nonterminal(symbol, children), curr, error)
-                    self.matched[i, symbol] = result
-                    return result
-            self.matched[i, symbol] = None, 0, error
-            return None, 0, error
+            return self.inner_match_non_terminal(i, symbol)
         else:
             return self.inner_match_terminal(i, symbol, error)
+
+    def inner_match_non_terminal(self,i , symbol):
+        rule = self.parser.get_rule(symbol)
+        subsymbol = None
+        error = None
+        for expansion in rule.expansions:
+            curr = i
+            children = []
+            for subsymbol in expansion:
+                node, next, error2 = self.inner_match_symbol(curr, subsymbol)
+                if node is None:
+                    error = combine_errors(error, error2)
+                    break
+                children.append(node)
+                curr = next
+            else:
+                assert len(expansion) == len(children)
+                result = (Nonterminal(symbol, children), curr, error)
+                self.matched[i, symbol] = result
+                return result
+        self.matched[i, symbol] = None, 0, error
+        return None, 0, error
 
     def inner_match_terminal(self, i, symbol, error):
         try:
