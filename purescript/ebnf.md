@@ -129,7 +129,6 @@ row
     | "|" type
     ;
 row_label: label double_colon type;
-type_var: identifier;
 type_var_binding_plain
     : identifier
     | "(" identifier double_colon type")"
