@@ -288,7 +288,7 @@ infix
 derive_declaration: ["derive"] ["instance"] (identifier double_colon)? type;
 derive_newtype_declaration: ["derive"] ["newtype"] ["instance"] (identifier double_colon)? type;
 instance_head
-    : ["instance"] ([identifier] double_colon)? (constraints DOUBLE_ARROW)? proper_name type_atom*
+    : ["instance"] ([identifier] double_colon)? (constraints DOUBLE_ARROW)? qualified_proper_name type_atom*
     ;
 instance_declaration
     : instance_head ["where"] 
