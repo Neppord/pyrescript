@@ -6,3 +6,6 @@ class Const f where
 
 class Const f <= MyConst f where
     my_value :: f -> Int
+
+class Const f <= OtherConst f
+
