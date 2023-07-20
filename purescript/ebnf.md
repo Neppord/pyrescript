@@ -228,9 +228,6 @@ let_binding
 
 
 backtick_expression: "`" identifier "`";
-guarded_declaration_expression
-    : guard ["="] expression_where
-    ;
 expression_where
     : expression ["where"]
         [INDENT] (let_binding [SEP])+
@@ -310,7 +307,7 @@ type_declaration : ["type"] proper_name type_var_binding_plain* layout* ["="] ty
 newtype_signature: ["newtype"] proper_name double_colon type;
 newtype_declaration: ["newtype"] proper_name type_var_binding_plain* ["="] proper_name type_atom;
 value_signature : identifier [double_colon] type ;
-value_declaration : identifier binder_atom* ["="] expression_where? ;
+value_declaration : identifier binder_atom* guarded_declaration ;
 data_head_declaration: ["data"] proper_name type_var_binding_plain*;
 data_signature: ["data"] proper_name double_colon type;
 data_declaration: ["data"] proper_name type_parameter* ["="]
@@ -318,8 +315,9 @@ data_declaration: ["data"] proper_name type_parameter* ["="]
 data_constructor: proper_name type_atom* ;
 guarded_declaration
     : ["="] expression_where
-    | guarded_declaration_expression+
+    | (guard ["="] expression_where)+
     ;
+
 constraints
     : constraint
     | "(" (constraint ",")? constraint ")"
