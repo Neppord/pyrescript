@@ -30,24 +30,35 @@ class NiceLexerError(Exception):
         return "\n".join(result)
 
 
+def add_sep(out, pos):
+    if not out or out[-1].name not in ["SEP", "INDENT"]:
+        out.append(Token("SEP", "", pos))
+
+
+def add_dedent(out, pos):
+    out.append(Token("DEDENT", "", pos))
+
+def close(out, pos):
+    add_sep(out, pos)
+    add_dedent(out, pos)
+    add_sep(out, pos)
 
 BLOCK_OWNERS = ["do", "ado", "let", "where", "of"]
+
+
 def layout_blocks(tokens):
     blocks = []
     out = []
     indent = 0
     for index, token in enumerate(tokens):
         name = human_name(token)
+        pos = token.source_pos
         if name == "LINE_INDENT":
             if indent == level(token):
-                if not out or out[-1].name not in ["SEP", "INDENT"]:
-                    out.append(Token("SEP", "", token.source_pos))
+                add_sep(out, pos)
             elif indent > level(token):
                 while indent > level(token):
-                    if not out or out[-1].name not in ["SEP", "INDENT"]:
-                        out.append(Token("SEP", "", token.source_pos))
-                    out.append(Token("DEDENT", "", token.source_pos))
-                    out.append(Token("SEP", "", token.source_pos))
+                    close(out, pos)
                     if blocks:
                         indent = blocks.pop()
                     else:
@@ -57,14 +68,10 @@ def layout_blocks(tokens):
                 pass
         elif name == "EOF":
             if indent == 0:
-                if not out or out[-1].name not in ["SEP", "INDENT"]:
-                    out.append(Token("SEP", "", token.source_pos))
+                add_sep(out, pos)
             elif indent > 0:
                 while indent > 0:
-                    if not out or out[-1].name not in ["SEP", "INDENT"]:
-                        out.append(Token("SEP", "", token.source_pos))
-                    out.append(Token("DEDENT", "", token.source_pos))
-                    out.append(Token("SEP", "", token.source_pos))
+                    close(out, pos)
                     if blocks:
                         indent = blocks.pop()
                     else:
@@ -78,10 +85,7 @@ def layout_blocks(tokens):
             next_indent = level(next_token)
             if indent != 0 and next_indent == indent:
                 # these blocks are siblings
-                if not out or out[-1].name not in ["SEP", "INDENT"]:
-                    out.append(Token("SEP", "", token.source_pos))
-                out.append(Token("DEDENT", "", token.source_pos))
-                out.append(Token("SEP", "", token.source_pos))
+                close(out, pos)
             out.append(token)
             if human_name(next_token) == "LINE_INDENT" and next_indent >= indent:
                 if next_indent != indent or indent == 0:
@@ -110,6 +114,7 @@ def level(line_indent):
         else:
             ret += 1
     return ret
+
 
 class IndentLexer(Lexer):
     def tokenize_with_name(self, name, text):
