@@ -66,7 +66,7 @@ label: identifier | string;
 module
     : [SEP]? ["module"] [SEP]? module_name [SEP]? export_list? [SEP]? ["where"] [SEP]
         (import_declaration [SEP])*
-        (declaration [SEP]?)*
+        ((declaration [SEP] ["else"])* declaration [SEP]?)*
     [EOF]
     ;
    
