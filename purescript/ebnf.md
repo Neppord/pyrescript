@@ -257,8 +257,8 @@ declaration
     | <value_declaration>
     | <foreign_declaration>
     | <foreign_data_declaration>
-    | <class_declaration>
     | <class_signature>
+    | <class_declaration>
     | <derive_declaration>
     | <derive_newtype_declaration>
     | <instance_declaration>

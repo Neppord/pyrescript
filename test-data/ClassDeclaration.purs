@@ -1,5 +1,6 @@
 module ClassDeclaration where
 
+class Const :: Type
 class Const f where
     value :: f -> Int
 
