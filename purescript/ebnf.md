@@ -54,6 +54,8 @@ qual_op: (module_name ["."])? OPERATOR;
 qualified_identifier: (module_name ["."])? identifier;
 hole: ["?"] <identifier>;
 number: INTEGER | NUMBER;
+string: STRING| MULTILINE_STRING ;
+label: identifier | string;
 ```
 ## Module Layout
 ```ebnf
@@ -113,10 +115,10 @@ type_atom
     | ["("] [")"]
     ;
 row
-    : (row_lable [SEP]? [","] [SEP]?)* row_lable [SEP]? ("|" type)?
+    : (row_label [SEP]? [","] [SEP]?)* row_label [SEP]? ("|" type)?
     | "|" type
     ;
-row_lable: identifier double_colon type;
+row_label: label double_colon type;
 type_var: identifier;
 type: type_1 ("::" type)?;
 type_1: ([FORALL] type_var+ ["."])? type_2 ;
