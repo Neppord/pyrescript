@@ -322,7 +322,6 @@ class ParserCompiler(object):
         if i in self.matched_nonterminals%(number)s:
             return self.matched_nonterminals%(number)s[i]
         last_failed_position = 0
-        subsymbol = None
         expansionindex = 0
         while 1:""" % vars())
         for expansionindex, expansion in enumerate(rule.expansions):
