@@ -322,7 +322,7 @@ guarded_declaration
 
 constraints
     : constraint
-    | "(" (constraint ",")? constraint ")"
+    | "(" (constraint ",")* constraint ")"
     ;
 constraint
     : qualified_proper_name type_atom*
