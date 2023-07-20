@@ -147,7 +147,7 @@ type_var_binding
     | "@" identifier
     | "(" "@" identifier double_colon type")"
     ;
-type: type_1 ("::" type_1)*;
+type: type_1 (double_colon type_1)*;
 type_1: ([FORALL] type_var_binding+ ["."])* type_2 ;
 type_2
     : type_3 ARROW type_1
@@ -162,7 +162,7 @@ type_4: type_atom+ | "-" INTEGER ;
 
 ```ebnf
 expression 
-    : expression_1 ("::" type)?
+    : expression_1 (double_colon type)?
     ;
 expression_1
     : (expression_2 qual_op)* expression_2
