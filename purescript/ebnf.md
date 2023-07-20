@@ -46,7 +46,7 @@ symbol: "(" operator ")" ;
 qualified_symbol: module_name ["."] symbol ;
 boolean: "True" | "False" ;
 double_colon: "::" | "∷";
-identifier: <LOWER> | <"as">;
+identifier: <LOWER> | <"as"> | <"kind">;
 proper_name: <PROPER_NAME> | <"True"> | <"False">;
 qualified_proper_name
     : module_name
