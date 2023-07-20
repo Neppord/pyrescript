@@ -37,6 +37,7 @@ LOWER: "[a-z_ηℏεµα]([A-Za-z0-9_ηℏεµα']|\xca\x94)*";
 Order matter, this grammar will select the first match if multiple may match
 
 ## Atoms, Literals and Names
+
 ```ebnf
 module_name: (proper_name ["."])* proper_name;
 operator: OPERATOR | ".." | ":" | "-" | "?" ;
@@ -57,7 +58,9 @@ number: INTEGER | NUMBER;
 string: STRING| MULTILINE_STRING ;
 label: identifier | string;
 ```
+
 ## Module Layout
+
 ```ebnf
 module
     : [SEP]? ["module"] [SEP]? module_name [SEP]? export_list? [SEP]? ["where"] [SEP]
@@ -82,7 +85,9 @@ exported_item
     | identifier
     ;
 ```
+
 ## Import declaration
+
 ```ebnf
 import_declaration: ["import"] module_name "hiding"? import_list? (["as"] module_name)?;
 import_list: ["("] ( import_item [","])* import_item [")"];
@@ -101,6 +106,7 @@ members
 ```
 
 ## Type
+
 ```ebnf
 type_parameter: identifier ;
 type_atom
@@ -120,6 +126,16 @@ row
     ;
 row_label: label double_colon type;
 type_var: identifier;
+type_var_binding_plain
+    : identifier
+    | "(" identifier double_colon type")"
+    ;
+type_var_binding
+    : identifier
+    | "(" identifier double_colon type")"
+    | "@" identifier
+    | "(" "@" identifier double_colon type")"
+    ;
 type: type_1 ("::" type)?;
 type_1: ([FORALL] type_var+ ["."])? type_2 ;
 type_2
@@ -132,8 +148,8 @@ type_4: type_5 | "-" INTEGER ;
 type_5: type_atom+ ;
 ```
 
-
 ## Expression
+
 ```ebnf
 expression 
     : expression_1 ("::" type)?
@@ -221,6 +237,7 @@ pattern_guard:(binder LEFT_ARROW)? expression;
 ```
 
 ## Declarations
+
 ```ebnf
 declaration
     : <data_declaration>
@@ -264,12 +281,12 @@ class_member: identifier [double_colon] type;
 foreign_declaration: ["foreign"] ["import"] identifier [double_colon] type;
 foreign_data_declaration: ["foreign"] ["import"] ["data"] proper_name [double_colon] type;
 type_declaration
-    : ["type"] proper_name binder_atom* layout* ["="] type
+    : ["type"] proper_name type_var_binding_plain* layout* ["="] type
     ;
-newtype_declaration: ["newtype"] proper_name binder_atom* ["="] proper_name type_atom;
+newtype_declaration: ["newtype"] proper_name type_var_binding_plain* ["="] proper_name type_atom;
 value_signature : identifier [double_colon] type ;
 value_declaration : identifier binder_atom* ["="] expression_where? ;
-data_head_declaration: ["data"] proper_name type_parameter*;
+data_head_declaration: ["data"] proper_name type_var_binding_plain*;
 data_declaration: ["data"] proper_name type_parameter* ["="]
     (data_constructor ["|"])* data_constructor ;
 data_constructor: proper_name type_atom* ;
