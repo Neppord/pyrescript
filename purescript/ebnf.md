@@ -296,6 +296,7 @@ instance_declaration
     : instance_head ["where"] 
         [INDENT] (value_declaration [SEP])+
         [DEDENT]
+    | instance_head ["where"] value_declaration
     | instance_head
     ;
 instance_binding
