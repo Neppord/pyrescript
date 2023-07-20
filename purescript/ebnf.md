@@ -316,7 +316,7 @@ data_declaration: ["data"] proper_name type_parameter* ["="]
 data_constructor: proper_name type_atom* ;
 guarded_declaration
     : ["="] expression_where
-    | guarded_declaration_expression
+    | guarded_declaration_expression+
     ;
 constraints
     : constraint
