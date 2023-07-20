@@ -41,7 +41,7 @@ Order matter, this grammar will select the first match if multiple may match
 
 ```ebnf
 module_name: (proper_name ["."])* proper_name;
-operator: <OPERATOR> | <".."> | <":"> | <"-"> | <"?"> ;
+operator: <OPERATOR> | <".."> | <":"> | <"-"> | <"?"> | <LEFT_DOUBLE_ARROW> ;
 symbol: "(" operator ")" ;
 qualified_symbol: (module_name ["."])? symbol ;
 boolean: "True" | "False" ;
@@ -99,8 +99,7 @@ import_item
     | "kind" proper_name
     | symbol
     | identifier
-    | proper_name ["("] members [")"]
-    | proper_name
+    | proper_name (["("] members [")"])?
     ;
 members
     : ".."
