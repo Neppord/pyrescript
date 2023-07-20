@@ -249,6 +249,8 @@ class_declaration
         (proper_name type_var* LEFT_DOUBLE_ARROW)?
         # Class name
          proper_name type_var*
+        # functional dependencies
+        ("|" type_var ARROW type_var )?
     ["where"] 
     [INDENT] (class_member [SEP])+
     [DEDENT]
