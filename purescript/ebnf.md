@@ -249,7 +249,7 @@ declaration
     | <data_head_declaration>
     | <newtype_declaration>
     | <newtype_signature>
-#   | type_role_declaration
+    | <type_role_declaration>
 #   | type_signature_declaration
     | <type_declaration>
     | <value_signature>
@@ -263,6 +263,8 @@ declaration
     | <instance_declaration>
     | <fixity>
     ;
+type_role_declaration: "type" "role" proper_name role* ;
+role: "nominal" | "representational" | "phantom";
 fixity
     : infix INTEGER qualified_identifier ["as"] operator
     | infix INTEGER qualified_proper_name ["as"] operator
