@@ -241,7 +241,7 @@ let_binding
     ;
 
 
-backtick_expression: "`" identifier "`";
+backtick_expression: ["`"] identifier ["`"];
 expression_where
     : expression ["where"]
         [INDENT] (let_binding [SEP])+
