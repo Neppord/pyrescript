@@ -43,17 +43,14 @@ Order matter, this grammar will select the first match if multiple may match
 module_name: (proper_name ["."])* proper_name;
 operator: <OPERATOR> | <".."> | <":"> | <"-"> | <"?"> | <LEFT_DOUBLE_ARROW> ;
 symbol: "(" operator ")" ;
-qualified_symbol: (module_name ["."])? symbol ;
+qualified_symbol: (proper_name ["."])* symbol ;
 boolean: "True" | "False" ;
 double_colon: "::" | "∷";
 identifier: <LOWER> | <"as"> | <"kind"> | <"type">;
 proper_name: <PROPER_NAME> | <"True"> | <"False">;
-qualified_proper_name
-    : module_name
-    | proper_name
-    ;
+qualified_proper_name: (proper_name ["."])* proper_name ;
 qual_op: (module_name ["."])? operator;
-qualified_identifier: (module_name ["."])? identifier;
+qualified_identifier: (proper_name ["."])* identifier;
 hole: ["?"] <identifier>;
 number: INTEGER | NUMBER;
 string: STRING| MULTILINE_STRING ;

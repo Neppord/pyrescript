@@ -4,6 +4,7 @@ import Prelude
 
 import Effect (Effect)
 import Effect.Console (log)
+import Data.Maybe (maybe) as Data.Maybe
 
 main :: Effect Unit
 main = log "hello world!"
@@ -37,3 +38,5 @@ value_from_where_same_line =
     x
     where
     x = 1
+
+int_maybe = Data.Maybe.maybe 1
