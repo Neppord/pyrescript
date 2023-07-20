@@ -169,7 +169,7 @@ expression_4
     : (expression_5 ("@" type_atom)?)+
     ;
 expression_5
-    : ["if"] expression ["then"] expression ["else"] expression
+    : ["if"] expression [SEP]? ["then"] expression [SEP]? ["else"] expression
     | [do] do_statements
     | ["ado"] do_statement ["in"] expression
     | ["ado"] do_statements [SEP] ["in"] expression
