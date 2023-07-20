@@ -25,6 +25,7 @@ FORALL: "forall|∀";
 DOUBLE_ARROW: "=>|⇒";
 LEFT_ARROW: "<-|←";
 LEFT_DOUBLE_ARROW: "<=|⇐";
+LAMBDA: "[\\]";
 # let operators match last and then read them in the `operator` definition
 OPERATOR: "([?:\!#\$%&*<=>@\\\^\|\-~/+⊕⊖⊗⊘.🌱🌸🍒≅⤓⇥⋈]|\xe2\x8a\xa0)+";
 # let lower match after all keywords and ad them back efter
@@ -173,6 +174,7 @@ expression_5
     | ["do"] do_statements
     | ["ado"] do_statement ["in"] expression
     | ["ado"] do_statements [SEP] ["in"] expression
+    | [LAMBDA] binder_atom* ARROW expression 
     | ["let"] [INDENT] (let_binding [SEP])+ [DEDENT]
     | ["case"] (expression [","])* expression ["of"]
         [INDENT] ((binder [","])* binder ARROW expression [SEP])+
