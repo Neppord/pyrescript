@@ -104,3 +104,22 @@ def test_layout_do_block():
         Token("DEDENT", "", pos), Token("SEP", "", pos),
     ]
     assert tokens == expect
+
+def test_layout_do_block_same_level_with_where():
+    pos = SourcePos(0, 0, 0)
+    tokens = layout_blocks([
+        Token("LINE_INDENT", "\n  ", pos), Token("do", "do", pos),
+        Token("LINE_INDENT", "\n  ", pos), Token("LOWER", "a", pos),
+        Token("LINE_INDENT", "\n  ", pos), Token("where", "where", pos),
+        Token("LINE_INDENT", "\n  ", pos), Token("LOWER", "a", pos), Token("=", "=", pos), Token("INTEGER", "1", pos),
+        Token("LINE_INDENT", "\n", pos),
+    ])
+    expect = [
+        Token("do", "do", pos),
+        Token("INDENT", "", pos), Token("LOWER", "a", pos), Token("SEP", "", pos),
+        Token("DEDENT", "", pos), Token("SEP", "", pos),
+        Token("where", "where", pos),
+        Token("INDENT", "", pos), Token("LOWER", "a", pos), Token("=", "=", pos), Token("INTEGER", "1", pos), Token("SEP", "", pos),
+        Token("DEDENT", "", pos), Token("SEP", "", pos),
+    ]
+    assert tokens == expect

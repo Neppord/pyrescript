@@ -65,7 +65,7 @@ do: (module_name ["."])? "do" ;
 
 ```ebnf
 module
-    : [SEP]? ["module"] [SEP]? module_name [SEP]? export_list? [SEP]? ["where"] [SEP]
+    : [SEP]? ["module"] [SEP]? module_name [SEP]? export_list? [SEP]? ["where"] [INDENT]
         (import_declaration [SEP])*
         ((declaration [SEP] ["else"])* declaration [SEP]?)*
     [EOF]
@@ -246,6 +246,7 @@ expression_where
     : expression [SEP]? ["where"]
         [INDENT] (let_binding [SEP])+
         [DEDENT] 
+    | expression ["where"] let_binding
     | expression ["where"] let_binding
     | expression
     ;

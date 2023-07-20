@@ -31,6 +31,7 @@ class NiceLexerError(Exception):
 
 
 
+BLOCK_OWNERS = ["do", "ado", "let", "where", "of"]
 def layout_blocks(tokens):
     blocks = []
     out = []
@@ -72,12 +73,19 @@ def layout_blocks(tokens):
             else:
                 pass
             out.append(token)
-        elif name in ["do", "ado", "let", "where", "of"]:
-            out.append(token)
+        elif name in BLOCK_OWNERS:
             next_token = tokens[index + 1]
             next_indent = level(next_token)
-            if human_name(next_token) == "LINE_INDENT" and next_indent > indent:
-                blocks.append(indent)
+            if indent != 0 and next_indent == indent:
+                # these blocks are siblings
+                if not out or out[-1].name not in ["SEP", "INDENT"]:
+                    out.append(Token("SEP", "", token.source_pos))
+                out.append(Token("DEDENT", "", token.source_pos))
+                out.append(Token("SEP", "", token.source_pos))
+            out.append(token)
+            if human_name(next_token) == "LINE_INDENT" and next_indent >= indent:
+                if next_indent != indent or indent == 0:
+                    blocks.append(indent)
                 indent = next_indent
                 out.append(Token("INDENT", "", next_token.source_pos))
         else:

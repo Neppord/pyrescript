@@ -8,3 +8,8 @@ y =
     [ do
         [1]
     ]
+
+layout = do
+  [1]
+  where
+  x= 1
