@@ -273,9 +273,9 @@ class_declaration
          proper_name type_var*
         # functional dependencies
         ("|" type_var ARROW type_var )?
-    ["where"] 
+    (["where"] 
     [INDENT] (class_member [SEP])+
-    [DEDENT]
+    [DEDENT])?
     ;
 class_member: identifier [double_colon] type;
 foreign_declaration: ["foreign"] ["import"] identifier [double_colon] type;
