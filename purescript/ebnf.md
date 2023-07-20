@@ -117,6 +117,7 @@ type_atom
     | qualified_proper_name
     | identifier
     | qualified_symbol
+    | ["("] ARROW [")"]
     | ["("] type_1 [")"]
     | ["{"] row ["}"]
     | ["{"] ["}"]
