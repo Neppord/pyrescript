@@ -22,7 +22,7 @@ INTEGER: "\d+";
 NUMBER: "\d+\.\d+";
 CHAR: "'(\\x[^']{1,4}|\\\\'|\\\\|\\.|[^']{1,2}|\xe2\x99\xa5|☺|\xe6\x9c\xac|\xe3\x80\x80|日|２|③|—|語)'";
 FORALL: "forall|∀";
-DUBBLE_ARROW: "=>|⇒";
+DOUBLE_ARROW: "=>|⇒";
 LEFT_ARROW: "<-|←";
 LEFT_DOUBLE_ARROW: "<=|⇐";
 # let operators match last and then read them in the `operator` definition
@@ -140,7 +140,7 @@ type: type_1 ("::" type)?;
 type_1: ([FORALL] type_var+ ["."])? type_2 ;
 type_2
     : type_3 ARROW type_1
-    | type_3 DUBBLE_ARROW type_1
+    | type_3 DOUBLE_ARROW type_1
     | type_3
     ;
 type_3: (type_4 qual_op)* type_4 ;
@@ -256,7 +256,7 @@ declaration
     | <instance_declaration>
     ;
 derive_declaration: ["derive"] ["instance"] (identifier double_colon)? type;
-instance_declaration: ["instance"] ([identifier] double_colon)? proper_name type_atom* ["where"] 
+instance_declaration: ["instance"] ([identifier] double_colon)? (constraints DOUBLE_ARROW)? proper_name type_atom* ["where"] 
     [INDENT] (value_declaration [SEP])+
     [DEDENT]
     ;
@@ -268,11 +268,11 @@ instance_binding
 class_declaration
     : ["class"] 
         # Super class
-        (proper_name type_var* LEFT_DOUBLE_ARROW)?
+        (constraints LEFT_DOUBLE_ARROW)?
         # Class name
-         proper_name type_var*
+         proper_name type_var_binding*
         # functional dependencies
-        ("|" type_var ARROW type_var )?
+        ("|" (identifier* ARROW identifier+ [","])*  identifier* ARROW identifier+)?
     (["where"] 
     [INDENT] (class_member [SEP])+
     [DEDENT])?
@@ -293,6 +293,14 @@ data_constructor: proper_name type_atom* ;
 guarded_declaration
     : ["="] expression_where
     | guarded_declaration_expression
+    ;
+constraints
+    : constraint
+    | "(" (constraint ",")? constraint ")"
+    ;
+constraint
+    : qualified_proper_name type_atom*
+    | "(" constraint ")"
     ;
 ```
 
