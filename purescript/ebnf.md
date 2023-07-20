@@ -246,6 +246,7 @@ declaration
     : <data_declaration>
     | <data_head_declaration>
     | <newtype_declaration>
+    | <newtype_signature>
 #   | type_role_declaration
 #   | type_signature_declaration
     | <type_declaration>
@@ -288,6 +289,7 @@ foreign_data_declaration: ["foreign"] ["import"] ["data"] proper_name [double_co
 type_declaration
     : ["type"] proper_name type_var_binding_plain* layout* ["="] type
     ;
+newtype_signature: ["newtype"] proper_name double_colon type;
 newtype_declaration: ["newtype"] proper_name type_var_binding_plain* ["="] proper_name type_atom;
 value_signature : identifier [double_colon] type ;
 value_declaration : identifier binder_atom* ["="] expression_where? ;
