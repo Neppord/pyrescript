@@ -140,8 +140,8 @@ type_var_binding
     | "@" identifier
     | "(" "@" identifier double_colon type")"
     ;
-type: type_1 ("::" type)?;
-type_1: ([FORALL] type_var+ ["."])? type_2 ;
+type: type_1 ("::" type_1)*;
+type_1: ([FORALL] type_var_binding+ ["."])* type_2 ;
 type_2
     : type_3 ARROW type_1
     | type_3 DOUBLE_ARROW type_1
