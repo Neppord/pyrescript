@@ -178,7 +178,9 @@ expression_5
     | ["ado"] do_statement ["in"] expression
     | ["ado"] do_statements [SEP] ["in"] expression
     | [LAMBDA] binder_atom* ARROW expression 
-    | ["let"] [INDENT] (let_binding [SEP])+ [DEDENT]
+    | ["let"] let_binding ["in"] expression
+    | ["let"] [INDENT] (let_binding [SEP])+ [DEDENT] [SEP] ["in"] expression
+    | ["let"] [INDENT] (let_binding [SEP])+ ["in"] expression [SEP] [DEDENT]
     | ["case"] (expression [","])* expression ["of"]
         [INDENT] ((binder [","])* binder guarded_case [SEP])+
         [DEDENT]
@@ -231,9 +233,9 @@ do_statement
 
 let_binding
     : identifier double_colon type
-#    | identifier guarded_declaration
-    | identifier binder_atom* guarded_declaration
     | binder_1 "=" expression_where 
+    | identifier binder_atom+ guarded_declaration
+    | identifier guarded_declaration
     ;
 
 

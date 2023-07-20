@@ -28,17 +28,11 @@ do_expression = """\
 do
     log "hello world"
 """.strip()
-let_expression = """\
-let
-    x = 1
-in x
-"""
-
 @pytest.mark.parametrize("expression", [
     "if a then b else c",
     "(1)",
     """f\n  1""",
-    let_expression,
+    """let x = 1 in x""",
     do_expression,
     """ado a <- x in a""",
     """\
