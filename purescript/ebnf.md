@@ -95,6 +95,7 @@ import_list: ["("] ( import_item [","])* import_item [")"];
 import_item
     : "type" symbol
     | "class" proper_name
+    | "kind" proper_name
     | symbol
     | identifier
     | proper_name ["("] members [")"]
