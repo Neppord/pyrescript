@@ -107,7 +107,6 @@ members
 ## Type
 
 ```ebnf
-type_parameter: identifier ;
 type_atom
     : "_"
     | "?" identifier
@@ -327,7 +326,7 @@ value_signature : identifier [double_colon] type ;
 value_declaration : identifier binder_atom* guarded_declaration ;
 data_head_declaration: ["data"] proper_name type_var_binding_plain*;
 data_signature: ["data"] proper_name double_colon type;
-data_declaration: ["data"] proper_name type_parameter* ["="]
+data_declaration: ["data"] proper_name type_var_binding_plain* ["="]
     (data_constructor ["|"])* data_constructor ;
 data_constructor: proper_name type_atom* ;
 guarded_declaration
