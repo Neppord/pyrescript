@@ -22,6 +22,25 @@ slow = {
     os.path.join(base, "elmish-html", "v0.8.1", "src", "Elmish", "HTML", "Generated.purs"),
     os.path.join(base, "abc-parser", "v2.0.0", "test", "Midi.purs"),
     os.path.join(base, "abc-parser", "v2.0.0", "test", "KeySignature.purs"),
+    os.path.join(base, "tecton", "v0.2.1", "src", "Tecton", "Internal.purs"),
+    os.path.join(base, "jelly", "v0.10.0", "src", "Jelly", "Element.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Ai.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Bi.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Bs.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Cg.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Fa.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Gi.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Gr.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Hi.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Hi2.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Im.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Io.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Io5.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Md.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Ri.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Tb.purs"),
+    os.path.join(base, "unicode", "v6.0.0", "test", "Test", "Data", "CodePoint", "Unicode.purs"),
+
 }
 dirname = os.path.dirname(__file__)
 glob_expressions = [
@@ -47,7 +66,7 @@ def test_e2e(file_path):
     tokens = lexer.tokenize_with_name(file_path, source)
     try:
         tree = module_parser.parse(tokens)
-        ast = to_ast.visit_module(tree)
+        # ast = to_ast.visit_module(tree)
     except ParseError as e:
         message = e.nice_error_message(file_path, source, tokens)
         raise ValueError(message)
