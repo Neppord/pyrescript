@@ -217,7 +217,7 @@ expression_atom
     | ["("] expression [")"]
     ;
 
-record_label: label [":"] expression ;
+record_label: label ([":"] expression)? ;
 record_update
     : label ["="] expression
     | label ["{"] (record_update [","])* record_update ["}"]
