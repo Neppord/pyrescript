@@ -286,18 +286,19 @@ instance_binding
     : identifier double_colon type
     | identifier binder_atom* guarded_declaration
     ;
-class_signature: ["class"] proper_name [double_colon] type; 
-class_declaration
-    : ["class"] 
+class_signature: ["class"] proper_name [double_colon] type;
+class_head
+    :["class"] 
         # Super class
         (constraints LEFT_DOUBLE_ARROW)?
         # Class name
          proper_name type_var_binding*
         # functional dependencies
         ("|" (identifier* ARROW identifier+ [","])*  identifier* ARROW identifier+)?
-    (["where"] 
-    [INDENT] (class_member [SEP])+
-    [DEDENT])?
+    ;
+class_declaration
+    : class_head (["where"] [INDENT] (class_member [SEP])+ [DEDENT])?
+    | class_head (["where"] class_member )?
     ;
 class_member: identifier [double_colon] type;
 foreign_declaration: ["foreign"] ["import"] identifier [double_colon] type;
