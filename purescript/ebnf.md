@@ -278,9 +278,14 @@ infix
   ;
 derive_declaration: ["derive"] ["instance"] (identifier double_colon)? type;
 derive_newtype_declaration: ["derive"] ["newtype"] ["instance"] (identifier double_colon)? type;
-instance_declaration: ["instance"] ([identifier] double_colon)? (constraints DOUBLE_ARROW)? proper_name type_atom* ["where"] 
-    [INDENT] (value_declaration [SEP])+
-    [DEDENT]
+instance_head
+    : ["instance"] ([identifier] double_colon)? (constraints DOUBLE_ARROW)? proper_name type_atom*
+    ;
+instance_declaration
+    : instance_head ["where"] 
+        [INDENT] (value_declaration [SEP])+
+        [DEDENT]
+    | instance_head
     ;
 instance_binding
     : identifier double_colon type
