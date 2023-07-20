@@ -180,8 +180,15 @@ expression_5
     | [LAMBDA] binder_atom* ARROW expression 
     | ["let"] [INDENT] (let_binding [SEP])+ [DEDENT]
     | ["case"] (expression [","])* expression ["of"]
-        [INDENT] ((binder [","])* binder ARROW expression [SEP])+
+        [INDENT] ((binder [","])* binder guarded_case [SEP])+
         [DEDENT]
+    ;
+guarded_case
+    : [ARROW] expression_where
+    | guarded_case_expression+
+    ;
+guarded_case_expression
+    : guard [ARROW] expression_where
     ;
 expression_6 : expression_7 ("{" ((record_update [","])* record_update)? "}")? ;
 expression_7: expression_atom ("." identifier)*;
@@ -223,8 +230,10 @@ do_statement
     ;
 
 let_binding
-    : value_signature
-    | value_declaration 
+    : identifier double_colon type
+#    | identifier guarded_declaration
+    | identifier binder_atom* guarded_declaration
+    | binder_1 "=" expression_where 
     ;
 
 
