@@ -25,3 +25,6 @@ p = do
   where
     x = 1
 
+p2 = do
+  do x
+  where x = [1]

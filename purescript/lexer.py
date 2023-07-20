@@ -84,7 +84,7 @@ def layout_blocks(tokens):
         elif name in BLOCK_OWNERS:
             next_token = tokens[index + 1]
             next_indent = level(next_token)
-            if human_name(next_token) == "LINE_INDENT":
+            if human_name(next_token) == "LINE_INDENT" or name == "where":
                 while indent != 0 and next_indent <= indent:
                     # these blocks are siblings
                     indent = blocks.pop()
