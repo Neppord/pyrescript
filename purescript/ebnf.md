@@ -253,7 +253,7 @@ declaration
     | <foreign_declaration>
     | <foreign_data_declaration>
     | <class_declaration>
-#    | <class_signature_declaration>
+    | <class_signature_declaration>
     | <derive_declaration>
     | <derive_newtype_declaration>
     | <instance_declaration>
@@ -268,7 +268,7 @@ instance_binding
     : identifier double_colon type
     | identifier binder_atom* guarded_declaration
     ;
-#class_signature_declaration: ["class"] proper_name [double_colon] type; 
+class_signature_declaration: ["class"] proper_name [double_colon] type; 
 class_declaration
     : ["class"] 
         # Super class
