@@ -1,4 +1,6 @@
 import py
+
+from purescript.lexer import human_name
 from rpython.rlib.parsing.lexer import SourcePos
 from rpython.rlib.parsing.tree import Node, Symbol, Nonterminal
 from rpython.rlib.objectmodel import not_rpython
@@ -82,7 +84,7 @@ class ParseError(Exception):
                             marker = "->"
                         else:
                             marker = "  "
-                        result.append("%s%s(%r)" % (marker, t.name, t.source))
+                        result.append("%s%s(%r)" % (marker, human_name(t), t.source))
             else:
                 result.append("ParseError: expected %s" % (expected,))
         else:
