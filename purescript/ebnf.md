@@ -58,6 +58,7 @@ hole: ["?"] <identifier>;
 number: INTEGER | NUMBER;
 string: STRING| MULTILINE_STRING ;
 label: identifier | string;
+do: (module_name ["."])? "do" ;
 ```
 
 ## Module Layout
@@ -174,7 +175,7 @@ expression_4
 expression_5
     : expression_6
     | ["if"] expression ["then"] expression ["else"] expression
-    | ["do"] do_statements
+    | [do] do_statements
     | ["ado"] do_statement ["in"] expression
     | ["ado"] do_statements [SEP] ["in"] expression
     | [LAMBDA] binder_atom* ARROW expression 
