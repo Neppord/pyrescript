@@ -363,7 +363,7 @@ binder_atom
     | ["["] ((binder [","])* binder)? ["]"]
     | ["("] binder [")"]
     ;
-record_binder : identifier ([":"] binder)? ;
+record_binder : label ([":"] binder)? ;
 binder: binder_1 (double_colon type)? ;
 binder_1: (binder_2 qual_op)* binder_2 ;
 binder_2: "-" number | binder_atom+ ;
