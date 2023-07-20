@@ -17,3 +17,10 @@ layout = do
 g b = do
     if b then [1]
     else [2]
+
+p = do
+  do
+    [1]
+  where
+    x = 1
+

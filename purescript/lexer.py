@@ -83,15 +83,18 @@ def layout_blocks(tokens):
         elif name in BLOCK_OWNERS:
             next_token = tokens[index + 1]
             next_indent = level(next_token)
-            if indent != 0 and next_indent == indent:
-                # these blocks are siblings
-                close(out, pos)
-            out.append(token)
-            if human_name(next_token) == "LINE_INDENT" and next_indent >= indent:
-                if next_indent != indent or indent == 0:
-                    blocks.append(indent)
-                indent = next_indent
-                out.append(Token("INDENT", "", next_token.source_pos))
+            if human_name(next_token) == "LINE_INDENT":
+                if indent != 0 and next_indent == indent:
+                    # these blocks are siblings
+                    close(out, pos)
+                out.append(token)
+                if next_indent >= indent:
+                    if next_indent != indent or indent == 0:
+                        blocks.append(indent)
+                    indent = next_indent
+                    out.append(Token("INDENT", "", next_token.source_pos))
+            else:
+                out.append(token)
         else:
             out.append(token)
     return out
