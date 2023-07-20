@@ -147,8 +147,7 @@ type_2
     | type_3
     ;
 type_3: (type_4 qual_op)* type_4 ;
-type_4: type_5 | "-" INTEGER ;
-type_5: type_atom+ ;
+type_4: type_atom+ | "-" INTEGER ;
 ```
 
 ## Expression
