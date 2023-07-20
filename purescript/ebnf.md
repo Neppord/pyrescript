@@ -210,11 +210,11 @@ expression_atom
     | INTEGER
     | NUMBER
     | ["["] ["]"]
-    | ["["] (expression [","] )* expression ["]"]
+    | ["["] (expression [SEP]? [","] )* expression [SEP]? ["]"]
     | ["{"] ["}"]
-    | ["{"] (record_label [","]) * record_label ["}"]
-    | ["("] expression [")"]
-    | ["("] expression [")"]
+    | ["{"] (record_label [SEP]? [","]) * record_label [SEP]? ["}"]
+    | ["("] expression [SEP]? [")"]
+    | ["("] expression [SEP]? [")"]
     ;
 
 record_label: label ([":"] expression)? ;
