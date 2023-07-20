@@ -1,6 +1,6 @@
 import pytest
 
-from purescript.lexer import add_join_line
+from purescript.lexer import human_name, level, layout_blocks
 from purescript.parser import lexer
 from rpython.rlib.parsing.lexer import Token, SourcePos
 
@@ -33,7 +33,7 @@ def test_empty_line():
     r'''"\n"''',
 ])
 def test_strings(text):
-    assert [t.name for t in lexer.tokenize(text)] == ['STRING', 'SEP', 'EOF']
+    assert [t.name for t in lexer.tokenize(text)] == ['STRING','SEP', 'EOF']
 
 
 @pytest.mark.parametrize("text", [
@@ -41,11 +41,11 @@ def test_strings(text):
     r'''"""""""''',
 ])
 def test_multiline_strings(text):
-    assert [t.name for t in lexer.tokenize(text)] == ['MULTILINE_STRING', 'SEP', 'EOF']
+    assert [t.name for t in lexer.tokenize(text)] == ['MULTILINE_STRING','SEP',  'EOF']
 
 
 @pytest.mark.parametrize(("text", "layout"), [
-    (r'''''', ['EOF']),
+    (r'''''', ['SEP', 'EOF']),
     ('''\
 a
     a
@@ -53,12 +53,7 @@ a
     a
 a''',
      [
-         'LOWER', 'SEP',
-         'INDENT', 'LOWER', 'SEP',
-         'INDENT', 'LOWER', 'SEP',
-         'DEDENT', 'SEP', 'LOWER', 'SEP',
-         'DEDENT', 'SEP', 'LOWER', 'SEP',
-         'EOF'
+         'LOWER', 'LOWER','LOWER','LOWER', 'SEP', 'LOWER','SEP',  'EOF'
      ]),
     ('''\
 a
@@ -66,27 +61,46 @@ a
        a
 a''',
      [
-         'LOWER', 'SEP',
-         'INDENT', 'LOWER', 'SEP',
-         'INDENT', 'LOWER', 'SEP', 'DEDENT', 'SEP',
-         'DEDENT', 'SEP', 'LOWER', 'SEP',
-         'EOF'
+         'LOWER', 'LOWER', 'LOWER', 'SEP', 'LOWER','SEP', 'EOF'
      ]),
 ])
 def test_layout(text, layout):
     assert [t.name for t in lexer.tokenize(text)] == layout
 
 
-def test_add_join_line():
+
+
+def test_human_name():
     pos = SourcePos(0, 0, 0)
-    pos_after = SourcePos(1, 0, 1)
-    assert add_join_line([Token("=", "=", pos)]) == [
-        Token("JLL", "", pos),
-        Token("=", "=", pos),
-        Token("JLR", "", pos_after),
+    assert human_name(Token("LINE_INDENT", "\n", pos)) == "LINE_INDENT"
+    assert human_name(Token("__1_=", "\n", pos)) == "="
+
+
+def test_level():
+    pos = SourcePos(0, 0, 0)
+    assert level(Token("LINE_INDENT", "\n", pos)) == 0
+    assert level(Token("LINE_INDENT", "\n  ", pos)) == 2
+
+
+
+def test_layout_blocks():
+    pos = SourcePos(0, 0, 0)
+    assert layout_blocks([Token("LINE_INDENT", "\n", pos)]) == [Token("SEP", "", pos)]
+    assert layout_blocks([Token("LOWER", "a", pos)]) == [Token("LOWER", "a", pos)]
+
+
+def test_layout_do_block():
+    pos = SourcePos(0, 0, 0)
+    tokens = layout_blocks([
+        Token("do", "do", pos),
+        Token("LINE_INDENT", "\n  ", pos), Token("LOWER", "a", pos),Token("LEFT_ARROW", "<-", pos),Token("LOWER", "a", pos),
+        Token("LINE_INDENT", "\n  ", pos), Token("LOWER", "a", pos),
+        Token("LINE_INDENT", "\n", pos),
+    ])
+    expect = [
+        Token("do", "do", pos),
+        Token("INDENT", "", pos), Token("LOWER", "a", pos),Token("LEFT_ARROW", "<-", pos),Token("LOWER", "a", pos), Token("SEP", "", pos),
+        Token("LOWER", "a", pos), Token("SEP", "", pos),
+        Token("DEDENT", "", pos), Token("SEP", "", pos),
     ]
-    assert add_join_line([Token("__1_=", "=", pos)]) == [
-        Token("JLL", "", pos),
-        Token("__1_=", "=", pos),
-        Token("JLR", "", pos_after),
-    ]
+    assert tokens == expect

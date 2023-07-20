@@ -51,6 +51,7 @@ LINE_COMMENT: "--[^\n]*\n?";
 MULTILINE_COMMENT: "{-([^-]*(-[^}])?)*-}";
 LINE_INDENT: "\n[\s]*";
 IGNORE: "\s|\n";
+IGNORE: "\s|\n";
 PROPER_NAME
     : "[A-Z]([A-Za-z0-9_'])*"
 #    : "\p{Uppercase_Letter}(\p{Letter}|\p{Mark}|\p{Number}|[_'])*"
@@ -100,7 +101,7 @@ number: INTEGER | NUMBER;
 ## Module Layout
 ```ebnf
 module
-    : [SEP]? ["module"] [layout]? module_name [SEP]? [INDENT]? export_list? [layout]* ["where"] [layout]*
+    : ["module"] module_name export_list? ["where"] [SEP]
         (import_declaration [SEP])*
         (declaration [SEP]?)*
     [EOF]
@@ -108,10 +109,6 @@ module
 export_list
     : ["("] [")"]
     | ["("] (exported_item [","])* exported_item [")"]
-    | ["("] 
-        [SEP] [INDENT](exported_item [SEP]? [","] [SEP] ?)*
-        exported_item [SEP]?
-        [DEDENT] [SEP] [")"]
     ;
 layout: SEP | INDENT | DEDENT;
 exported_item
@@ -196,9 +193,10 @@ expression_5
     : expression_6
     | ["if"] expression ["then"] expression ["else"] expression
     | ["do"] do_statements
-    | ["ado"] do_statements [SEP]? ["in"] expression
-    | ["let"] [SEP] [INDENT] (let_binding [SEP])+ [DEDENT]
-    | ["case"] (expression [","])* expression ["of"] [SEP]
+    | ["ado"] do_statement ["in"] expression
+    | ["ado"] do_statements [SEP] ["in"] expression
+    | ["let"] [INDENT] (let_binding [SEP])+ [DEDENT]
+    | ["case"] (expression [","])* expression ["of"]
         [INDENT] ((binder [","])* binder ARROW expression [SEP])+
         [DEDENT]
     ;
@@ -223,7 +221,6 @@ expression_atom
     | ["{"] (record_label [","]) * record_label ["}"]
     | ["("] expression [")"]
     | ["("] expression [")"]
-    | [SEP] [INDENT] expression [SEP] [DEDENT]
     ;
 
 record_label: identifier [":"] expression ;
@@ -232,12 +229,12 @@ record_update
     | identifier ["{"] (record_update [","])* record_update ["}"]
     ;
 do_statements
-    : [SEP] [INDENT] (do_statement [SEP])+ [DEDENT]
+    : [INDENT] (do_statement [SEP])+ [DEDENT]
     | do_statement
     ;
 do_statement 
     : binder [LEFT_ARROW] expression
-    | ["let"] [SEP] [INDENT] (let_binding [SEP])+ [DEDENT]
+    | ["let"] [INDENT] (let_binding [SEP])+ [DEDENT]
     | expression
     ;
 
@@ -252,14 +249,9 @@ guarded_declaration_expression
     : guard ["="] expression_where
     ;
 expression_where
-    : expression [SEP] [INDENT] ["where"] [SEP] 
+    : expression ["where"]
         [INDENT] (let_binding [SEP])+
-        [DEDENT] [SEP]
-        [DEDENT]
-        
-    | expression [SEP] 
-        [INDENT] ["where"] [SEP] (let_binding [SEP])+
-        [DEDENT]   
+        [DEDENT] 
     | expression
     ;
 guard: ["|"] (pattern_guard [","])* pattern_guard; 
@@ -286,7 +278,7 @@ declaration
     ;
 derive_declaration: ["derive"] ["instance"] identifier double_colon type;
 instance_declaration: ["instance"] ([identifier] double_colon)? proper_name type_atom* ["where"] 
-    [SEP] [INDENT] (value_declaration [SEP])+
+    [INDENT] (value_declaration [SEP])+
     [DEDENT]
     ;
 instance_binding
@@ -301,26 +293,17 @@ class_declaration
         # Class name
          proper_name type_var*
     ["where"] 
-    [SEP] [INDENT] (class_member [SEP])+
+    [INDENT] (class_member [SEP])+
     [DEDENT]
     ;
 class_member: identifier [double_colon] type;
 foreign_declaration: ["foreign"] ["import"] identifier [double_colon] type;
 foreign_data_declaration: ["foreign"] ["import"] ["data"] proper_name [double_colon] type;
 type_declaration
-    : ["type"] proper_name binder_atom* layout* ["="] [SEP] [INDENT] type [SEP] [DEDENT]
-    | ["type"] proper_name binder_atom* layout* ["="] type
+    : ["type"] proper_name binder_atom* layout* ["="] type
     ;
 newtype_declaration: ["newtype"] proper_name binder_atom* ["="] proper_name type_atom;
-value_signature 
-    : identifier [double_colon] type
-    | identifier
-        [SEP] [INDENT] [double_colon] [SEP]? type [SEP]
-        [DEDENT]
-    | identifier [double_colon]
-        [SEP] [INDENT] type [SEP]
-        [DEDENT]
-    ;
+value_signature : identifier [double_colon] type ;
 value_declaration : identifier binder_atom* ["="] expression_where? ;
 data_head_declaration: ["data"] proper_name type_parameter*;
 data_declaration: ["data"] proper_name type_parameter* ["="]

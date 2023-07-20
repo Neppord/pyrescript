@@ -30,47 +30,78 @@ class NiceLexerError(Exception):
         return "\n".join(result)
 
 
-join_both_names = ["=", ",", "|"]
-join_right_names = ["(", "[", "{", "ARROW", "OPERATOR"] + join_both_names
-join_left_names = [")", "]", "}"] + join_both_names
 
-
-def add_join_line(tokens):
+def layout_blocks(tokens):
+    blocks = []
     out = []
-    for token in tokens:
-        name = token.name.lstrip("_0123456789")
-        if name in join_left_names:
-            pos = token.source_pos
-            out.append(Token("JLL", "", pos))
-        out.append(token)
-        if name in join_right_names:
-            pos = token.source_pos
-            offset = len(token.source)
-            after_pos = SourcePos(
-                pos.i + offset,
-                pos.lineno,
-                pos.columnno + offset,
-            )
-            out.append(Token("JLR", "", after_pos))
+    indent = 0
+    for index, token in enumerate(tokens):
+        name = human_name(token)
+        if name == "LINE_INDENT":
+            if indent == level(token):
+                if not out or out[-1].name not in ["SEP", "INDENT"]:
+                    out.append(Token("SEP", "", token.source_pos))
+            elif indent > level(token):
+                while indent > level(token):
+                    if not out or out[-1].name not in ["SEP", "INDENT"]:
+                        out.append(Token("SEP", "", token.source_pos))
+                    out.append(Token("DEDENT", "", token.source_pos))
+                    out.append(Token("SEP", "", token.source_pos))
+                    if blocks:
+                        indent = blocks.pop()
+                    else:
+                        indent = 0
+                        break
+            else:
+                pass
+        elif name == "EOF":
+            if indent == 0:
+                if not out or out[-1].name not in ["SEP", "INDENT"]:
+                    out.append(Token("SEP", "", token.source_pos))
+            elif indent > 0:
+                while indent > 0:
+                    if not out or out[-1].name not in ["SEP", "INDENT"]:
+                        out.append(Token("SEP", "", token.source_pos))
+                    out.append(Token("DEDENT", "", token.source_pos))
+                    out.append(Token("SEP", "", token.source_pos))
+                    if blocks:
+                        indent = blocks.pop()
+                    else:
+                        indent = 0
+                        break
+            else:
+                pass
+            out.append(token)
+        elif name in ["do", "ado", "let", "where", "of"]:
+            out.append(token)
+            next_token = tokens[index + 1]
+            next_indent = level(next_token)
+            if human_name(next_token) == "LINE_INDENT" and next_indent > indent:
+                blocks.append(indent)
+                indent = next_indent
+                out.append(Token("INDENT", "", next_token.source_pos))
+        else:
+            out.append(token)
     return out
 
 
-def join_lines(tokens):
-    i = 0
-    while i < len(tokens) - 1:
-        t1 = tokens[i]
-        t2 = tokens[i + 1]
-        if t1.name == "JLR" and t2.name == "LINE_INDENT":
-            del tokens[i + 1]
-        elif t1.name == "LINE_INDENT" and t2.name == "JLL":
-            del tokens[i]
-            i = max(i - 1, 0)
-        elif t1.name in ["JLL", "JLR"]:
-            del tokens[i]
-        else:
-            i += 1
-    return tokens
+def human_name(token):
+    if token.name.startswith("__"):
+        # the internal names looks like so __\d+_name
+        without_prefix = token.name[2:]
+        number_, _, name = without_prefix.partition("_")
+        return name
+    return token.name
 
+
+def level(line_indent):
+    ret = 0
+    for c in line_indent.source:
+        if c == "\n":
+            ret = 0
+        else:
+            ret += 1
+    return ret
 
 class IndentLexer(Lexer):
     def tokenize_with_name(self, name, text):
@@ -91,65 +122,4 @@ class IndentLexer(Lexer):
                 break
             except LexerError as e:
                 raise NiceLexerError(result, "<None>", text, e.state, e.source_pos)
-
-        tokens = add_join_line(result)
-        tokens = join_lines(tokens)
-        out = []
-        current_level = 0
-        stack = []
-        for token in tokens:
-            if token.name == "LINE_INDENT":
-                source = token.source
-                level = 0
-                for char in source:
-                    level += 1
-                    if char == '\n':
-                        level = 0
-                if level > current_level:
-                    token.name = "INDENT"
-                    pos = token.source_pos
-                    out.append(Token("SEP", '', pos))
-                    out.append(token)
-                    stack.append(current_level)
-                    current_level = level
-                elif level < current_level:
-                    while level < current_level:
-                        token.name = "DEDENT"
-                        current_level = stack.pop()
-                        pos = token.source_pos
-                        out.append(Token("SEP", '', pos))
-                        out.append(token)
-                        out.append(Token("SEP", '', SourcePos(
-                            pos.i + len(token.source),
-                            pos.lineno + token.source.count("\n"),
-                            current_level
-                        )))
-                else:
-                    token.name = "SEP"
-                    out.append(token)
-            else:
-                out.append(token)
-        eof = out.pop()
-        if out and out[-1].name != "SEP":
-            out.append(Token("SEP", "", eof.source_pos))
-        for _ in stack:
-            out.append(Token("DEDENT", "", eof.source_pos))
-            out.append(Token("SEP", "", eof.source_pos))
-        out.append(eof)
-        # remove empty lines
-        i = 0
-        while (i + 2) < len(out):
-            t1 = out[i]
-            t2 = out[i + 1]
-            if t1.name == "DEDENT" and t2.name == "INDENT":
-                t1.name = "SEP"
-                t1.source += t2.source
-                del out[i + 1]
-                i -= 1
-            elif t1.name == "SEP" and t2.name == "SEP":
-                t1.source += t2.source
-                del out[i + 1]
-            else:
-                i += 1
-
-        return out
+        return layout_blocks(result)
