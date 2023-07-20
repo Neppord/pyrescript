@@ -28,3 +28,8 @@ p = do
 p2 = do
   do x
   where x = [1]
+
+p3  = do
+  [1]
+  where
+    x = 1
