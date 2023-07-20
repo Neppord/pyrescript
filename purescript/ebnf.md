@@ -122,6 +122,7 @@ type_atom
     | ["("] row [")"]
     | ["("] [")"]
     | string
+    | number
     ;
 row
     : (row_label [SEP]? [","] [SEP]?)* row_label [SEP]? ("|" type)?
