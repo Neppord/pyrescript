@@ -229,6 +229,7 @@ do_statements
 do_statement 
     : binder [LEFT_ARROW] expression
     | ["let"] [INDENT] (let_binding [SEP])+ [DEDENT]
+    | ["let"] let_binding
     | expression
     ;
 
