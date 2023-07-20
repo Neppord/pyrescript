@@ -255,9 +255,11 @@ declaration
     | <class_declaration>
 #    | <class_signature_declaration>
     | <derive_declaration>
+    | <derive_newtype_declaration>
     | <instance_declaration>
     ;
 derive_declaration: ["derive"] ["instance"] (identifier double_colon)? type;
+derive_newtype_declaration: ["derive"] ["newtype"] ["instance"] (identifier double_colon)? type;
 instance_declaration: ["instance"] ([identifier] double_colon)? (constraints DOUBLE_ARROW)? proper_name type_atom* ["where"] 
     [INDENT] (value_declaration [SEP])+
     [DEDENT]
