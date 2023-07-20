@@ -94,7 +94,7 @@ def layout_blocks(tokens):
                 if indent not in blocks:
                     blocks.append(indent)
                 indent = next_indent
-                out.append(Token("INDENT", "%r:%r" % (blocks, indent), next_token.source_pos))
+                out.append(Token("INDENT", "", next_token.source_pos))
         elif name in BLOCK_OWNERS:
             next_token = tokens[index + 1]
             next_indent = level(next_token)
@@ -108,7 +108,7 @@ def layout_blocks(tokens):
                     if indent not in blocks:
                         blocks.append(indent)
                     indent = next_indent
-                    out.append(Token("INDENT", "%r:%r" % (blocks, indent), next_token.source_pos))
+                    out.append(Token("INDENT", "", next_token.source_pos))
             else:
                 out.append(token)
         else:
@@ -117,12 +117,14 @@ def layout_blocks(tokens):
 
 
 def human_name(token):
-    if token.name.startswith("__"):
+    name = token.name
+    if name.startswith("__"):
         # the internal names looks like so __\d+_name
-        without_prefix = token.name[2:]
-        number_, _, name = without_prefix.partition("_")
-        return name
-    return token.name
+        index = 2
+        while name[index] != "_":
+            index += 1
+        return name[index + 1:]
+    return name
 
 
 def level(line_indent):

@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from purescript.parser import lexer, module_parser, to_ast
+from purescript.parser import lexer, module_parser, to_ast, compiled_module_parser
 from rpython.rlib.parsing.parsing import ParseError
 
 base = os.path.join("e2e", "acme", ".spago")
@@ -17,6 +17,7 @@ slow = {
     os.path.join(base, "css-frameworks", "v1.0.1", "src", "CSSFrameworks", "BootstrapIcons.purs"),
     os.path.join(base, "css-frameworks", "v1.0.1", "src", "CSSFrameworks", "Bootstrap.purs"),
     os.path.join(base, "css-frameworks", "v1.0.1", "src", "CSSFrameworks", "BoxIcons.purs"),
+    os.path.join(base, "css-frameworks", "v1.0.1", "src", "CSSFrameworks", "Bulma.purs"),
     os.path.join(base, "react-basic-dom", "v6.1.0", "src", "React", "Basic", "DOM", "Simplified", "Generated.purs"),
     os.path.join(base, "react-basic-dom", "v6.1.0", "src", "React", "Basic", "DOM", "Generated.purs"),
     os.path.join(base, "elmish-html", "v0.8.1", "src", "Elmish", "HTML", "Generated.purs"),
@@ -39,8 +40,12 @@ slow = {
     os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Md.purs"),
     os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Ri.purs"),
     os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Tb.purs"),
+    os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Si.purs"),
     os.path.join(base, "unicode", "v6.0.0", "test", "Test", "Data", "CodePoint", "Unicode.purs"),
     os.path.join(base, "halogen-bootstrap5", "v2.2.0", "src", "Halogen", "Themes", "Bootstrap5.purs"),
+    os.path.join(base, "css-frameworks", "v1.0.1", "src", "CSSFrameworks", "Bulma.purs"),
+    os.path.join(base, "quantities", "v12.2.0", "test", "Main.pur"),
+    os.path.join(base, "lists", "v7.0.0", "test", "Test", "Data", "List", "Lazy.purs"),
 
 }
 dirname = os.path.dirname(__file__)
@@ -66,8 +71,11 @@ def test_e2e(file_path):
         source = source_file.read()
     tokens = lexer.tokenize_with_name(file_path, source)
     try:
-        tree = module_parser.parse(tokens)
-        # ast = to_ast.visit_module(tree)
+        tree = compiled_module_parser.parse(tokens)
+        assert tree.children
+        ast = to_ast.visit_module(tree)[0]
+        assert ast.children
+        assert ast.children[0].symbol == "module_name"
     except ParseError as e:
         message = e.nice_error_message(file_path, source, tokens)
         raise ValueError(message)

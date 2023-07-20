@@ -1,5 +1,5 @@
 import sys
-from purescript.parser import module_parser, lexer
+from purescript.parser import module_parser, lexer, compiled_module_parser, to_ast
 
 
 def entry_point(argv):
@@ -9,7 +9,9 @@ def entry_point(argv):
         with open(file_to_parse) as f:
             source = f.read()
         tokens = lexer.tokenize_with_name(file_to_parse, source)
-        module_parser.parse(tokens)
+        tree = compiled_module_parser.parse(tokens)
+        ast = to_ast.visit_module(tree)[0]
+        print ast.children[0].token.source
     return 0
 
 
