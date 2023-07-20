@@ -251,6 +251,7 @@ declaration
     | <newtype_signature>
     | <type_role_declaration>
 #   | type_signature_declaration
+    | <type_signature>
     | <type_declaration>
     | <value_signature>
     | <value_declaration>
@@ -301,9 +302,8 @@ class_declaration
 class_member: identifier [double_colon] type;
 foreign_declaration: ["foreign"] ["import"] identifier [double_colon] type;
 foreign_data_declaration: ["foreign"] ["import"] ["data"] proper_name [double_colon] type;
-type_declaration
-    : ["type"] proper_name type_var_binding_plain* layout* ["="] type
-    ;
+type_signature : ["type"] proper_name double_colon type ;
+type_declaration : ["type"] proper_name type_var_binding_plain* layout* ["="] type ;
 newtype_signature: ["newtype"] proper_name double_colon type;
 newtype_declaration: ["newtype"] proper_name type_var_binding_plain* ["="] proper_name type_atom;
 value_signature : identifier [double_colon] type ;
