@@ -190,6 +190,7 @@ expression_atom
     | hole
     | qualified_identifier
     | qualified_symbol
+    | string
 # qualified_proper_name matches the beginning of 
 # all qualified so it must apear after
     | qualified_proper_name
@@ -206,10 +207,10 @@ expression_atom
     | ["("] expression [")"]
     ;
 
-record_label: identifier [":"] expression ;
+record_label: label [":"] expression ;
 record_update
-    : identifier ["="] expression
-    | identifier ["{"] (record_update [","])* record_update ["}"]
+    : label ["="] expression
+    | label ["{"] (record_update [","])* record_update ["}"]
     ;
 do_statements
     : [INDENT] (do_statement [SEP])+ [DEDENT]
