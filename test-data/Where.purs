@@ -1,4 +1,9 @@
 module Where where
 
 
-x = y where y = 1
+x = z where z = 1
+
+y = do
+    [z]
+  where
+    z = 1

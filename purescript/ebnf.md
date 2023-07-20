@@ -243,7 +243,7 @@ let_binding
 
 backtick_expression: ["`"] identifier ["`"];
 expression_where
-    : expression ["where"]
+    : expression [SEP]? ["where"]
         [INDENT] (let_binding [SEP])+
         [DEDENT] 
     | expression ["where"] let_binding
