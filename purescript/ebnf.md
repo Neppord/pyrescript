@@ -41,7 +41,7 @@ Order matter, this grammar will select the first match if multiple may match
 
 ```ebnf
 module_name: (proper_name ["."])* proper_name;
-operator: OPERATOR | ".." | ":" | "-" | "?" ;
+operator: <OPERATOR> | <".."> | <":"> | <"-"> | <"?"> ;
 symbol: "(" operator ")" ;
 qualified_symbol: module_name ["."] symbol ;
 boolean: "True" | "False" ;
@@ -52,7 +52,7 @@ qualified_proper_name
     : module_name
     | proper_name
     ;
-qual_op: (module_name ["."])? OPERATOR;
+qual_op: (module_name ["."])? operator;
 qualified_identifier: (module_name ["."])? identifier;
 hole: ["?"] <identifier>;
 number: INTEGER | NUMBER;
@@ -116,6 +116,7 @@ type_atom
     | "?" identifier
     | qualified_proper_name
     | identifier
+    | qualified_symbol
     | ["("] type_1 [")"]
     | ["{"] row ["}"]
     | ["{"] ["}"]
