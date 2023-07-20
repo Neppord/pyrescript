@@ -261,7 +261,18 @@ declaration
     | <derive_declaration>
     | <derive_newtype_declaration>
     | <instance_declaration>
+    | <fixity>
     ;
+fixity
+    : infix INTEGER qualified_identifier ["as"] operator
+    | infix INTEGER qualified_proper_name ["as"] operator
+    | infix INTEGER ["type"] qualified_proper_name ["as"] operator
+    ;
+infix
+  : "infix"
+  | "infixl"
+  | "infixr"
+  ;
 derive_declaration: ["derive"] ["instance"] (identifier double_colon)? type;
 derive_newtype_declaration: ["derive"] ["newtype"] ["instance"] (identifier double_colon)? type;
 instance_declaration: ["instance"] ([identifier] double_colon)? (constraints DOUBLE_ARROW)? proper_name type_atom* ["where"] 
