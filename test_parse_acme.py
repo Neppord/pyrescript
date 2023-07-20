@@ -40,6 +40,7 @@ slow = {
     os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Ri.purs"),
     os.path.join(base, "react-icons", "v1.1.1", "src", "React", "Icons", "Tb.purs"),
     os.path.join(base, "unicode", "v6.0.0", "test", "Test", "Data", "CodePoint", "Unicode.purs"),
+    os.path.join(base, "halogen-bootstrap5", "v2.2.0", "src", "Halogen", "Themes", "Bootstrap5.purs"),
 
 }
 dirname = os.path.dirname(__file__)

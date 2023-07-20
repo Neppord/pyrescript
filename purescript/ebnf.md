@@ -58,7 +58,7 @@ number: INTEGER | NUMBER;
 ## Module Layout
 ```ebnf
 module
-    : ["module"] module_name export_list? ["where"] [SEP]
+    : [SEP]? ["module"] module_name export_list? ["where"] [SEP]
         (import_declaration [SEP])*
         (declaration [SEP]?)*
     [EOF]
@@ -233,7 +233,7 @@ declaration
     | <derive_declaration>
     | <instance_declaration>
     ;
-derive_declaration: ["derive"] ["instance"] identifier double_colon type;
+derive_declaration: ["derive"] ["instance"] (identifier double_colon)? type;
 instance_declaration: ["instance"] ([identifier] double_colon)? proper_name type_atom* ["where"] 
     [INDENT] (value_declaration [SEP])+
     [DEDENT]
