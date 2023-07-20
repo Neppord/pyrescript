@@ -4,7 +4,7 @@ these are the tokens that needs regexp the tokens that are string constants can 
 lexer don't seam to understand unicode groups, therefore they are only kept as comments.
 
 ```ebnf
-LINE_COMMENT: "--[^\n]*\n?";
+LINE_COMMENT: "--[^\n]*";
 MULTILINE_COMMENT: "{-([^-]*(-[^}])?)*-}";
 LINE_INDENT: "\n[\s]*";
 IGNORE: "\s|\n";
