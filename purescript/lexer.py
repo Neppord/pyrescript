@@ -82,13 +82,14 @@ def layout_blocks(tokens):
                 pass
             out.append(token)
         elif name == "where":
-            next_token = tokens[index + 1]
-            next_indent = level(next_token)
-            while indent != 0 and next_indent <= indent:
+            columnno = token.source_pos.columnno
+            while indent != 0 and columnno <= indent:
                 # these blocks are siblings
                 indent = blocks.pop()
                 close(out, pos)
             out.append(token)
+            next_token = tokens[index + 1]
+            next_indent = level(next_token)
             if next_indent >= indent:
                 if indent not in blocks:
                     blocks.append(indent)
