@@ -18,9 +18,10 @@ g b = do
     if b then [1]
     else [2]
 
+l = [1]
 p = do
-  do
-    [1]
+    do
+        l
   where
     x = 1
 

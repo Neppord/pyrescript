@@ -54,10 +54,11 @@ def layout_blocks(tokens):
         name = human_name(token)
         pos = token.source_pos
         if name == "LINE_INDENT":
-            if indent == level(token):
+            next_indent = level(token)
+            if next_indent == indent:
                 add_sep(out, pos)
-            elif indent > level(token):
-                while indent > level(token):
+            elif next_indent < indent:
+                while next_indent < indent:
                     close(out, pos)
                     if blocks:
                         indent = blocks.pop()
@@ -84,15 +85,16 @@ def layout_blocks(tokens):
             next_token = tokens[index + 1]
             next_indent = level(next_token)
             if human_name(next_token) == "LINE_INDENT":
-                if indent != 0 and next_indent == indent:
+                while indent != 0 and next_indent <= indent:
                     # these blocks are siblings
+                    indent = blocks.pop()
                     close(out, pos)
                 out.append(token)
                 if next_indent >= indent:
-                    if next_indent != indent or indent == 0:
+                    if indent not in blocks:
                         blocks.append(indent)
                     indent = next_indent
-                    out.append(Token("INDENT", "", next_token.source_pos))
+                    out.append(Token("INDENT", "%r:%r" % (blocks, indent), next_token.source_pos))
             else:
                 out.append(token)
         else:

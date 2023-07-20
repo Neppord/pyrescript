@@ -242,8 +242,7 @@ expression_where
     : expression [SEP]? ["where"]
         [INDENT] (let_binding [SEP])+
         [DEDENT] 
-    | expression ["where"] let_binding
-    | expression ["where"] let_binding
+    | expression [SEP]? ["where"] let_binding
     | expression
     ;
 guard: ["|"] (pattern_guard [","])* pattern_guard; 
