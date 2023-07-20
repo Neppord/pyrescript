@@ -9,3 +9,4 @@ class Const f <= MyConst f where
 
 class Const f <= OtherConst f
 
+class Const f <= SimpleConst f where my_value :: f -> Int

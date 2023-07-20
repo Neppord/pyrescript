@@ -297,8 +297,8 @@ class_head
         ("|" (identifier* ARROW identifier+ [","])*  identifier* ARROW identifier+)?
     ;
 class_declaration
-    : class_head (["where"] [INDENT] (class_member [SEP])+ [DEDENT])?
-    | class_head (["where"] class_member )?
+    : class_head ["where"] [INDENT] (class_member [SEP])+ [DEDENT]
+    | class_head ["where"] class_member
     | class_head
     ;
 class_member: identifier [double_colon] type;
