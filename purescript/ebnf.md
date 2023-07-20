@@ -173,8 +173,7 @@ expression_4
     : (expression_5 ("@" type_atom)?)+
     ;
 expression_5
-    : expression_6
-    | ["if"] expression ["then"] expression ["else"] expression
+    : ["if"] expression ["then"] expression ["else"] expression
     | [do] do_statements
     | ["ado"] do_statement ["in"] expression
     | ["ado"] do_statements [SEP] ["in"] expression
@@ -185,6 +184,7 @@ expression_5
     | ["case"] (expression [","])* expression ["of"]
         [INDENT] ((binder [","])* binder guarded_case [SEP])+
         [DEDENT]
+    | expression_6
     ;
 guarded_case
     : [ARROW] expression_where
