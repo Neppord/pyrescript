@@ -58,14 +58,17 @@ number: INTEGER | NUMBER;
 ## Module Layout
 ```ebnf
 module
-    : [SEP]? ["module"] module_name export_list? ["where"] [SEP]
+    : [SEP]? ["module"] [SEP]? module_name [SEP]? export_list? [SEP]? ["where"] [SEP]
         (import_declaration [SEP])*
         (declaration [SEP]?)*
     [EOF]
     ;
+   
+# Allow SEP every where in exportlist
+# since it cant contain any blocks and therefore don't care about layout
 export_list
-    : ["("] [")"]
-    | ["("] (exported_item [","])* exported_item [")"]
+    : ["("] [SEP]? [")"]
+    | ["("] [SEP]? (exported_item [SEP]? [","] [SEP]?)* [SEP]? exported_item [SEP]? [")"]
     ;
 layout: SEP | INDENT | DEDENT;
 exported_item
