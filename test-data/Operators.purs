@@ -1,0 +1,3 @@
+module Operators where
+
+symbol = (<>)

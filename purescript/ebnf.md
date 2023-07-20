@@ -43,7 +43,7 @@ Order matter, this grammar will select the first match if multiple may match
 module_name: (proper_name ["."])* proper_name;
 operator: <OPERATOR> | <".."> | <":"> | <"-"> | <"?"> ;
 symbol: "(" operator ")" ;
-qualified_symbol: module_name ["."] symbol ;
+qualified_symbol: (module_name ["."])? symbol ;
 boolean: "True" | "False" ;
 double_colon: "::" | "∷";
 identifier: <LOWER> | <"as"> | <"kind"> | <"type">;
