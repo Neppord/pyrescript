@@ -7,7 +7,7 @@ value : <object> | <array> | <STRING> | <INTEGER> | <FLOAT> | <"true"> | <"false
 key_value_pair: STRING  [":"] value ;
 object : ["{"] ["}"] | ["{"] (key_value_pair [","])* key_value_pair ["}"] ;
 array: ["["] ["]"] | ["["] (value [","])* value ["]"] ;
-STRING: "\"[^\"]*\"";
+STRING: "\"([^\"]*(\\\")?)*\"";
 INTEGER : "\d|[1-9]|\d+|-\d|-[1-9]|\d+" ;
 FLOAT: "(\d|[1-9]|\d+|-\d|-[1-9]|\d+)(\.\d+)?([Ee][+-]?\d+)?";
 '''
