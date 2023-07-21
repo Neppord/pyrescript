@@ -37,6 +37,10 @@ LOWER: "[a-z_ηℏεµα]([A-Za-z0-9_ηℏεµα']|\xca\x94)*";
 
 Order matter, this grammar will select the first match if multiple may match
 
+`[symbol]` means that symbol will be removed from the tree
+`<symbol>` means that symbol will replace current rule in the parsed tree
+`>symbol<` means that symbol's children will be inserted instead of symbol at its place.
+
 ## Atoms, Literals and Names
 
 ```ebnf
