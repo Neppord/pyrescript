@@ -20,9 +20,9 @@ def load_module(module_name):
     with open(file_name) as json_file:
         s = json_file.read()
     module = raw_loads(s)
-    decls = object_(module)["decls"]
+    module_object = object_(module)
     declarations = {}
-    for child in decls.children:
+    for child in module_object["decls"].children:
         decl = object_(child)
         bind_type = str_(decl["bindType"])
         if bind_type == "NonRec":
@@ -37,7 +37,11 @@ def load_module(module_name):
                 declarations[identifier] = Declaration(identifier, expression)
         else:
             raise NotImplementedError()
-    return Module(declarations)
+    imports = []
+    for child in module_object["imports"].children:
+        imported_module_name = ".".join([str_(c) for c in object_(child)["moduleName"].children])
+        imports.append(imported_module_name)
+    return Module(imports, declarations)
 
 
 def iter_object(node):

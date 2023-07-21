@@ -11,7 +11,7 @@ class Interpreter(object):
         self.loaded_modules = {}
 
     def get_or_load_module(self, module):
-        if not module in self.loaded_modules:
+        if module not in self.loaded_modules:
             self.loaded_modules[module] = self.__load_module(module)
         return self.loaded_modules[module]
 

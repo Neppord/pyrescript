@@ -1,4 +1,7 @@
 import sys
+from parser import ParserError
+
+from purescript.lexer import NiceLexerError
 from purescript.parser import module_parser, lexer, compiled_module_parser, to_ast
 
 
@@ -8,10 +11,22 @@ def entry_point(argv):
         print "parsing file:", file_to_parse
         with open(file_to_parse) as f:
             source = f.read()
-        tokens = lexer.tokenize_with_name(file_to_parse, source)
-        tree = compiled_module_parser.parse(tokens)
+        try:
+            tokens = lexer.tokenize_with_name(file_to_parse, source)
+        except NiceLexerError as e:
+            print e
+            return 1
+        try:
+            tree = compiled_module_parser.parse(tokens)
+        except ParserError as e:
+            print e
+            return 1
         ast = to_ast.visit_module(tree)[0]
-        print ast.children[0].token.source
+        module_name = ast.children[0]
+        parts = []
+        for child in module_name.children:
+            parts.append(child.token.source)
+        print ".".join(parts)
     return 0
 
 

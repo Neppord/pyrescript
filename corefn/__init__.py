@@ -1,3 +1,4 @@
+from prim import prim
 
 
 def interpret_foreign(module_name, identifier):
@@ -23,7 +24,8 @@ class Declaration(object):
 
 
 class Module:
-    def __init__(self, declarations):
+    def __init__(self, imports, declarations):
+        self.imports = imports
         self.declarations = declarations
 
     def decl(self, name):
@@ -31,6 +33,11 @@ class Module:
 
     def has_decl(self, name):
         return name in self.declarations
+
+    def preload_imports(self, interpreter):
+        for name in self.imports:
+            if name not in interpreter.loaded_modules and name not in prim:
+                interpreter.get_or_load_module(name)
 
     def __repr__(self):
         return "\n".join([decl.__repr__() for decl in self.declarations.values()])

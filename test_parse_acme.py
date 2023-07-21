@@ -71,7 +71,7 @@ def test_e2e(file_path):
         source = source_file.read()
     tokens = lexer.tokenize_with_name(file_path, source)
     try:
-        tree = compiled_module_parser.parse(tokens)
+        tree = module_parser.parse(tokens)
         assert tree.children
         ast = to_ast.visit_module(tree)[0]
         assert ast.children
