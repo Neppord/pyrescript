@@ -1,6 +1,6 @@
 from corefn import Declaration, Module
 from corefn.binders import VarBinder, ConstructorBinder, NullBinder, NamedBinder, RecordBinder, \
-    StringLiteralBinder, IntBinder, FloatBinder, BoolBinder, ArrayLiteralBinder
+    StringLiteralBinder, IntBinder, FloatBinder, BoolBinder, ArrayLiteralBinder, CharLiteralBinder
 from corefn.case import Alternative, GuardedAlternative, Case
 from corefn.expression import App, Accessor, Let
 from corefn.abs import Abs, Constructor
@@ -182,7 +182,9 @@ def binder_(node):
         elif type_ == "ArrayLiteral":
             return ArrayLiteralBinder( [binder_(b) for b in value_.children])
         elif type_ == "StringLiteral":
-            return StringLiteralBinder((str_(value_)))
+            return StringLiteralBinder(str_(value_))
+        elif type_ == "CharLiteral":
+            return CharLiteralBinder(str_(value_))
         elif type_ == "IntLiteral":
             return IntBinder(int(value_.token.source))
         elif type_ == "NumberLiteral":
@@ -192,11 +194,14 @@ def binder_(node):
         elif "false" in symbol:
             return BoolBinder(False)
         else:
-            msg = "not implemented literal for symbol: " + symbol
+            msg = "not implemented literal %s with symbol %s " %(type_, symbol)
             raise NotImplementedError(msg)
     elif type_ == "ConstructorBinder":
         constructor_binder = binder
-        return ConstructorBinder([binder_(b) for b in constructor_binder["binders"].children])
+        constructor_name = object_(constructor_binder["constructorName"])
+        module_name = ".".join(str(n) for n in constructor_name["moduleName"].children)
+        identifier = str_(constructor_name["identifier"])
+        return ConstructorBinder(module_name, identifier, [binder_(b) for b in constructor_binder["binders"].children])
     elif type_ == "NullBinder":
         return NullBinder()
     elif type_ == "NamedBinder":

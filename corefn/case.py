@@ -35,16 +35,20 @@ class Case(Expression):
         self.alternatives = alternatives
 
     def eval(self, interpreter, frame):
-        to_match, = self.expressions
-        to_match = to_match.eval(interpreter, frame)
+        to_matchs = [to_match.eval(interpreter, frame) for to_match in self.expressions]
         for alternative in self.alternatives:
             if isinstance(alternative, Alternative):
-                binder, = alternative.binders
-                match = binder.eval(interpreter, to_match, frame)
-                if isinstance(match, Match):
-                    next_frame = {}
-                    next_frame.update(frame)
-                    next_frame.update(match.frame)
+                binders = alternative.binders
+                assert len(to_matchs) == len(binders)
+                next_frame = {}
+                for i,binder in enumerate(binders):
+                    match = binder.eval(interpreter, to_matchs[i], frame)
+                    if isinstance(match, Match):
+                        next_frame.update(frame)
+                        next_frame.update(match.frame)
+                    else:
+                        break
+                else:
                     return alternative.expression.eval(interpreter, next_frame)
             else:
                 raise NotImplementedError("do not support %r yet" % alternative)

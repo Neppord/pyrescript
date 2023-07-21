@@ -102,7 +102,7 @@ class BoundNative1(Expression):
         return self.native(interpreter, self.bound)
 
     def __repr__(self):
-        return "<placeholder>"
+        return "%s (%s)" % (self.native.__repr__(), self.bound.__repr__())
 
 
 class Native2(AbsInterface):
@@ -156,6 +156,26 @@ class Native3(AbsInterface):
 
     def call_abs(self, interpreter, expression):
         return BoundNative3(self.native, expression)
+
+    def __repr__(self):
+        return "<placeholder>"
+
+
+class NativeX(AbsInterface):
+    def __init__(self, native, x, arguments):
+        self.x = x
+        self.native = native
+        self.arguments = arguments
+        assert x >= len(arguments)
+
+    def eval(self, interpreter, frame):
+        if self.x == len(self.arguments):
+            return self.native(interpreter, *self.arguments)
+        else:
+            return self
+
+    def call_abs(self, interpreter, expression):
+        return NativeX(self.native, self.x, self.arguments + [expression])
 
     def __repr__(self):
         return "<placeholder>"
@@ -235,6 +255,7 @@ class Constructor(AbsInterface):
 
     def __repr__(self):
         return self.name
+
 
 class NotImplementedYet(AbsInterface):
     def __init__(self, reason):

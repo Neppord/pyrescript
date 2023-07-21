@@ -76,7 +76,7 @@ class Let(Expression):
         new_frame = {}
         new_frame.update(frame)
         for k, v in self.binds.items():
-            new_frame[k] = v.eval(interpreter, frame)
+            new_frame[k] = v
         return self.expression.eval(interpreter, new_frame)
 
     def __repr__(self):

@@ -1,0 +1,13 @@
+from corefn.abs import Native1, BoundNative1
+from corefn.literals import String, Effect
+
+
+def _open(i, s):
+    assert isinstance(s, String)
+    file_name = s.value
+    with file(file_name, "r") as f:
+        out = f.read()
+    return String(out)
+
+
+open = Native1(lambda i, s: Effect(BoundNative1(_open, s)))

@@ -62,6 +62,15 @@ class String(Box):
             return '"' + self.value + '"'
 
 
+class Char(Box):
+    def __init__(self, value):
+        assert isinstance(value, str)
+        self.value = value
+
+    def __repr__(self):
+        return "'" + self.value + "'"
+
+
 class Float(Box):
     def __init__(self, value):
         assert isinstance(value, float)

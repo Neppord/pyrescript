@@ -1,5 +1,5 @@
 from corefn.literals import unit
-from foreign import effect_aff
+from foreign import effect_aff, data_function_uncurried, data_string_common, data_string_regex, partial_unsafe
 from foreign.data_array import range_impl
 from foreign.data_eq import eq_int_impl
 from foreign.data_euclidean_ring import int_degree, int_div, int_mod
@@ -40,9 +40,7 @@ foreign = {
         'foldrArray': foldr_array,
         'foldlArray': unit,
     },
-    'Data.Function.Uncurried': {
-        'runFn2': to_foreign(lambda i, a: a),
-    },
+    'Data.Function.Uncurried': data_function_uncurried.exports,
     'Data.Semigroup': {
         'concatString': to_foreign(concat_string),
     },
@@ -53,7 +51,8 @@ foreign = {
     'Data.Show': {
         'showIntImpl': show_int_impl
     },
-    'Data.Unit': {
-        'unit': unit
-    },
+    'Data.String.Common': data_string_common.exports,
+    'Data.String.Regex': data_string_regex.exports,
+    'Data.Unit': {'unit': unit},
+    'Partial.Unsafe': partial_unsafe.exports,
 }
