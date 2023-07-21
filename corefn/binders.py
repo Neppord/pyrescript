@@ -1,3 +1,4 @@
+from corefn.abs import ConstructorInvocation
 from corefn.literals import Boolean, Float, Int, String
 
 
@@ -114,7 +115,10 @@ class ConstructorBinder(Binder):
         self.binders = binders
 
     def eval(self, interpreter, to_match, frame):
-        matches = [b.eval(interpreter, to_match, frame) for b in self.binders]
+        if isinstance(to_match, ConstructorInvocation):
+            matches = [b.eval(interpreter, m, frame) for b, m in zip(self.binders, to_match.arguments)]
+        else:
+            matches = [b.eval(interpreter, to_match, frame) for b in self.binders]
         new_frame = {}
         for match in matches:
             if isinstance(match, Match):

@@ -25,3 +25,12 @@ Fizz
 14
 FizzBuzz
 """
+
+def test_e2e_constructor(monkeypatch, capsys):
+    monkeypatch.chdir("e2e/constructor")
+    check_call(["spago", "build", "--purs-args", "--codegen corefn"], shell=True)
+    capsys.readouterr()
+    Interpreter(load_module).run_main(load_module("Main"))
+    assert capsys.readouterr().out == """\
+Hello world!
+"""

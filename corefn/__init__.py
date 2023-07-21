@@ -6,7 +6,7 @@ def interpret_foreign(module_name, identifier):
     if module_name in foreign and identifier in foreign[module_name]:
         return foreign[module_name][identifier]
     else:
-        raise NotImplementedError
+        raise NotImplementedError("Could not find foreign %s.%s" % (module_name, identifier))
 
 
 class Declaration(object):

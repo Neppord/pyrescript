@@ -202,3 +202,38 @@ class Dynamic(Expression):
 
     def __repr__(self):
         return "<dynamic>"
+
+
+class ConstructorInvocation(AbsInterface):
+
+    def __init__(self, name, field_names, arguments):
+        self.name = name
+        self.field_names = field_names
+        self.arguments = arguments
+        assert len(field_names) >= len(arguments), "to many arguments"
+
+    def eval(self, interpreter, frame):
+        return self
+
+    def call_abs(self, interpreter, expression):
+        return ConstructorInvocation(self.name, self.field_names, self.arguments + [expression])
+
+    def __repr__(self):
+        return " ".join([self.name] + ["(%s)" % a.__repr__() for a in self.arguments])
+
+
+class Constructor(AbsInterface):
+    def __init__(self, name, field_names):
+        self.name = name
+        self.field_names = field_names
+
+    def eval(self, interpreter, frame):
+        return self
+
+    def call_abs(self, interpreter, expression):
+        return ConstructorInvocation(self.name, self.field_names, [expression])
+
+    def __repr__(self):
+        return self.name
+
+

@@ -3,7 +3,7 @@ from corefn.binders import VarBinder, ConstructorBinder, NullBinder, NamedBinder
     StringLiteralBinder, IntBinder, FloatBinder, BoolBinder, ArrayLiteralBinder
 from corefn.case import Alternative, GuardedAlternative, Case
 from corefn.expression import App, Accessor, Let
-from corefn.abs import Abs
+from corefn.abs import Abs, Constructor
 from corefn.literals import Record, Array, String, Int, Float, \
     Boolean, unit
 from corefn.var import LocalVar, ExternalVar
@@ -139,6 +139,10 @@ def expression_(node):
             else:
                 raise NotImplementedError("dont know how to handle: " + bind_type)
         return Let(binds, expression_(expr["expression"]))
+    elif type_ == "Constructor":
+        name = str_(expr["constructorName"])
+        field_names = [str(c) for c in expr["fieldNames"].children]
+        return Constructor(name, field_names)
     else:
         raise NotImplementedError("Cant parse type: " + type_)
 
