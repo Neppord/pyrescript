@@ -1,16 +1,15 @@
-from corefn.abs import Foreign, Dynamic
-from corefn.expression import App
-from corefn.literals import String, Effect, unit
+from corefn.literals import unit
+from foreign import effect_aff
 from foreign.data_array import range_impl
 from foreign.data_eq import eq_int_impl
 from foreign.data_euclidean_ring import int_degree, int_div, int_mod
 from foreign.data_foldable import foldr_array, foldl_array
 from foreign.data_semigroup import concat_string
 from foreign.data_semiring import int_add, int_mul
+from foreign.data_show import show_int_impl
 from foreign.effect import bindE, pureE
 from foreign.effect_console import log
 from foreign.util import to_foreign
-from foreign.data_show import show_int_impl
 
 """
 Foreign functions can take any Box type as arguments.
@@ -22,6 +21,7 @@ foreign = {
         'pureE': pureE,
         'bindE': bindE
     },
+    'Effect.Aff': effect_aff.exports,
     'Effect.Console': {
         'log': log
     },
