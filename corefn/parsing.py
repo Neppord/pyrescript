@@ -140,7 +140,7 @@ def expression_(node):
                 raise NotImplementedError("dont know how to handle: " + bind_type)
         return Let(binds, expression_(expr["expression"]))
     else:
-        raise NotImplementedError
+        raise NotImplementedError("Cant parse type: " + type_)
 
 
 def alternative_(node):
