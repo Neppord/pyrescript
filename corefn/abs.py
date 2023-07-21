@@ -236,4 +236,12 @@ class Constructor(AbsInterface):
     def __repr__(self):
         return self.name
 
+class NotImplementedYet(AbsInterface):
+    def __init__(self, reason):
+        self.reason = reason
 
+    def eval(self, interpreter, frame):
+        raise NotImplementedError(self.reason)
+
+    def call_abs(self, interpreter, expression):
+        raise NotImplementedError(self.reason)

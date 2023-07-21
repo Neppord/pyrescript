@@ -1,5 +1,6 @@
 import sys
 
+from corefn import interpret_foreign, load_python_foreign
 from corefn.literals import Effect
 from corefn.parsing import load_module
 from interpreter import Interpreter
@@ -8,7 +9,7 @@ from interpreter import Interpreter
 def target(*args):
     _, module_names = args
     module_name, = module_names
-    interpreter = Interpreter(load_module)
+    interpreter = Interpreter(load_python_foreign, load_module)
     module = load_module(module_name)
     module.preload_imports(interpreter)
     decl = module.decl("main")  # type: Expression

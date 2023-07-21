@@ -116,7 +116,11 @@ class ConstructorBinder(Binder):
 
     def eval(self, interpreter, to_match, frame):
         if isinstance(to_match, ConstructorInvocation):
-            matches = [b.eval(interpreter, m, frame) for b, m in zip(self.binders, to_match.arguments)]
+            matches = []
+            arguments = to_match.arguments
+            assert len(self.binders) == len(arguments)
+            for i, binder in enumerate(self.binders):
+                matches.append(binder.eval(interpreter, arguments[i], frame))
         else:
             matches = [b.eval(interpreter, to_match, frame) for b in self.binders]
         new_frame = {}

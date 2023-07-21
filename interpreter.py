@@ -6,7 +6,8 @@ from corefn.parsing import load_module, expression_
 
 
 class Interpreter(object):
-    def __init__(self, _load_module):
+    def __init__(self, _load_foreign, _load_module):
+        self.__load_foreign = _load_foreign
         self.__load_module = _load_module
         self.loaded_modules = {}
 
@@ -42,7 +43,7 @@ class Interpreter(object):
                 decl = module.decl(identifier)
                 return decl.expression.eval(self, {})
             else:
-                foreign = interpret_foreign(module_name, identifier)
+                foreign = self.__load_foreign(module_name, identifier)
                 assert isinstance(foreign, Expression)
                 return foreign
 

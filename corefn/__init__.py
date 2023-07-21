@@ -1,4 +1,25 @@
+import importlib
+import sys
+
+from corefn.abs import NotImplementedYet
+from corefn.expression import Expression
 from prim import prim
+
+
+def load_python_foreign(module_name, identifier):
+    if 'src' not in sys.path:
+        sys.path.append('src')
+    try:
+        python_module = importlib.import_module(module_name)
+        imported = python_module.__dict__[identifier]
+        assert isinstance(imported, Expression)
+        return imported
+    except:
+        from foreign import foreign
+        if module_name in foreign and identifier in foreign[module_name]:
+            return foreign[module_name][identifier]
+        else:
+            return NotImplementedYet("Could not find foreign %s.%s" % (module_name, identifier))
 
 
 def interpret_foreign(module_name, identifier):
@@ -6,7 +27,7 @@ def interpret_foreign(module_name, identifier):
     if module_name in foreign and identifier in foreign[module_name]:
         return foreign[module_name][identifier]
     else:
-        raise NotImplementedError("Could not find foreign %s.%s" % (module_name, identifier))
+        return NotImplementedYet("Could not find foreign %s.%s" % (module_name, identifier))
 
 
 class Declaration(object):
