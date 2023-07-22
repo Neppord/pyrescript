@@ -1,5 +1,6 @@
 from corefn.binders import Match
 from corefn.expression import Expression
+from corefn.literals import Boolean
 
 
 class AlternativeInterface(object):
@@ -41,7 +42,7 @@ class Case(Expression):
                 binders = alternative.binders
                 assert len(to_matchs) == len(binders)
                 next_frame = {}
-                for i,binder in enumerate(binders):
+                for i, binder in enumerate(binders):
                     match = binder.eval(interpreter, to_matchs[i], frame)
                     if isinstance(match, Match):
                         next_frame.update(frame)
@@ -50,6 +51,28 @@ class Case(Expression):
                         break
                 else:
                     return alternative.expression.eval(interpreter, next_frame)
+            elif isinstance(alternative, GuardedAlternative):
+                binders = alternative.binders
+                assert len(to_matchs) == len(binders)
+                next_frame = {}
+                for i, binder in enumerate(binders):
+                    match = binder.eval(interpreter, to_matchs[i], frame)
+                    if isinstance(match, Match):
+                        next_frame.update(frame)
+                        next_frame.update(match.frame)
+                    else:
+                        break
+                else:
+                    guard_frame = {}
+                    guard_frame.update(frame)
+                    guard_frame.update(next_frame)
+                    guarded_expressions = alternative.guarded_expressions
+                    for guard, expression in guarded_expressions:
+                        assert isinstance(guard, Expression)
+                        result = guard.eval(interpreter, guard_frame)
+                        assert isinstance(result, Boolean)
+                        if result.value:
+                            return expression
             else:
                 raise NotImplementedError("do not support %r yet" % alternative)
         raise NotImplementedError

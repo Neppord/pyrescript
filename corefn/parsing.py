@@ -1,6 +1,6 @@
 from corefn import Declaration, Module
 from corefn.binders import VarBinder, ConstructorBinder, NullBinder, NamedBinder, RecordBinder, \
-    StringLiteralBinder, IntBinder, FloatBinder, BoolBinder, ArrayLiteralBinder, CharLiteralBinder
+    StringLiteralBinder, IntBinder, FloatBinder, BoolBinder, ArrayLiteralBinder, CharLiteralBinder, NewtypeBinder
 from corefn.case import Alternative, GuardedAlternative, Case
 from corefn.expression import App, Accessor, Let
 from corefn.abs import Abs, Constructor
@@ -141,7 +141,7 @@ def expression_(node):
         return Let(binds, expression_(expr["expression"]))
     elif type_ == "Constructor":
         name = str_(expr["constructorName"])
-        field_names = [str(c) for c in expr["fieldNames"].children]
+        field_names = [str_(c) for c in expr["fieldNames"].children]
         return Constructor(name, field_names)
     else:
         raise NotImplementedError("Cant parse type: " + type_)
@@ -197,11 +197,17 @@ def binder_(node):
             msg = "not implemented literal %s with symbol %s " %(type_, symbol)
             raise NotImplementedError(msg)
     elif type_ == "ConstructorBinder":
+        annotation = object_(binder["annotation"])
+        meta = object_(annotation["meta"])
+        meta_type = str_(meta["metaType"])
         constructor_binder = binder
         constructor_name = object_(constructor_binder["constructorName"])
-        module_name = ".".join(str(n) for n in constructor_name["moduleName"].children)
+        module_name = ".".join(str_(n) for n in constructor_name["moduleName"].children)
         identifier = str_(constructor_name["identifier"])
-        return ConstructorBinder(module_name, identifier, [binder_(b) for b in constructor_binder["binders"].children])
+        if meta_type == "IsNewtype":
+            return NewtypeBinder(module_name, identifier, [binder_(b) for b in constructor_binder["binders"].children])
+        else:
+            return ConstructorBinder(module_name, identifier, [binder_(b) for b in constructor_binder["binders"].children])
     elif type_ == "NullBinder":
         return NullBinder()
     elif type_ == "NamedBinder":

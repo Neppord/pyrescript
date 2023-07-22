@@ -75,8 +75,11 @@ class Let(Expression):
     def eval(self, interpreter, frame):
         new_frame = {}
         new_frame.update(frame)
+        # TODO: eval all of the bindings exactly once
         for k, v in self.binds.items():
             new_frame[k] = v
+        for k in new_frame.keys():
+            new_frame[k] = new_frame[k].eval(interpreter, new_frame)
         return self.expression.eval(interpreter, new_frame)
 
     def __repr__(self):

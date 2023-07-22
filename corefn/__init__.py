@@ -1,4 +1,5 @@
 import importlib
+import os
 import sys
 
 from corefn.abs import NotImplementedYet
@@ -7,10 +8,13 @@ from prim import prim
 
 
 def load_python_foreign(module_name, identifier):
-    if 'src' not in sys.path:
-        sys.path.append('src')
+    cwd = os.getcwd()
+    src = os.path.join(cwd, "src")
+    sys.path.append(src)
     try:
         python_module = importlib.import_module(module_name)
+        if os.path.commonprefix([src, python_module.__file__]) != src:
+            reload(python_module)
         imported = python_module.__dict__[identifier]
         assert isinstance(imported, Expression)
         return imported
@@ -20,6 +24,8 @@ def load_python_foreign(module_name, identifier):
             return foreign[module_name][identifier]
         else:
             return NotImplementedYet("Could not find foreign %s.%s" % (module_name, identifier))
+    finally:
+        sys.path.remove(src)
 
 
 def interpret_foreign(module_name, identifier):

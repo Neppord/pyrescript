@@ -1,5 +1,5 @@
-from corefn.abs import ConstructorInvocation
-from corefn.literals import Boolean, Float, Int, String, Record
+from corefn.abs import ConstructorInvocation, Constructor
+from corefn.literals import Boolean, Float, Int, String, Record, Box, Array
 
 
 class Binder(object):
@@ -135,10 +135,20 @@ class ArrayLiteralBinder(Binder):
         self.value = value
 
     def eval(self, interpreter, to_match, frame):
-        raise NotImplementedError()
+        assert isinstance(to_match, Array)
+        new_frame = {}
+        for i, b in enumerate(self.value):
+            m = to_match.array[i]
+            match = b.eval(interpreter, m, frame)
+            if match is no_match:
+                return no_match
+            else:
+                new_frame.update(match.frame)
+        return Match(new_frame)
 
     def __repr__(self):
-        raise NotImplementedError()
+        items = ", ".join([b.__repr__() for b in self.value])
+        return "[%s]" % items
 
 
 class ConstructorBinder(Binder):
@@ -148,7 +158,12 @@ class ConstructorBinder(Binder):
         self.binders = binders
 
     def eval(self, interpreter, to_match, frame):
-        if isinstance(to_match, ConstructorInvocation):
+        if isinstance(to_match, Constructor):
+            if to_match.name != self.identifier:
+                return no_match
+            else:
+                return empty_match
+        elif isinstance(to_match, ConstructorInvocation):
             if to_match.name != self.identifier:
                 return no_match
             matches = []
@@ -157,7 +172,7 @@ class ConstructorBinder(Binder):
             for i, binder in enumerate(self.binders):
                 matches.append(binder.eval(interpreter, arguments[i], frame))
         else:
-            matches = [b.eval(interpreter, to_match, frame) for b in self.binders]
+            raise NotImplementedError("Cant match: " + to_match.__repr__())
         new_frame = {}
         for match in matches:
             if isinstance(match, Match):
@@ -167,7 +182,28 @@ class ConstructorBinder(Binder):
         return Match(new_frame)
 
     def __repr__(self):
-        return "%s.%s" % (self.module_name, self.identifier)
+        binders = " ".join([b.__repr__() for b in self.binders])
+        return "%s.%s %s" % (self.module_name, self.identifier, binders)
+
+class NewtypeBinder(Binder):
+    def __init__(self, module_name, identifier, binders):
+        self.module_name = module_name
+        self.identifier = identifier
+        self.binders = binders
+
+    def eval(self, interpreter, to_match, frame):
+        matches = [b.eval(interpreter, to_match, frame) for b in self.binders]
+        new_frame = {}
+        for match in matches:
+            if isinstance(match, Match):
+                new_frame.update(match.frame)
+            else:
+                return no_match
+        return Match(new_frame)
+
+    def __repr__(self):
+        binders = " ".join([b.__repr__() for b in self.binders])
+        return "%s.%s %s" % (self.module_name, self.identifier, binders)
 
 
 class NullBinder(Binder):
@@ -176,11 +212,6 @@ class NullBinder(Binder):
 
     def __repr__(self):
         return "_"
-
-
-class ArrayBinder(Binder):
-    def __repr__(self):
-        raise NotImplementedError()
 
 
 class NamedBinder(Binder):

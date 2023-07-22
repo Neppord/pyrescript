@@ -1,14 +1,8 @@
 # Horrible import-time hack.
 # Blame CPython for renumbering these OPCODE_* at some point.
 from rpython.rlib.objectmodel import specialize
-try:
-    import pypy.module.sys.version
-    V37 = pypy.module.sys.version.CPYTHON_VERSION >= (3, 7)
-except ImportError:
-    raise ImportError("Cannot import pypy.module.sys.version. You can safely "
-                      "remove this 'raise' line if you are not interested in "
-                      "PyPy but only RPython.")
-    V37 = False
+
+V37 = False
 
 OPCODE_FAILURE            = 0
 OPCODE_SUCCESS            = 1

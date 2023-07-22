@@ -1,5 +1,6 @@
 from corefn.literals import unit
-from foreign import effect_aff, data_function_uncurried, data_string_common, data_string_regex, partial_unsafe
+from foreign import effect_aff, data_function_uncurried, data_string_common, data_string_regex, partial_unsafe, \
+    data_lazy, unsafe_coerce, data_ring, data_enum, data_bounded
 from foreign.data_array import range_impl
 from foreign.data_eq import eq_int_impl
 from foreign.data_euclidean_ring import int_degree, int_div, int_mod
@@ -28,6 +29,8 @@ foreign = {
     'Data.Array': {
         'rangeImpl': to_foreign(range_impl),
     },
+    'Data.Bounded': data_bounded.exports,
+    'Data.Enum': data_enum.exports,
     'Data.Eq': {
         'eqIntImpl': to_foreign(eq_int_impl),
     },
@@ -41,6 +44,8 @@ foreign = {
         'foldlArray': unit,
     },
     'Data.Function.Uncurried': data_function_uncurried.exports,
+    'Data.Lazy': data_lazy.exports,
+    'Data.Ring': data_ring.exports,
     'Data.Semigroup': {
         'concatString': to_foreign(concat_string),
     },
@@ -48,11 +53,10 @@ foreign = {
         'intAdd': to_foreign(int_add),
         'intMul': to_foreign(int_mul),
     },
-    'Data.Show': {
-        'showIntImpl': show_int_impl
-    },
+    'Data.Show': {'showIntImpl': show_int_impl},
     'Data.String.Common': data_string_common.exports,
     'Data.String.Regex': data_string_regex.exports,
     'Data.Unit': {'unit': unit},
     'Partial.Unsafe': partial_unsafe.exports,
+    'Unsafe.Coerce': unsafe_coerce.exports,
 }
