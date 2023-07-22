@@ -1,3 +1,5 @@
+
+
 class Expression(object):
     def eval(self, interpreter, frame):
         raise NotImplementedError("%s have yet to implement interpret" % type(self))
@@ -11,6 +13,7 @@ class App(Expression):
         self.argument = argument
         self.abstraction = abstraction
 
+
     def __repr__(self):
         arguments = []
         current = self
@@ -18,9 +21,7 @@ class App(Expression):
             arguments.append(current.argument)
             current = current.abstraction
         arguments.reverse()
-
         arguments_ = []
-
         for arg in arguments:
             from corefn.var import LocalVar, ExternalVar
             if isinstance(arg, LocalVar) or isinstance(arg, ExternalVar):
@@ -29,7 +30,7 @@ class App(Expression):
                 arguments_.append("(%s)" % arg.__repr__())
 
         arguments_repr = " ".join(arguments_)
-        current_repr = current.__repr__()
+        current_repr = self.__repr__()
         on_oneline = "%s %s" % (current_repr, arguments_repr)
         if len(on_oneline) > 79:
             return "%s%s" % (current_repr, "".join(["\n    %s" % a for a in arguments_]))
@@ -38,14 +39,19 @@ class App(Expression):
 
     def eval(self, interpreter, frame):
         from corefn.abs import AbsInterface
-        abstraction = self.abstraction.eval(interpreter, frame)
-
-        if isinstance(abstraction, AbsInterface):
-            argument = self.argument.eval(interpreter, frame)
-            result = abstraction.call_abs(interpreter, argument)
-            return result
-        else:
-            raise ValueError("%s is not callable" % abstraction.__repr__())
+        stack = []
+        current = self
+        while isinstance(current, App):
+            stack.append(current.argument)
+            current = current.abstraction
+        result = current.eval(interpreter, frame)
+        while stack:
+            argument = stack.pop().eval(interpreter, frame)
+            if isinstance(result, AbsInterface):
+                result = result.call_abs(interpreter, argument)
+            else:
+                raise ValueError("%s is not callable" % result.__repr__())
+        return result
 
 
 class Accessor(Expression):

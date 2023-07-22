@@ -7,7 +7,7 @@ from corefn.expression import Expression
 from prim import prim
 
 
-def load_python_foreign(module_name, identifier):
+def load_python_foreign(module_name):
     cwd = os.getcwd()
     src = os.path.join(cwd, "src")
     sys.path.append(src)
@@ -15,25 +15,19 @@ def load_python_foreign(module_name, identifier):
         python_module = importlib.import_module(module_name)
         if os.path.commonprefix([src, python_module.__file__]) != src:
             reload(python_module)
-        imported = python_module.__dict__[identifier]
-        assert isinstance(imported, Expression)
-        return imported
+        return ForeignModule(module_name, python_module.exports)
     except:
-        from foreign import foreign
-        if module_name in foreign and identifier in foreign[module_name]:
-            return foreign[module_name][identifier]
-        else:
-            return NotImplementedYet("Could not find foreign %s.%s" % (module_name, identifier))
+        return interpret_foreign(module_name)
     finally:
         sys.path.remove(src)
 
 
-def interpret_foreign(module_name, identifier):
+def interpret_foreign(module_name):
     from foreign import foreign
-    if module_name in foreign and identifier in foreign[module_name]:
-        return foreign[module_name][identifier]
+    if module_name in foreign:
+        return ForeignModule(module_name, foreign[module_name])
     else:
-        return NotImplementedYet("Could not find foreign %s.%s" % (module_name, identifier))
+        return NotImplementedYet("Could not find foreign module %s" % (module_name))
 
 
 class Declaration(object):
@@ -50,7 +44,10 @@ class Declaration(object):
         return self
 
 
-class Module:
+class ModuleInterface:
+    pass
+
+class Module(ModuleInterface):
     def __init__(self, imports, declarations):
         self.imports = imports
         self.declarations = declarations
@@ -68,3 +65,20 @@ class Module:
 
     def __repr__(self):
         return "\n".join([decl.__repr__() for decl in self.declarations.values()])
+
+class ForeignModule(ModuleInterface):
+    def __init__(self, name, exports):
+        self.name = name
+        self.exports = exports
+
+    def decl(self, name):
+        return Declaration(name, self.exports[name])
+
+    def has_decl(self, name):
+        return name in self.exports
+
+    def preload_imports(self, interpreter):
+        pass
+
+    def __repr__(self):
+        return "\n".join([Declaration(k, expr).__repr__() for k, expr in self.exports])

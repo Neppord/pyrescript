@@ -1,8 +1,6 @@
-from corefn import interpret_foreign
 from corefn.expression import Expression
-from corefn.literals import Record, String, Effect
+from corefn.literals import Effect
 from prim import prim
-from corefn.parsing import load_module, expression_
 
 
 class Interpreter(object):
@@ -10,11 +8,17 @@ class Interpreter(object):
         self.__load_foreign = _load_foreign
         self.__load_module = _load_module
         self.loaded_modules = {}
+        self.loaded_foreign_modules = {}
 
     def get_or_load_module(self, module):
         if module not in self.loaded_modules:
             self.loaded_modules[module] = self.__load_module(module)
         return self.loaded_modules[module]
+
+    def get_or_load_foreign_module(self, module):
+        if module not in self.loaded_foreign_modules:
+            self.loaded_foreign_modules[module] = self.__load_foreign(module)
+        return self.loaded_foreign_modules[module]
 
     def run_main(self, module):
         """
@@ -43,16 +47,7 @@ class Interpreter(object):
                 decl = module.decl(identifier)
                 return decl.expression.eval(self, {})
             else:
-                foreign = self.__load_foreign(module_name, identifier)
-                assert isinstance(foreign, Expression)
-                return foreign
+                module = self.get_or_load_foreign_module(module_name)
+                decl = module.decl(identifier)
+                return decl.expression.eval(self, {})
 
-    def accessor(self, expression, field_name, frame):
-        record = expression.eval(interpreter, frame)
-        assert isinstance(record, Expression)
-        return record[field_name]
-
-
-if __name__ == '__main__':
-    module_name_argument, = sys.argv[1:1] or ["Main"]
-    Interpreter(load_module).run_main(load_module(module_name_argument))

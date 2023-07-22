@@ -10,4 +10,6 @@ def _open(i, s):
     return String(out)
 
 
-open = Native1(lambda i, s: Effect(BoundNative1(_open, s)))
+exports = {
+    'open': Native1(lambda i, s: Effect(BoundNative1(_open, s)))
+}
