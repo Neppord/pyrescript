@@ -7,6 +7,15 @@ class Expression(object):
     def __repr__(self):
         raise NotImplementedError
 
+    def fix_eval(self, interpreter, frame):
+        last = self
+        e = self.eval(interpreter, frame)
+        i = 0
+        while last != e:
+            i += 1
+            last = e
+            e = e.eval(interpreter, frame)
+        return e
 
 class App(Expression):
     def __init__(self, abstraction, argument):
@@ -44,9 +53,9 @@ class App(Expression):
         while isinstance(current, App):
             stack.append(current.argument)
             current = current.abstraction
-        result = current.eval(interpreter, frame)
+        result = current.fix_eval(interpreter, frame)
         while stack:
-            argument = stack.pop().eval(interpreter, frame)
+            argument = stack.pop().fix_eval(interpreter, frame)
             if isinstance(result, AbsInterface):
                 result = result.call_abs(interpreter, argument)
             else:
@@ -62,7 +71,7 @@ class Accessor(Expression):
 
     def eval(self, interpreter, frame):
         from corefn.literals import Record
-        record = self.expression.eval(interpreter, frame)
+        record = self.expression.fix_eval(interpreter, frame)
         if isinstance(record, Record):
             return record.obj[self.field_name]
         else:
@@ -81,12 +90,10 @@ class Let(Expression):
     def eval(self, interpreter, frame):
         new_frame = {}
         new_frame.update(frame)
-        # TODO: eval all of the bindings exactly once
         for k, v in self.binds.items():
             new_frame[k] = v
-        for k in new_frame.keys():
-            new_frame[k] = new_frame[k].eval(interpreter, new_frame)
-        return self.expression.eval(interpreter, new_frame)
+
+        return self.expression.fix_eval(interpreter, new_frame)
 
     def __repr__(self):
         binds = '  ' + '\n  '.join([k + " = " + b.__repr__() for k, b in self.binds.items()])

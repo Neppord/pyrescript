@@ -14,11 +14,16 @@ class Defered(Box):
     def force(self, interpreter):
         if self.value is None:
             if isinstance(self.thunk, AbsWithFrame):
-                self.value = self.thunk.eval(interpreter, {})
+                self.value = self.thunk.fix_eval(interpreter, {})
             else:
                 raise NotImplementedError("what to do here!?")
         return self.value
 
+    def __repr__(self):
+        if self.value:
+            return "Defered (%s)" % self.value.__repr__()
+        else:
+            return "Defered (%s)" % self.thunk.__repr__()
 
 def _defer(i, thunk):
     return Defered(thunk)

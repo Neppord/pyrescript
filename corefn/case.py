@@ -36,7 +36,10 @@ class Case(Expression):
         self.alternatives = alternatives
 
     def eval(self, interpreter, frame):
-        to_matchs = [to_match.eval(interpreter, frame) for to_match in self.expressions]
+        to_matchs = []
+        for e in self.expressions:
+            to_matchs.append(e.fix_eval(interpreter, frame))
+
         for alternative in self.alternatives:
             if isinstance(alternative, Alternative):
                 binders = alternative.binders
@@ -50,7 +53,7 @@ class Case(Expression):
                     else:
                         break
                 else:
-                    return alternative.expression.eval(interpreter, next_frame)
+                    return alternative.expression.fix_eval(interpreter, next_frame)
             elif isinstance(alternative, GuardedAlternative):
                 binders = alternative.binders
                 assert len(to_matchs) == len(binders)
@@ -69,7 +72,7 @@ class Case(Expression):
                     guarded_expressions = alternative.guarded_expressions
                     for guard, expression in guarded_expressions:
                         assert isinstance(guard, Expression)
-                        result = guard.eval(interpreter, guard_frame)
+                        result = guard.fix_eval(interpreter, guard_frame)
                         assert isinstance(result, Boolean)
                         if result.value:
                             return expression

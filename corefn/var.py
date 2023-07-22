@@ -11,7 +11,7 @@ class LocalVar(Expression):
     def eval(self, interpreter, frame):
         value = frame[self.name]
         assert isinstance(value, Expression)
-        return value.eval(interpreter, frame)
+        return value.fix_eval(interpreter, frame)
 
 
 class ExternalVar(Expression):
@@ -25,4 +25,4 @@ class ExternalVar(Expression):
     def eval(self, interpreter, frame):
         value = interpreter.load_decl(self.module_name, self.name)
         assert isinstance(value, Expression)
-        return value.eval(interpreter, {})
+        return value.fix_eval(interpreter, {})

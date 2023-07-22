@@ -9,14 +9,14 @@ class Box(Expression):
         return self
 
 
-class Record(Box):
+class RecordLiteral(Expression):
     def __init__(self, obj):
         self.obj = obj
 
     def eval(self, interpreter, frame):
         new_obj = {}
         for k, e in self.obj.items():
-            new_obj[k] = e.eval(interpreter, frame)
+            new_obj[k] = e.fix_eval(interpreter, frame)
         return Record(new_obj)
 
     def __repr__(self):
@@ -28,7 +28,20 @@ class Record(Box):
         return "{" + ", ".join(key_value_pairs) + "}"
 
 
-class Array(Box):
+class Record(Box):
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __repr__(self):
+        key_value_pairs = []
+        for field_name, expression in self.obj.items():
+            expression_as_text = expression.__repr__()
+            key_value_pair = field_name + ": " + expression_as_text
+            key_value_pairs.append(key_value_pair)
+        return "{" + ", ".join(key_value_pairs) + "}"
+
+
+class ArrayLiteral(Expression):
     def __init__(self, array):
         assert isinstance(array, list)
         self.array = array
@@ -37,7 +50,16 @@ class Array(Box):
         return "[" + ", ".join([a.__repr__() for a in self.array]) + "]"
 
     def eval(self, interpreter, frame):
-        return Array([e.eval(interpreter, frame) for e in self.array])
+        return Array([e.fix_eval(interpreter, frame) for e in self.array])
+
+
+class Array(Box):
+    def __init__(self, array):
+        assert isinstance(array, list)
+        self.array = array
+
+    def __repr__(self):
+        return "[" + ", ".join([a.__repr__() for a in self.array]) + "]"
 
 
 class Int(Box):
@@ -107,7 +129,7 @@ class Effect(Box):
         self.effect = effect
 
     def run_effect(self, interpreter):
-        return self.effect.eval(interpreter, {})
+        return self.effect.fix_eval(interpreter, {})
 
     def __repr__(self):
         return "Effect (%s)" % self.effect.__repr__()

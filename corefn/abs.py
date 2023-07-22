@@ -47,8 +47,8 @@ class AbsWithFrame(AbsInterface):
     def call_abs(self, interpreter, expression):
         new_frame = {}
         new_frame.update(self.frame)
-        new_frame[self.abs.argument] = expression
-        return self.abs.body.eval(interpreter, new_frame)
+        new_frame[self.abs.argument] = expression.fix_eval(interpreter, new_frame)
+        return self.abs.body.fix_eval(interpreter, new_frame)
 
     def eval(self, interpreter, frame):
         return self
