@@ -1,5 +1,6 @@
-from corefn.expression import App
+from corefn.expression import App, Let
 from corefn.literals import Int, Box
+from corefn.var import LocalVar
 
 
 class ByteCode(object):
@@ -37,6 +38,17 @@ class Emitter(object):
     def emit(self, ast):
         if isinstance(ast, Box):
             self.bytecode.emit_load_constant(ast)
+        elif isinstance(ast, Let):
+            for name, _ast in ast.binds.items():
+                bytecode = ByteCode(name)
+                emitter = Emitter(bytecode)
+                emitter.emit(_ast)
+                self.bytecode.emit_declaration(name, emitter.bytecode)
+            self.emit(ast.expression)
+        elif isinstance(ast, LocalVar):
+            self.bytecode.emit_load_declaration(ast.name)
+        else:
+            NotImplementedError("%r" % ast)
 
 class OpCode(object):
     """
@@ -66,4 +78,7 @@ class LoadConstant(OpCode):
 class LoadDeclaration(OpCode):
     def __init__(self, name):
         self.name = name
+
+    def __eq__(self, other):
+        return isinstance(other, LoadDeclaration) and other.name == self.name
 
