@@ -8,5 +8,6 @@ def test_constant():
     emitter = Emitter(bytecode)
     emitter.emit(Int(42))
     emitter.emit(String("hello world"))
+    emitter.emit(Int(42))
     assert bytecode.constants == [Int(42), String("hello world")]
-    assert bytecode.opcodes == [LoadConstant(0), LoadConstant(1)]
+    assert bytecode.opcodes == [LoadConstant(0), LoadConstant(1), LoadConstant(0)]
