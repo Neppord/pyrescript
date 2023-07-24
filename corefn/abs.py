@@ -90,7 +90,7 @@ class Native1(AbsInterface):
         return self.native(interpreter, expression)
 
     def __repr__(self):
-        return "<placeholder>"
+        return str(type(self))
 
 
 class BoundNative1(Expression):
@@ -116,7 +116,7 @@ class Native2(AbsInterface):
         return BoundNative2(self.native, expression)
 
     def __repr__(self):
-        return "<placeholder>"
+        return str(type(self))
 
 
 class BoundNative2(AbsInterface):
@@ -131,7 +131,7 @@ class BoundNative2(AbsInterface):
         return self.native(interpreter, self.bound, expression)
 
     def __repr__(self):
-        return "<placeholder>"
+        return str(type(self))
 
 
 class BoundBoundNative2(Expression):
@@ -144,7 +144,7 @@ class BoundBoundNative2(Expression):
         return self.native(interpreter, self.bound1, self.bound2)
 
     def __repr__(self):
-        return "<placeholder>"
+        return str(type(self))
 
 
 class Native3(AbsInterface):
@@ -158,7 +158,7 @@ class Native3(AbsInterface):
         return BoundNative3(self.native, expression)
 
     def __repr__(self):
-        return "<placeholder>"
+        return str(type(self))
 
 
 class NativeX(AbsInterface):
@@ -178,7 +178,7 @@ class NativeX(AbsInterface):
         return NativeX(self.native, self.x, self.arguments + [expression])
 
     def __repr__(self):
-        return "<placeholder>"
+        return str(type(self))
 
 
 class BoundNative3(AbsInterface):
@@ -193,7 +193,7 @@ class BoundNative3(AbsInterface):
         return BoundBoundNative3(self.native, self.bound, expression)
 
     def __repr__(self):
-        return "<placeholder>"
+        return str(type(self))
 
 
 class BoundBoundNative3(AbsInterface):
@@ -209,7 +209,7 @@ class BoundBoundNative3(AbsInterface):
         return self.native(interpreter, self.bound1, self.bound2, expression)
 
     def __repr__(self):
-        return "<placeholder>"
+        return str(type(self))
 
 
 class Dynamic(Expression):

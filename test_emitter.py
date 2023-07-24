@@ -1,12 +1,12 @@
 from corefn.expression import Let
 from corefn.var import LocalVar
-from purescript.bytecode import Emitter, ByteCode, Declaration, LoadDeclaration
+from purescript.bytecode import Emitter, Bytecode, Declaration, LoadDeclaration
 from corefn.literals import Int, String
 from purescript.bytecode import LoadConstant
 
 
 def test_constant():
-    bytecode = ByteCode("Main")
+    bytecode = Bytecode("Main")
     emitter = Emitter(bytecode)
     emitter.emit(Int(42))
     emitter.emit(String("hello world"))
@@ -16,7 +16,7 @@ def test_constant():
 
 
 def test_declaration():
-    bytecode = ByteCode("Main")
+    bytecode = Bytecode("Main")
     emitter = Emitter(bytecode)
     emitter.emit(Let({"x": Int(42)}, LocalVar("x")))
     x_declaration, x_var = bytecode.opcodes
