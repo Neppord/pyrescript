@@ -40,6 +40,9 @@ class Record(Box):
             key_value_pairs.append(key_value_pair)
         return "{" + ", ".join(key_value_pairs) + "}"
 
+    def __eq__(self, other):
+        return isinstance(other, Record) and other.obj == self.obj
+
 
 class ArrayLiteral(Expression):
     def __init__(self, array):
@@ -61,6 +64,9 @@ class Array(Box):
     def __repr__(self):
         return "[" + ", ".join([a.__repr__() for a in self.array]) + "]"
 
+    def __eq__(self, other):
+        return isinstance(other, Array) and other.array == self.array
+
 
 class Int(Box):
     def __init__(self, value):
@@ -70,6 +76,9 @@ class Int(Box):
 
     def __repr__(self):
         return str(self.value)
+
+    def __eq__(self, other):
+        return isinstance(other, Int) and other.value == self.value
 
 
 class String(Box):
@@ -83,6 +92,9 @@ class String(Box):
         else:
             return '"' + self.value + '"'
 
+    def __eq__(self, other):
+        return isinstance(other, String) and other.value == self.value
+
 
 class Char(Box):
     def __init__(self, value):
@@ -91,6 +103,9 @@ class Char(Box):
 
     def __repr__(self):
         return "'" + self.value + "'"
+
+    def __eq__(self, other):
+        return isinstance(other, Char) and other.value == self.value
 
 
 class Float(Box):
@@ -101,6 +116,9 @@ class Float(Box):
     def __repr__(self):
         return str(self.value)
 
+    def __eq__(self, other):
+        return isinstance(other, Float) and other.value == self.value
+
 
 class Boolean(Box):
     def __init__(self, value):
@@ -110,6 +128,9 @@ class Boolean(Box):
     def __repr__(self):
         return "true" if self.value else "false"
 
+    def __eq__(self, other):
+        return isinstance(other, Boolean) and other.value == self.value
+
 
 class Unit(Box):
     def __init__(self):
@@ -117,6 +138,9 @@ class Unit(Box):
 
     def __repr__(self):
         return "unit"
+
+    def __eq__(self, other):
+        return isinstance(other, Unit) and other.value == self.value
 
 
 unit = Unit()
