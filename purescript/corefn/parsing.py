@@ -7,7 +7,7 @@ from purescript.corefn.abs import Abs, Constructor
 from purescript.corefn.literals import Record, Array, String, Int, Float, \
     Boolean, unit, RecordLiteral
 from purescript.corefn.var import LocalVar, ExternalVar
-from rjson import raw_loads
+from purescript.rjson import raw_loads
 from rpython.rlib.parsing.tree import Nonterminal
 from rpython.rlib.parsing.tree import Symbol
 

@@ -1,3 +1,4 @@
+import os.path
 from subprocess import check_call
 
 from purescript.corefn.abs import Abs
@@ -35,7 +36,7 @@ def test_lambda():
 
 
 def test_e2e(monkeypatch, capsys):
-    monkeypatch.chdir("e2e/fizz-buzz")
+    monkeypatch.chdir("../e2e/fizz-buzz")
     check_call(
         ["spago", "build", "--purs-args", "--codegen corefn"],
         shell=True
