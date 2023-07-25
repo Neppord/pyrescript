@@ -5,7 +5,7 @@ class Expression(object):
         raise NotImplementedError("%s have yet to implement interpret" % type(self))
 
     def __repr__(self):
-        raise NotImplementedError
+        raise NotImplementedError("%r" % type(self))
 
     def fix_eval(self, interpreter, frame):
         last = self
@@ -39,7 +39,7 @@ class App(Expression):
                 arguments_.append("(%s)" % arg.__repr__())
 
         arguments_repr = " ".join(arguments_)
-        current_repr = self.__repr__()
+        current_repr = current.__repr__()
         on_oneline = "%s %s" % (current_repr, arguments_repr)
         if len(on_oneline) > 79:
             return "%s%s" % (current_repr, "".join(["\n    %s" % a for a in arguments_]))

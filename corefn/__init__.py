@@ -27,7 +27,7 @@ def interpret_foreign(module_name):
     if module_name in foreign:
         return ForeignModule(module_name, foreign[module_name])
     else:
-        return NotImplementedYet("Could not find foreign module %s" % (module_name))
+        raise NotImplementedError("Could not find foreign module %s" % (module_name))
 
 
 class Declaration(object):
@@ -52,13 +52,13 @@ class ModuleInterface:
 class Module(ModuleInterface):
     def __init__(self, imports, declarations):
         self.imports = imports
-        self.declarations = declarations
+        self.__declarations = declarations
 
     def decl(self, name):
-        return self.declarations[name]
+        return self.__declarations[name]
 
     def declarations(self):
-        return self.declarations
+        return self.__declarations
 
     def has_decl(self, name):
         return name in self.declarations

@@ -1,5 +1,6 @@
-from corefn.abs import Foreign, AbsInterface, Native2, Native1, BoundNative2, BoundBoundNative2
+from corefn.abs import Foreign, AbsInterface, Native2, Native1, BoundNative2, BoundBoundNative2, NativeX
 from corefn.literals import Effect, Bound
+from purescript.bytecode import Bytecode
 
 
 def bindE__(i, a, atob):
@@ -9,9 +10,16 @@ def bindE__(i, a, atob):
 def bindE_(interpreter, a, atob):
     if not isinstance(a, Effect):
         raise TypeError("expected Effect got: " + a.__repr__())
-    if not isinstance(atob, AbsInterface):
+    if isinstance(atob, AbsInterface):
+        return Effect(NativeX(bindE__, 2, [a, atob]))
+    if isinstance(atob, Bytecode):
+        effect = Bytecode("effect")
+        effect.emit_load_constant(a)
+        effect.emit_load_constant(atob)
+        effect.emit_apply()
+        return effect
+    else:
         raise TypeError("expected Abs got: " + atob.__repr__())
-    return Effect(BoundBoundNative2(bindE__, a, atob))
 
 
 bindE = Native2(bindE_)

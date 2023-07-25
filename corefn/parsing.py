@@ -13,9 +13,6 @@ from rpython.rlib.parsing.tree import Symbol
 
 
 def load_module(module_name):
-    """
-    :type module_name: list
-    """
     file_name = "output/" + module_name + "/corefn.json"
     with open(file_name) as json_file:
         s = json_file.read()

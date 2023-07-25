@@ -178,7 +178,11 @@ class NativeX(AbsInterface):
         return NativeX(self.native, self.x, self.arguments + [expression])
 
     def __repr__(self):
-        return str(type(self))
+        return "NativeX(%s, %s, %s)" % (
+            self.native.__name__,
+            self.x,
+            self.arguments.__repr__()
+        )
 
 
 class BoundNative3(AbsInterface):
