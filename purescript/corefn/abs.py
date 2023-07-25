@@ -26,139 +26,10 @@ class Abs(AbsInterface):
         self.argument = argument
         self.body = body
 
-    def eval(self, interpreter, frame):
-        return AbsWithFrame(self, frame)
-
-    def call_abs(self, interpreter, expression):
-        return AbsWithFrame(self, {}).call_abs(interpreter, expression)
-
     def __repr__(self):
         argument = self.argument
         body = self.body.__repr__()
         return "\\" + argument + " -> " + body
-
-
-class AbsWithFrame(AbsInterface):
-
-    def __init__(self, abs, frame):
-        self.abs = abs
-        self.frame = frame
-
-    def call_abs(self, interpreter, expression):
-        new_frame = {}
-        new_frame.update(self.frame)
-        new_frame[self.abs.argument] = expression.fix_eval(interpreter, new_frame)
-        return self.abs.body.fix_eval(interpreter, new_frame)
-
-    def eval(self, interpreter, frame):
-        return self
-
-    def __repr__(self):
-        body_repr = self.abs.body.__repr__()
-        if self.frame:
-            frame_repr = "; ".join([k + " = " + v.__repr__() for k, v in self.frame.items()])
-            return "\\" + self.abs.argument + " -> let " + frame_repr + " in " + body_repr
-        else:
-            return "\\" + self.abs.argument + " -> " + body_repr
-
-
-class Foreign(AbsInterface):
-    def __init__(self, repr_, function):
-        self.repr = repr_
-        self.function = function
-
-    def eval(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        ret = self.function(expression)
-        assert isinstance(ret, Expression)
-        return ret
-
-    def __repr__(self):
-        return self.repr
-
-
-class Native1(AbsInterface):
-    def __init__(self, native):
-        self.native = native
-
-    def eval(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        return self.native(interpreter, expression)
-
-    def __repr__(self):
-        return str(type(self))
-
-
-class BoundNative1(Expression):
-    def __init__(self, native, bound):
-        self.bound = bound
-        self.native = native
-
-    def eval(self, interpreter, frame):
-        return self.native(interpreter, self.bound)
-
-    def __repr__(self):
-        return "%s (%s)" % (self.native.__repr__(), self.bound.__repr__())
-
-
-class Native2(AbsInterface):
-    def __init__(self, native):
-        self.native = native
-
-    def eval(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        return BoundNative2(self.native, expression)
-
-    def __repr__(self):
-        return str(type(self))
-
-
-class BoundNative2(AbsInterface):
-    def __init__(self, native, bound):
-        self.native = native
-        self.bound = bound
-
-    def eval(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        return self.native(interpreter, self.bound, expression)
-
-    def __repr__(self):
-        return str(type(self))
-
-
-class BoundBoundNative2(Expression):
-    def __init__(self, native, bound1, bound2):
-        self.native = native
-        self.bound1 = bound1
-        self.bound2 = bound2
-
-    def eval(self, interpreter, frame):
-        return self.native(interpreter, self.bound1, self.bound2)
-
-    def __repr__(self):
-        return str(type(self))
-
-
-class Native3(AbsInterface):
-    def __init__(self, native):
-        self.native = native
-
-    def eval(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        return BoundNative3(self.native, expression)
-
-    def __repr__(self):
-        return str(type(self))
 
 
 class NativeX(AbsInterface):
@@ -168,64 +39,12 @@ class NativeX(AbsInterface):
         self.arguments = arguments
         assert x >= len(arguments)
 
-    def eval(self, interpreter, frame):
-        if self.x == len(self.arguments):
-            return self.native(interpreter, *self.arguments)
-        else:
-            return self
-
-    def call_abs(self, interpreter, expression):
-        return NativeX(self.native, self.x, self.arguments + [expression])
-
     def __repr__(self):
         return "NativeX(%s, %s, %s)" % (
             self.native.__name__,
             self.x,
             self.arguments.__repr__()
         )
-
-
-class BoundNative3(AbsInterface):
-    def __init__(self, native, bound):
-        self.native = native
-        self.bound = bound
-
-    def eval(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        return BoundBoundNative3(self.native, self.bound, expression)
-
-    def __repr__(self):
-        return str(type(self))
-
-
-class BoundBoundNative3(AbsInterface):
-    def __init__(self, native, bound1, bound2):
-        self.native = native
-        self.bound1 = bound1
-        self.bound2 = bound2
-
-    def eval(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        return self.native(interpreter, self.bound1, self.bound2, expression)
-
-    def __repr__(self):
-        return str(type(self))
-
-
-class Dynamic(Expression):
-
-    def __init__(self, function):
-        self.function = function
-
-    def eval(self, interpreter, frame):
-        return self.function(interpreter)
-
-    def __repr__(self):
-        return "<dynamic>"
 
 
 class ConstructorInvocation(AbsInterface):
@@ -236,12 +55,6 @@ class ConstructorInvocation(AbsInterface):
         self.arguments = arguments
         assert len(field_names) >= len(arguments), "to many arguments"
 
-    def eval(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        return ConstructorInvocation(self.name, self.field_names, self.arguments + [expression])
-
     def __repr__(self):
         return " ".join([self.name] + ["(%s)" % a.__repr__() for a in self.arguments])
 
@@ -251,12 +64,6 @@ class Constructor(AbsInterface):
         self.name = name
         self.field_names = field_names
 
-    def eval(self, interpreter, frame):
-        return self
-
-    def call_abs(self, interpreter, expression):
-        return ConstructorInvocation(self.name, self.field_names, [expression])
-
     def __repr__(self):
         return self.name
 
@@ -264,9 +71,3 @@ class Constructor(AbsInterface):
 class NotImplementedYet(AbsInterface):
     def __init__(self, reason):
         self.reason = reason
-
-    def eval(self, interpreter, frame):
-        raise NotImplementedError(self.reason)
-
-    def call_abs(self, interpreter, expression):
-        raise NotImplementedError(self.reason)

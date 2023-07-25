@@ -25,7 +25,8 @@ def test_hello_world(capsys):
     ]
     interpreter = BytecodeInterpreter({}, {})
     effect = interpreter.interpret(bytecode)
-    effect.run_effect(None)
+    fun = effect.effect
+    fun.native(None, *fun.arguments)
     assert capsys.readouterr().out == "hello world\n"
 
 
@@ -46,6 +47,7 @@ test_directories = [
     for path in glob.glob(glob_expression)
 ]
 
+
 @pytest.mark.parametrize("test_directory", test_directories)
 def test_e2e(test_directory, monkeypatch, capsys):
     monkeypatch.chdir(test_directory)
@@ -59,7 +61,8 @@ def test_e2e(test_directory, monkeypatch, capsys):
     Emitter(bytecode).emit(module)
     interpreter = BytecodeInterpreter({'Main': bytecode}, {})
     effect = interpreter.interpret(bytecode.decl("main"))
-    effect.run_effect(None)
+    fun = effect.effect
+    fun.native(None, *fun.arguments)
     with open("expected.txt") as f:
         expected = f.read()
     assert capsys.readouterr().out == expected

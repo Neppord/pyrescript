@@ -1,4 +1,4 @@
-from purescript.corefn.abs import Native1, Constructor, Native2
+from purescript.corefn.abs import Constructor
 
 
 def aff_ctor(tag):

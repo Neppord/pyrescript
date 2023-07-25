@@ -1,8 +1,8 @@
-from purescript.corefn.abs import Native1
+from purescript.corefn.abs import NativeX
 
 exports = {
-    'mkFn4': Native1(lambda i, fn: fn),
-    'runFn4': Native1(lambda i, fn: fn),
-    'mkFn2': Native1(lambda i, fn: fn),
-    'runFn2': Native1(lambda i, fn: fn),
+    'mkFn4': NativeX(lambda i, fn: fn, 1, []),
+    'runFn4': NativeX(lambda i, fn: fn, 1, []),
+    'mkFn2': NativeX(lambda i, fn: fn, 1, []),
+    'runFn2': NativeX(lambda i, fn: fn, 1, []),
 }

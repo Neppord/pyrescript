@@ -1,6 +1,6 @@
 from purescript import corefn
 from purescript.corefn import ModuleInterface
-from purescript.corefn.abs import Abs, Native1, Native2
+from purescript.corefn.abs import Abs, NativeX
 from purescript.corefn.binders import NullBinder, BoolBinder, NewtypeBinder, VarBinder
 from purescript.corefn.case import Case, Alternative
 from purescript.corefn.expression import App, Let, Accessor
@@ -86,10 +86,8 @@ class Emitter(object):
                 self.bytecode.emit_declaration(name, emitter.bytecode)
         elif isinstance(ast, corefn.Declaration):
             self.emit(ast.expression)
-        elif isinstance(ast, Native1):
-            self.bytecode.emit_native_call(ast.native, 1)
-        elif isinstance(ast, Native2):
-            self.bytecode.emit_native_call(ast.native, 2)
+        elif isinstance(ast, NativeX):
+            self.bytecode.emit_native_call(ast.native, ast.x)
         elif isinstance(ast, RecordLiteral):
             self.bytecode.emit_load_constant(Record({}))
             for key, value in ast.obj.items():

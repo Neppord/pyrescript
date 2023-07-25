@@ -1,6 +1,4 @@
-from functools import reduce
-
-from purescript.corefn.abs import Foreign, Native3
+from purescript.corefn.abs import NativeX
 from purescript.corefn.literals import Array
 
 
@@ -17,7 +15,8 @@ def foldr_array_(interpreter, f, b, arr):
         raise ValueError("arr was not an array")
 
 
-foldr_array = Native3(foldr_array_)
+foldr_array = NativeX(foldr_array_, 3, [])
+
 
 def foldl_array(interpreter, f):
     raise NotImplementedError()

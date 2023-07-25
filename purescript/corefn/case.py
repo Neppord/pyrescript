@@ -1,6 +1,4 @@
-from purescript.corefn.binders import Match
 from purescript.corefn.expression import Expression
-from purescript.corefn.literals import Boolean
 
 
 class AlternativeInterface(object):
@@ -34,51 +32,6 @@ class Case(Expression):
     def __init__(self, expressions, alternatives):
         self.expressions = expressions
         self.alternatives = alternatives
-
-    def eval(self, interpreter, frame):
-        to_matchs = []
-        for e in self.expressions:
-            to_matchs.append(e.fix_eval(interpreter, frame))
-
-        for alternative in self.alternatives:
-            if isinstance(alternative, Alternative):
-                binders = alternative.binders
-                assert len(to_matchs) == len(binders)
-                next_frame = {}
-                for i, binder in enumerate(binders):
-                    match = binder.eval(interpreter, to_matchs[i], frame)
-                    if isinstance(match, Match):
-                        next_frame.update(frame)
-                        next_frame.update(match.frame)
-                    else:
-                        break
-                else:
-                    return alternative.expression.fix_eval(interpreter, next_frame)
-            elif isinstance(alternative, GuardedAlternative):
-                binders = alternative.binders
-                assert len(to_matchs) == len(binders)
-                next_frame = {}
-                for i, binder in enumerate(binders):
-                    match = binder.eval(interpreter, to_matchs[i], frame)
-                    if isinstance(match, Match):
-                        next_frame.update(frame)
-                        next_frame.update(match.frame)
-                    else:
-                        break
-                else:
-                    guard_frame = {}
-                    guard_frame.update(frame)
-                    guard_frame.update(next_frame)
-                    guarded_expressions = alternative.guarded_expressions
-                    for guard, expression in guarded_expressions:
-                        assert isinstance(guard, Expression)
-                        result = guard.fix_eval(interpreter, guard_frame)
-                        assert isinstance(result, Boolean)
-                        if result.value:
-                            return expression
-            else:
-                raise NotImplementedError("do not support %r yet" % alternative)
-        raise NotImplementedError
 
     def __repr__(self):
         expressions = ", ".join([e.__repr__() for e in self.expressions])

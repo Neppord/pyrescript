@@ -1,5 +1,5 @@
-from purescript.corefn.abs import Native1
+from purescript.corefn.abs import NativeX
 
 exports = {
-    'unsafeCoerce': Native1(lambda i, e: e)
+    'unsafeCoerce': NativeX(lambda i, e: e, 1, [])
 }

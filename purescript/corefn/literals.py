@@ -13,12 +13,6 @@ class RecordLiteral(Expression):
     def __init__(self, obj):
         self.obj = obj
 
-    def eval(self, interpreter, frame):
-        new_obj = {}
-        for k, e in self.obj.items():
-            new_obj[k] = e.fix_eval(interpreter, frame)
-        return Record(new_obj)
-
     def __repr__(self):
         key_value_pairs = []
         for field_name, expression in self.obj.items():
@@ -51,10 +45,6 @@ class ArrayLiteral(Expression):
 
     def __repr__(self):
         return "[" + ", ".join([a.__repr__() for a in self.array]) + "]"
-
-    def eval(self, interpreter, frame):
-        return Array([e.fix_eval(interpreter, frame) for e in self.array])
-
 
 class Array(Box):
     def __init__(self, array):
@@ -157,15 +147,3 @@ class Effect(Box):
 
     def __repr__(self):
         return "Effect (%s)" % self.effect.__repr__()
-
-
-class Bound(Box):
-    def __init__(self, function):
-        assert isinstance(function, FunctionType)
-        self.function = function
-
-    def eval(self, interpreter, frame):
-        return self.function()
-
-    def __repr__(self):
-        return "<native>"

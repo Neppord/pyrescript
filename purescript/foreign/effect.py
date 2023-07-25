@@ -1,5 +1,5 @@
-from purescript.corefn.abs import Foreign, AbsInterface, Native2, Native1, BoundNative2, BoundBoundNative2, NativeX
-from purescript.corefn.literals import Effect, Bound
+from purescript.corefn.abs import AbsInterface, NativeX
+from purescript.corefn.literals import Effect
 from purescript.bytecode import Bytecode
 
 
@@ -22,5 +22,5 @@ def bindE_(interpreter, a, atob):
         raise TypeError("expected Abs got: " + atob.__repr__())
 
 
-bindE = Native2(bindE_)
-pureE = Native1(lambda i, x: Effect(x))
+bindE = NativeX(bindE_, 2, [])
+pureE = NativeX(lambda i, x: Effect(x), 1, [])

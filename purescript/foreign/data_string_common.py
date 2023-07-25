@@ -1,4 +1,4 @@
-from purescript.corefn.abs import Native2, Native3
+from purescript.corefn.abs import NativeX
 from purescript.corefn.literals import String
 
 
@@ -8,6 +8,7 @@ def _replace_all(i, replace, with_, in_):
     assert isinstance(in_, String)
     return String(in_.value.replace(replace.value, with_.value))
 
+
 exports = {
-    'replaceAll': Native3(_replace_all)
+    'replaceAll': NativeX(_replace_all, 3, [])
 }

@@ -1,5 +1,4 @@
-import interpreter
-from purescript.corefn.abs import Native1, AbsInterface, AbsWithFrame
+from purescript.corefn.abs import NativeX
 from purescript.corefn.literals import Effect
 
 
@@ -11,5 +10,5 @@ def _unsafe_partial(i, value):
 
 
 exports = {
-    '_unsafePartial': Native1(_unsafe_partial)
+    '_unsafePartial': NativeX(_unsafe_partial, 1, [])
 }

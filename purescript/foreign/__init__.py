@@ -1,3 +1,4 @@
+from purescript.corefn.abs import NativeX
 from purescript.corefn.literals import unit
 from purescript.foreign import effect_aff, data_function_uncurried, data_string_common, data_string_regex, \
     partial_unsafe, data_lazy, unsafe_coerce, data_ring, data_enum, data_bounded
@@ -10,7 +11,6 @@ from purescript.foreign.data_semiring import int_add, int_mul
 from purescript.foreign.data_show import show_int_impl
 from purescript.foreign.effect import bindE, pureE
 from purescript.foreign.effect_console import log
-from purescript.foreign.util import to_foreign
 
 """
 Foreign functions can take any Box type as arguments.
@@ -27,17 +27,17 @@ foreign = {
         'log': log
     },
     'Data.Array': {
-        'rangeImpl': to_foreign(range_impl),
+        'rangeImpl': NativeX(range_impl, 2, []),
     },
     'Data.Bounded': data_bounded.exports,
     'Data.Enum': data_enum.exports,
     'Data.Eq': {
-        'eqIntImpl': to_foreign(eq_int_impl),
+        'eqIntImpl': NativeX(eq_int_impl, 2, []),
     },
     'Data.EuclideanRing': {
-        'intDegree': to_foreign(int_degree),
-        'intDiv': to_foreign(int_div),
-        'intMod': to_foreign(int_mod),
+        'intDegree': NativeX(int_degree, 1, []),
+        'intDiv': NativeX(int_div, 2, []),
+        'intMod': NativeX(int_mod, 2, []),
     },
     'Data.Foldable': {
         'foldrArray': foldr_array,
@@ -47,11 +47,11 @@ foreign = {
     'Data.Lazy': data_lazy.exports,
     'Data.Ring': data_ring.exports,
     'Data.Semigroup': {
-        'concatString': to_foreign(concat_string),
+        'concatString': NativeX(concat_string, 2, []),
     },
     'Data.Semiring': {
-        'intAdd': to_foreign(int_add),
-        'intMul': to_foreign(int_mul),
+        'intAdd': NativeX(int_add, 2, []),
+        'intMul': NativeX(int_mul, 2, []),
     },
     'Data.Show': {'showIntImpl': show_int_impl},
     'Data.String.Common': data_string_common.exports,

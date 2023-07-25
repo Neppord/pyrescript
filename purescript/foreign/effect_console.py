@@ -1,4 +1,4 @@
-from purescript.corefn.abs import Native1, BoundNative1
+from purescript.corefn.abs import NativeX
 from purescript.corefn.literals import unit, Effect, String
 
 
@@ -9,8 +9,9 @@ def print_(i, s):
 
 
 def log_(i, s):
-    if not isinstance(s, String): raise TypeError("expected String got: " + s.__repr__())
-    return Effect(BoundNative1(print_, s))
+    if not isinstance(s, String):
+        raise TypeError("expected String got: " + s.__repr__())
+    return Effect(NativeX(print_, 1, [s]))
 
 
-log = Native1(log_)
+log = NativeX(log_, 1, [])
