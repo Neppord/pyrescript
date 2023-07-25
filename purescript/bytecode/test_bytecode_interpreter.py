@@ -1,5 +1,9 @@
+import glob
 import os.path
+import sys
 from subprocess import check_call
+
+import pytest
 
 from purescript.corefn.abs import Abs
 from purescript.corefn.expression import App
@@ -35,8 +39,16 @@ def test_lambda():
     assert answer == Int(42)
 
 
-def test_e2e(monkeypatch, capsys):
-    monkeypatch.chdir("../e2e/fizz-buzz")
+dirname = os.path.dirname(__file__)
+glob_expression = os.path.join(dirname, "..", "..", "e2e", "*", "expected.txt")
+test_directories = [
+    os.path.dirname(os.path.relpath(path))
+    for path in glob.glob(glob_expression)
+]
+
+@pytest.mark.parametrize("test_directory", test_directories)
+def test_e2e(test_directory, monkeypatch, capsys):
+    monkeypatch.chdir(test_directory)
     check_call(
         ["spago", "build", "--purs-args", "--codegen corefn"],
         shell=True
@@ -47,7 +59,7 @@ def test_e2e(monkeypatch, capsys):
     Emitter(bytecode).emit(module)
     interpreter = BytecodeInterpreter({'Main': bytecode}, {})
     effect = interpreter.interpret(bytecode.decl("main"))
-    while isinstance(effect, Bytecode):
-        effect = interpreter.interpret(effect)
     effect.run_effect(None)
-    assert capsys.readouterr().out == ""
+    with open("expected.txt") as f:
+        expected = f.read()
+    assert capsys.readouterr().out == expected
