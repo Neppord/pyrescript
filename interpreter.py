@@ -1,6 +1,6 @@
-from corefn.expression import Expression
-from corefn.literals import Effect
-from prim import prim
+from purescript.corefn.expression import Expression
+from purescript.corefn.literals import Effect
+from purescript.prim import prim
 
 
 class Interpreter(object):

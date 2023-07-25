@@ -1,11 +1,11 @@
-import corefn
-from corefn import ModuleInterface
-from corefn.abs import Abs, Native1, Native2
-from corefn.binders import NullBinder, BoolBinder, NewtypeBinder, VarBinder
-from corefn.case import Case, Alternative
-from corefn.expression import App, Let, Accessor
-from corefn.literals import Box, RecordLiteral, Record, Boolean
-from corefn.var import LocalVar, ExternalVar
+from purescript import corefn
+from purescript.corefn import ModuleInterface
+from purescript.corefn.abs import Abs, Native1, Native2
+from purescript.corefn.binders import NullBinder, BoolBinder, NewtypeBinder, VarBinder
+from purescript.corefn.case import Case, Alternative
+from purescript.corefn.expression import App, Let, Accessor
+from purescript.corefn.literals import Box, RecordLiteral, Record, Boolean
+from purescript.corefn.var import LocalVar, ExternalVar
 from purescript.bytecode import Bytecode
 
 

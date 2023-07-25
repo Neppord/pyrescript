@@ -1,8 +1,8 @@
 import sys
 
-from corefn import interpret_foreign, load_python_foreign
-from corefn.literals import Effect
-from corefn.parsing import load_module
+from purescript.corefn import interpret_foreign, load_python_foreign
+from purescript.corefn.literals import Effect
+from purescript.corefn.parsing import load_module
 from interpreter import Interpreter
 
 

@@ -1,7 +1,7 @@
 import sys
 
-from corefn import interpret_foreign, load_python_foreign
-from corefn.parsing import load_module
+from purescript.corefn import interpret_foreign, load_python_foreign
+from purescript.corefn.parsing import load_module
 from interpreter import Interpreter
 from rpython.rlib.objectmodel import not_rpython
 

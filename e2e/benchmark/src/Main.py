@@ -1,5 +1,5 @@
-from corefn.abs import Native1, BoundNative1
-from corefn.literals import String, Effect
+from purescript.corefn.abs import Native1, BoundNative1
+from purescript.corefn.literals import String, Effect
 
 
 def _open(i, s):
