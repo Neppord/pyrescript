@@ -8,4 +8,9 @@ def show_int_impl_(i, x):
     return String(str(x.value))
 
 
-show_int_impl = NativeX(show_int_impl_, 1, [])
+exports = {
+    'showIntImpl': NativeX(show_int_impl_, 1, []),
+    'showStringImpl': NativeX(lambda i, v: String(str(v)), 1, []),
+    'showCharImpl': NativeX(lambda i, v: String(str(v)), 1, []),
+    'showNumberImpl': NativeX(lambda i, v: String(str(v)), 1, []),
+}
