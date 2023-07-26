@@ -4,7 +4,7 @@ from purescript.corefn.literals import Record, Int, Data
 from purescript.corefn.parsing import load_module
 from purescript.bytecode import LoadConstant, LoadExternal, Bytecode, Apply, NativeCall, StoreLocal, Declaration, \
     LoadLocal, JumpAbsoluteIfNotEqual, AccessField, AssignField, Duplicate, Pop, JumpAbsolute, MakeData, \
-    GuardConstructor
+    GuardConstructor, GuardValue
 from purescript.bytecode.emitter import Emitter
 from purescript.prim import prim
 
@@ -47,7 +47,9 @@ class BytecodeInterpreter(object):
         call_stack = []
         if frame is None:
             frame = {}
+        trace = []
         while 1:
+            trace.append((bytecode, pc))
             while len(bytecode.opcodes) <= pc:
                 if call_stack:
                     bytecode, pc = call_stack.pop()
@@ -81,16 +83,19 @@ class BytecodeInterpreter(object):
                     arg = value_stack.pop()
                     value_stack.append(Data(func.name, func.length, func.members + [arg]))
                 elif isinstance(func, NativeX):
-                    arg = value_stack.pop()
-                    args = func.arguments + [arg]
-                    if len(args) == func.x:
-                        value_stack.append(func.native(None, *args))
+                    if func.x <= func.arguments:
+                        arg = value_stack.pop()
+                        args = func.arguments + [arg]
+                        if len(args) == func.x:
+                            value_stack.append(func.native(None, *args))
+                        else:
+                            value_stack.append(NativeX(
+                                func.native,
+                                func.x,
+                                args
+                            ))
                     else:
-                        value_stack.append(NativeX(
-                            func.native,
-                            func.x,
-                            args
-                        ))
+                        value_stack.append(func.native(None, *func.arguments))
                 else:
                     raise NotImplementedError("cant call %s" % func.__repr__())
             elif isinstance(opcode, NativeCall):
@@ -139,6 +144,11 @@ class BytecodeInterpreter(object):
                         value_stack.append(m)
                 else:
                     value_stack.append(data)
+                    pc = opcode.address
+                    continue
+            elif isinstance(opcode, GuardValue):
+                value = value_stack.pop()
+                if not value == opcode.value:
                     pc = opcode.address
                     continue
             else:

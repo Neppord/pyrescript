@@ -35,13 +35,7 @@ class Emitter(object):
             for expression in ast.expressions:
                 self.emit(expression)
             for alternative in ast.alternatives:
-                go_to_nexts = []
-                for binder in alternative.binders:
-                    go_to_nexts.extend(binder.emit_bytecode(self))
-                self.emit(alternative.expression)
-                go_to_ends.append(self.bytecode.emit_jump())
-                for go_to_next in go_to_nexts:
-                    go_to_next.address = len(self.bytecode.opcodes)
+                go_to_ends.extend(alternative.emit_alternative_bytecode(self))
             for go_to_end in go_to_ends:
                 go_to_end.address = len(self.bytecode.opcodes)
         elif isinstance(ast, Alternative):

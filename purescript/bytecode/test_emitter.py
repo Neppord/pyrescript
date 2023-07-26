@@ -3,7 +3,7 @@ import pprint
 from purescript.bytecode.opcode import MakeData, GuardValue, GuardConstructor
 from purescript.corefn.abs import Abs, Constructor
 from purescript.corefn.binders import BoolBinder, VarBinder, NullBinder, ConstructorBinder
-from purescript.corefn.case import Case, Alternative
+from purescript.corefn.case import Case, Alternative, GuardedAlternative
 from purescript.corefn.expression import Let, App
 from purescript.corefn.var import LocalVar
 from purescript.bytecode import Bytecode, Declaration, LoadLocal, Apply, StoreLocal, Duplicate, JumpAbsoluteIfNotEqual, \
@@ -135,4 +135,28 @@ def test_case_bool_and_null_binder():
         Pop(),
         LoadConstant(2),
         JumpAbsolute(7),
+    ]
+
+
+def test_guarded():
+    bytecode = Bytecode("Main")
+    emitter = Emitter(bytecode)
+    ast = Case(
+        [Boolean(False)],
+        [
+            GuardedAlternative([VarBinder("n")], [(LocalVar("n"), String("skip"))]),
+            Alternative([NullBinder()], String("take"))
+        ]
+    )
+    emitter.emit(ast)
+    assert bytecode.opcodes == [LoadConstant(0),
+         StoreLocal('n'),
+         LoadLocal('n'),
+         GuardValue(Boolean(True), 6),
+         LoadConstant(1),
+         JumpAbsolute(10),
+         JumpAbsolute(10),
+         Pop(),
+         LoadConstant(2),
+         JumpAbsolute(10)
     ]
