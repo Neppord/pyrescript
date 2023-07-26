@@ -8,9 +8,6 @@ class Defered(Box):
         self.thunk = thunk
         self.value = None
 
-    def eval(self, interpreter, frame):
-        return self
-
     def force(self, interpreter):
         raise NotImplementedError("what to do here!?")
 

@@ -170,3 +170,13 @@ class Effect(Box):
 
     def __repr__(self):
         return "Effect (%s)" % self.effect.__repr__()
+
+
+class Ref(Box):
+
+    def __init__(self, module_name, name):
+        self.module_name = module_name
+        self.name = name
+
+    def __repr__(self):
+        return "Lazy (%s, %s)" % (self.module_name.__repr__(), self.name.__repr__())

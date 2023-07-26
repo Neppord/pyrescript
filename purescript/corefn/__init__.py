@@ -44,18 +44,10 @@ class Declaration(object):
         return self
 
 
-class ModuleInterface:
-    def declarations(self):
-        raise NotImplementedError()
-
-
-class Module(ModuleInterface):
+class Module(object):
     def __init__(self, imports, declarations):
         self.imports = imports
         self.__declarations = declarations
-
-    def decl(self, name):
-        return self.__declarations[name]
 
     def declarations(self):
         return self.__declarations
@@ -70,27 +62,3 @@ class Module(ModuleInterface):
 
     def __repr__(self):
         return "\n".join([decl.__repr__() for decl in self.declarations.values()])
-
-
-class ForeignModule(ModuleInterface):
-    def __init__(self, name, exports):
-        self.name = name
-        self.exports = exports
-
-    def decl(self, name):
-        return Declaration(name, self.exports[name])
-
-    def declarations(self):
-        declarations = {}
-        for name, export in self.exports.items():
-            declarations[name] = Declaration(name, export)
-        return declarations
-
-    def has_decl(self, name):
-        return name in self.exports
-
-    def preload_imports(self, interpreter):
-        pass
-
-    def __repr__(self):
-        return "\n".join([Declaration(k, expr).__repr__() for k, expr in self.exports])

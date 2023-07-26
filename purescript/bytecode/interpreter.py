@@ -1,6 +1,6 @@
 from purescript.corefn import load_python_foreign
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import Record, Int, Data
+from purescript.corefn.literals import Record, Data
 from purescript.corefn.parsing import load_module
 from purescript.bytecode import LoadConstant, LoadExternal, Bytecode, Apply, NativeCall, StoreLocal, Declaration, \
     LoadLocal, JumpAbsoluteIfNotEqual, AccessField, AssignField, Duplicate, Pop, JumpAbsolute, MakeData, \
@@ -64,8 +64,24 @@ class BytecodeInterpreter(object):
                 if (
                         opcode.module in [b.name for b, _ in call_stack] or
                         opcode.module == bytecode.name
-                ) and opcode.name in frame:
-                    value_stack.append(frame[opcode.name])
+                ):
+                    if opcode.name in frame:
+                        value_stack.append(frame[opcode.name])
+                    else:
+                        module_name = opcode.module
+                        name = opcode.name
+                        loaded_module = load_module(module_name)
+                        # TODO, or should the name be module name only
+                        declaration_bytecode = Bytecode(module_name + "." + name)
+                        declarations = loaded_module.declarations()
+                        declaration = None
+                        for declaration in declarations:
+                            if declaration.name == name:
+                                break
+                        Emitter(declaration_bytecode).emit(declaration)
+                        value = self.interpret(declaration_bytecode, frame)
+                        frame[name] = value
+                        value_stack.append(value)
                 else:
                     module_frame = self.load_module(opcode.module)
                     if opcode.name not in module_frame:

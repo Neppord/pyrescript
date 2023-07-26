@@ -22,5 +22,7 @@ def bindE_(interpreter, a, atob):
         raise TypeError("expected Abs got: " + atob.__repr__())
 
 
-bindE = NativeX(bindE_, 2, [])
-pureE = NativeX(lambda i, x: Effect(x), 1, [])
+exports = {
+    'pureE': NativeX(lambda i, x: Effect(x), 1, []),
+    'bindE': NativeX(bindE_, 2, []),
+}

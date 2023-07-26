@@ -50,4 +50,6 @@ def _match(i, just, nothing, re, s2):
 exports = {
     'regexImpl': NativeX(_regex_impl, 4, []),
     '_match': NativeX(_match, 4, []),
+    'showRegexImpl': NativeX(lambda i, r: String(str(r)), 1, []),
+    'flagsImpl': NativeX(lambda i, r: r, 1, []),
 }

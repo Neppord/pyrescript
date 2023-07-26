@@ -1,13 +1,11 @@
 from purescript import corefn
-from purescript.corefn import ModuleInterface
+from purescript.bytecode import Bytecode
+from purescript.corefn import Module
 from purescript.corefn.abs import Abs, NativeX, Constructor
-from purescript.corefn.binders import NullBinder, BoolBinder, NewtypeBinder, VarBinder, ConstructorBinder, \
-    ArrayLiteralBinder
 from purescript.corefn.case import Case, Alternative
 from purescript.corefn.expression import App, Let, Accessor
-from purescript.corefn.literals import Box, RecordLiteral, Record, Boolean
+from purescript.corefn.literals import Box, RecordLiteral, Record
 from purescript.corefn.var import LocalVar, ExternalVar
-from purescript.bytecode import Bytecode
 
 
 class Emitter(object):
@@ -43,8 +41,8 @@ class Emitter(object):
                 self.emit(binder)
             self.emit(ast.expression)
         elif isinstance(ast, Let):
-            for name, _ast in ast.binds.items():
-                self.emit(_ast)
+            for name, declaration in ast.binds.items():
+                self.emit(declaration)
                 self.bytecode.emit_store(name)
             self.emit(ast.expression)
         elif isinstance(ast, LocalVar):
@@ -52,11 +50,11 @@ class Emitter(object):
         elif isinstance(ast, Accessor):
             self.emit(ast.expression)
             self.bytecode.emit_access_field(ast.field_name)
-        elif isinstance(ast, ModuleInterface):
-            for name, _ast in ast.declarations().items():
-                bytecode = Bytecode(name)
+        elif isinstance(ast, Module):
+            for declaration in ast.declarations():
+                bytecode = Bytecode(declaration.name)
                 emitter = Emitter(bytecode)
-                emitter.emit(_ast)
+                emitter.emit(declaration)
                 self.bytecode.emit_declaration(emitter.bytecode)
         elif isinstance(ast, corefn.Declaration):
             self.emit(ast.expression)

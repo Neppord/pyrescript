@@ -18,20 +18,20 @@ def load_module(module_name):
         s = json_file.read()
     module = raw_loads(s)
     module_object = object_(module)
-    declarations = {}
+    declarations = []
     for child in module_object["decls"].children:
         decl = object_(child)
         bind_type = str_(decl["bindType"])
         if bind_type == "NonRec":
             identifier = str_(decl["identifier"])
             expression = expression_(decl["expression"])
-            declarations[identifier] = Declaration(identifier, expression)
+            declarations.append(Declaration(identifier, expression))
         elif bind_type == "Rec":
             for child in decl["binds"].children:
                 bind = object_(child)
                 identifier = str_(bind['identifier'])
                 expression = expression_(bind['expression'])
-                declarations[identifier] = Declaration(identifier, expression)
+                declarations.append(Declaration(identifier, expression))
         else:
             raise NotImplementedError()
     imports = []

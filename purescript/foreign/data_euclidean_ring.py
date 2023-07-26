@@ -1,4 +1,5 @@
-from purescript.corefn.literals import Int
+from purescript.corefn.abs import NativeX
+from purescript.corefn.literals import Int, Float
 
 
 def int_mod(i, a, b):
@@ -20,3 +21,11 @@ def int_div(i, a, b):
     if not isinstance(b, Int):
         raise TypeError("expected Int got: " + b.__repr__())
     return Int(a.value // b.value)
+
+
+exports = {
+    'intDegree': NativeX(int_degree, 1, []),
+    'intDiv': NativeX(int_div, 2, []),
+    'intMod': NativeX(int_mod, 2, []),
+    'numDiv': NativeX(lambda i, a, b: Float(a.value / b.value), 2, []),
+}
