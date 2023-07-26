@@ -42,10 +42,11 @@ def test_lambda():
 
 dirname = os.path.dirname(__file__)
 glob_expression = os.path.join(dirname, "..", "..", "e2e", "*", "expected.txt")
-test_directories = [
-    os.path.dirname(os.path.relpath(path))
-    for path in glob.glob(glob_expression)
-]
+test_directories = []
+for path in glob.glob(glob_expression):
+    directory = os.path.dirname(os.path.relpath(path))
+    example_name = os.path.basename(directory)
+    test_directories.append(pytest.param(directory, id=example_name))
 
 
 @pytest.mark.parametrize("test_directory", test_directories)
