@@ -6,6 +6,10 @@ class OpCode(object):
 
 
 class Declaration(OpCode):
+    """
+    A declaration contains bytecode that should be interpreted and
+     then assigned to the name of the declaration
+    """
     def __init__(self, name, bytecode):
         self.name = name
         self.bytecode = bytecode
@@ -22,6 +26,11 @@ class Declaration(OpCode):
 
 
 class Apply(OpCode):
+    """
+    Calls the top of the stack:
+    if it is a native function it calls it by applying the next item on the stack
+    if it is a bytecode it calls it and let it handle the stack
+    """
     def __repr__(self):
         return "Apply()"
 
@@ -30,6 +39,9 @@ class Apply(OpCode):
 
 
 class Duplicate(OpCode):
+    """
+    duplicate the top of the stack, used together with operations that consumes the top of the stack.
+    """
     def __repr__(self):
         return "Duplicate()"
 
@@ -38,6 +50,9 @@ class Duplicate(OpCode):
 
 
 class Pop(OpCode):
+    """
+    Throws away the top of the stack
+    """
     def __repr__(self):
         return "Pop()"
 
@@ -46,6 +61,9 @@ class Pop(OpCode):
 
 
 class LoadConstant(OpCode):
+    """
+    Loads constant from the constants area.
+    """
     def __init__(self, index):
         self.index = index
 
@@ -57,6 +75,9 @@ class LoadConstant(OpCode):
 
 
 class LoadLocal(OpCode):
+    """
+    Loads value from current scope (frame)
+    """
     def __init__(self, name):
         self.name = name
 
@@ -68,6 +89,9 @@ class LoadLocal(OpCode):
 
 
 class AccessField(OpCode):
+    """
+    Replaces the top of the stack with the field from the record currently at the top of the stack
+    """
     def __init__(self, name):
         self.name = name
 
@@ -79,6 +103,10 @@ class AccessField(OpCode):
 
 
 class AssignField(OpCode):
+    """
+    TODO: replace with immutable operation
+    Assign the top of the stack value to the field of stack +1 that needs to be a record
+    """
     def __init__(self, name):
         self.name = name
 
@@ -90,6 +118,9 @@ class AssignField(OpCode):
 
 
 class LoadExternal(OpCode):
+    """
+    Asks the interpreter to load and interpret `module`, and then grabs `name` from its scope
+    """
     def __init__(self, module, name):
         self.module = module
         self.name = name
