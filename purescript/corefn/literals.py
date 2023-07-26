@@ -46,6 +46,7 @@ class ArrayLiteral(Expression):
     def __repr__(self):
         return "[" + ", ".join([a.__repr__() for a in self.array]) + "]"
 
+
 class Array(Box):
     def __init__(self, array):
         assert isinstance(array, list)
@@ -120,6 +121,28 @@ class Boolean(Box):
 
     def __eq__(self, other):
         return isinstance(other, Boolean) and other.value == self.value
+
+
+class Data(Box):
+
+    def __init__(self, name, length, members):
+        self.name = name
+        self.length = length
+        self.members = members
+
+    def __repr__(self):
+        if self.members:
+            return "%s %s" % (self.name, " ".join([m.__repr__() for m in self.members]))
+        else:
+            return self.name
+
+    def __eq__(self, other):
+        return (
+                isinstance(other, Data) and
+                other.name == self.name and
+                other.length == self.length and
+                other.members == self.members
+        )
 
 
 class Unit(Box):

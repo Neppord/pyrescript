@@ -1,9 +1,10 @@
 from purescript.corefn import load_python_foreign
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import Record
+from purescript.corefn.literals import Record, Int, Data
 from purescript.corefn.parsing import load_module
 from purescript.bytecode import LoadConstant, LoadExternal, Bytecode, Apply, NativeCall, StoreLocal, Declaration, \
-    LoadLocal, JumpAbsoluteIfNotEqual, AccessField, AssignField, Duplicate, Pop, JumpAbsolute
+    LoadLocal, JumpAbsoluteIfNotEqual, AccessField, AssignField, Duplicate, Pop, JumpAbsolute, MakeData, \
+    GuardConstructor
 from purescript.bytecode.emitter import Emitter
 from purescript.prim import prim
 
@@ -76,6 +77,9 @@ class BytecodeInterpreter(object):
                     bytecode = func
                     pc = 0
                     continue
+                elif isinstance(func, Data):
+                    arg = value_stack.pop()
+                    value_stack.append(Data(func.name, func.length, func.members + [arg]))
                 elif isinstance(func, NativeX):
                     arg = value_stack.pop()
                     args = func.arguments + [arg]
@@ -126,6 +130,17 @@ class BytecodeInterpreter(object):
             elif isinstance(opcode, JumpAbsolute):
                 pc = opcode.address
                 continue
+            elif isinstance(opcode, MakeData):
+                value_stack.append(Data(opcode.name, opcode.length, []))
+            elif isinstance(opcode, GuardConstructor):
+                data = value_stack.pop()
+                if data.name == opcode.name:
+                    for m in data.members[::-1]:
+                        value_stack.append(m)
+                else:
+                    value_stack.append(data)
+                    pc = opcode.address
+                    continue
             else:
                 raise NotImplementedError(opcode)
             pc += 1

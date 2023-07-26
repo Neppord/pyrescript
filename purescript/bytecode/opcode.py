@@ -10,6 +10,7 @@ class Declaration(OpCode):
     A declaration contains bytecode that should be interpreted and
      then assigned to the name of the declaration
     """
+
     def __init__(self, name, bytecode):
         self.name = name
         self.bytecode = bytecode
@@ -31,6 +32,7 @@ class Apply(OpCode):
     if it is a native function it calls it by applying the next item on the stack
     if it is a bytecode it calls it and let it handle the stack
     """
+
     def __repr__(self):
         return "Apply()"
 
@@ -42,6 +44,7 @@ class Duplicate(OpCode):
     """
     duplicate the top of the stack, used together with operations that consumes the top of the stack.
     """
+
     def __repr__(self):
         return "Duplicate()"
 
@@ -53,6 +56,7 @@ class Pop(OpCode):
     """
     Throws away the top of the stack
     """
+
     def __repr__(self):
         return "Pop()"
 
@@ -64,6 +68,7 @@ class LoadConstant(OpCode):
     """
     Loads constant from the constants area.
     """
+
     def __init__(self, index):
         self.index = index
 
@@ -78,6 +83,7 @@ class LoadLocal(OpCode):
     """
     Loads value from current scope (frame)
     """
+
     def __init__(self, name):
         self.name = name
 
@@ -92,6 +98,7 @@ class AccessField(OpCode):
     """
     Replaces the top of the stack with the field from the record currently at the top of the stack
     """
+
     def __init__(self, name):
         self.name = name
 
@@ -107,6 +114,7 @@ class AssignField(OpCode):
     TODO: replace with immutable operation
     Assign the top of the stack value to the field of stack +1 that needs to be a record
     """
+
     def __init__(self, name):
         self.name = name
 
@@ -121,6 +129,7 @@ class LoadExternal(OpCode):
     """
     Asks the interpreter to load and interpret `module`, and then grabs `name` from its scope
     """
+
     def __init__(self, module, name):
         self.module = module
         self.name = name
@@ -177,6 +186,42 @@ class JumpAbsoluteIfNotEqual(OpCode):
         return "JumpAbsoluteIfNotEqual(%s)" % self.address
 
 
+class GuardValue(OpCode):
+    def __init__(self, value, address):
+        self.value = value
+        self.address = address
+
+    def __eq__(self, other):
+        return (
+                isinstance(other, GuardValue) and
+                other.value == self.value and
+                other.address == self.address
+        )
+
+    def __repr__(self):
+        return "GuardValue(%s, %s)" % (self.value.__repr__(), self.address)
+
+
+class GuardConstructor(OpCode):
+    """
+    Checks that the top of the stack is a data object with matching constructor name, otherwise puts it back and jumps
+    if it matches it splices the members onto the stack in reverse order, with the first member at the top of the stack
+    """
+    def __init__(self, name, address):
+        self.name = name
+        self.address = address
+
+    def __eq__(self, other):
+        return (
+                isinstance(other, GuardConstructor) and
+                other.name == self.name and
+                other.address == self.address
+        )
+
+    def __repr__(self):
+        return "GuardConstructor(%s, %s)" % (self.name.__repr__(), self.address)
+
+
 class JumpAbsolute(OpCode):
     def __init__(self, address):
         self.address = address
@@ -186,3 +231,20 @@ class JumpAbsolute(OpCode):
 
     def __repr__(self):
         return "JumpAbsolute(%s)" % self.address
+
+
+class MakeData(OpCode):
+
+    def __init__(self, name, length):
+        self.length = length
+        self.name = name
+
+    def __eq__(self, other):
+        return (
+                isinstance(other, MakeData) and
+                other.name == self.name and
+                other.length == self.length
+        )
+
+    def __repr__(self):
+        return "MakeData(%s, %s)" % (self.name.__repr__(), self.length)

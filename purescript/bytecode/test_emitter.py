@@ -1,7 +1,8 @@
 import pprint
 
-from purescript.corefn.abs import Abs
-from purescript.corefn.binders import BoolBinder, VarBinder, NullBinder
+from purescript.bytecode.opcode import MakeData, GuardValue, GuardConstructor
+from purescript.corefn.abs import Abs, Constructor
+from purescript.corefn.binders import BoolBinder, VarBinder, NullBinder, ConstructorBinder
 from purescript.corefn.case import Case, Alternative
 from purescript.corefn.expression import Let, App
 from purescript.corefn.var import LocalVar
@@ -19,6 +20,15 @@ def test_constant():
     emitter.emit(Int(42))
     assert bytecode.constants == [Int(42), String("hello world")]
     assert bytecode.opcodes == [LoadConstant(0), LoadConstant(1), LoadConstant(0)]
+
+
+def test_make_data():
+    bytecode = Bytecode("Main")
+    emitter = Emitter(bytecode)
+    ast = App(Constructor("Just", ["a"]), Int(42))
+    emitter.emit(ast)
+    assert bytecode.constants == [Int(42)]
+    assert bytecode.opcodes == [LoadConstant(0), MakeData("Just", 1), Apply()]
 
 
 def test_let():
@@ -62,18 +72,12 @@ def test_case_boolean_binder():
     emitter.emit(ast)
     assert bytecode.opcodes == [
         LoadConstant(0),
-        Duplicate(),
-        LoadConstant(0),
-        JumpAbsoluteIfNotEqual(7),
-        Pop(),
+        GuardValue(Boolean(True), 4),
         LoadConstant(1),
-        JumpAbsolute(13),
-        Duplicate(),
+        JumpAbsolute(7),
+        GuardValue(Boolean(False), 7),
         LoadConstant(2),
-        JumpAbsoluteIfNotEqual(13),
-        Pop(),
-        LoadConstant(3),
-        JumpAbsolute(13),
+        JumpAbsolute(7),
     ]
 
 
@@ -93,6 +97,25 @@ def test_case_var_binder():
     ]
 
 
+def test_case_constructor():
+    bytecode = Bytecode("Main")
+    emitter = Emitter(bytecode)
+    ast = Case(
+        [App(Constructor("Box", ["a"]), Int(42))],
+        [Alternative([ConstructorBinder("Main", "Box", [VarBinder("n")])], LocalVar("n"))]
+    )
+    emitter.emit(ast)
+    assert bytecode.opcodes == [
+        LoadConstant(0),
+        MakeData('Box', 1),
+        Apply(),
+        GuardConstructor('Box', 7),
+        StoreLocal('n'),
+        LoadLocal('n'),
+        JumpAbsolute(7)
+    ]
+
+
 def test_case_bool_and_null_binder():
     bytecode = Bytecode("Main")
     emitter = Emitter(bytecode)
@@ -106,13 +129,10 @@ def test_case_bool_and_null_binder():
     emitter.emit(ast)
     assert bytecode.opcodes == [
         LoadConstant(0),
-        Duplicate(),
+        GuardValue(Boolean(True), 4),
         LoadConstant(1),
-        JumpAbsoluteIfNotEqual(7),
+        JumpAbsolute(7),
         Pop(),
         LoadConstant(2),
-        JumpAbsolute(10),
-        Pop(),
-        LoadConstant(3),
-        JumpAbsolute(10),
+        JumpAbsolute(7),
     ]

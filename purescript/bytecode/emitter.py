@@ -1,6 +1,6 @@
 from purescript import corefn
 from purescript.corefn import ModuleInterface
-from purescript.corefn.abs import Abs, NativeX
+from purescript.corefn.abs import Abs, NativeX, Constructor
 from purescript.corefn.binders import NullBinder, BoolBinder, NewtypeBinder, VarBinder, ConstructorBinder, \
     ArrayLiteralBinder
 from purescript.corefn.case import Case, Alternative
@@ -31,65 +31,17 @@ class Emitter(object):
             emitter.emit(ast.body)
             self.bytecode.emit_load_constant(emitter.bytecode)
         elif isinstance(ast, Case):
-            assert len(ast.expressions) == 1
             go_to_ends = []
             for expression in ast.expressions:
                 self.emit(expression)
             for alternative in ast.alternatives:
-                binder, = alternative.binders
-                if isinstance(binder, NullBinder):
-                    self.bytecode.emit_pop()
-                    self.emit(alternative.expression)
-                    go_to_ends.append(self.bytecode.emit_jump())
-                elif isinstance(binder, VarBinder):
-                    self.bytecode.emit_store(binder.name)
-                    self.emit(alternative.expression)
-                    go_to_ends.append(self.bytecode.emit_jump())
-                elif isinstance(binder, NewtypeBinder):
-                    binder, = binder.binders
-                    if isinstance(binder, VarBinder):
-                        self.bytecode.emit_store(binder.name)
-                        self.emit(alternative.expression)
-                        go_to_ends.append(self.bytecode.emit_jump())
-                    else:
-                        raise NotImplementedError()
-                elif isinstance(binder, BoolBinder):
-                    self.bytecode.emit_duplicate()
-                    self.bytecode.emit_load_constant(Boolean(binder.value))
-                    jump = self.bytecode.emit_jump_if_not_equal()
-                    self.bytecode.emit_pop()
-                    self.emit(alternative.expression)
-                    go_to_ends.append(self.bytecode.emit_jump())
-                    jump.address = len(self.bytecode.opcodes)
-                elif isinstance(binder, ConstructorBinder):
-                    # TODO check Identifier
-                    for member in binder.binders:
-                        if isinstance(member, NullBinder):
-                            self.bytecode.emit_pop()
-                        elif isinstance(member, VarBinder):
-                            self.bytecode.emit_store(member.name)
-                        elif isinstance(member, NewtypeBinder):
-                            newtype_binder, = member.binders
-                            if isinstance(newtype_binder, VarBinder):
-                                self.bytecode.emit_store(newtype_binder.name)
-                            if isinstance(newtype_binder, ArrayLiteralBinder):
-                                value, = newtype_binder.value
-                                if isinstance(value, ConstructorBinder):
-                                    value_member, = value.binders
-                                    if isinstance(value_member, VarBinder):
-                                        self.bytecode.emit_store(value_member.name)
-                                    else:
-                                        raise NotImplementedError()
-                                else:
-                                    raise NotImplementedError()
-                            else:
-                                raise NotImplementedError()
-                        else:
-                            raise NotImplementedError()
-                    self.emit(alternative.expression)
-                    go_to_ends.append(self.bytecode.emit_jump())
-                else:
-                    raise NotImplementedError()
+                go_to_nexts = []
+                for binder in alternative.binders:
+                    go_to_nexts.extend(binder.emit_bytecode(self))
+                self.emit(alternative.expression)
+                go_to_ends.append(self.bytecode.emit_jump())
+                for go_to_next in go_to_nexts:
+                    go_to_next.address = len(self.bytecode.opcodes)
             for go_to_end in go_to_ends:
                 go_to_end.address = len(self.bytecode.opcodes)
         elif isinstance(ast, Alternative):
@@ -121,5 +73,7 @@ class Emitter(object):
             for key, value in ast.obj.items():
                 self.emit(value)
                 self.bytecode.emit_assign_field(key)
+        elif isinstance(ast, Constructor):
+            self.bytecode.emit_make_data(ast.name, len(ast.field_names))
         else:
             raise NotImplementedError("%r: %r" % (type(ast), ast))

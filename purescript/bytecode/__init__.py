@@ -1,5 +1,6 @@
 from purescript.bytecode.opcode import Declaration, Apply, Duplicate, Pop, LoadConstant, LoadLocal, AccessField, \
-    AssignField, LoadExternal, StoreLocal, NativeCall, JumpAbsoluteIfNotEqual, JumpAbsolute
+    AssignField, LoadExternal, StoreLocal, NativeCall, JumpAbsoluteIfNotEqual, JumpAbsolute, MakeData, GuardValue, \
+    GuardConstructor
 
 
 class Bytecode(object):
@@ -23,11 +24,24 @@ class Bytecode(object):
     def emit_store(self, name):
         self.opcodes.append(StoreLocal(name))
 
+    def emit_guard_value(self, value):
+        guard = GuardValue(value, -1)
+        self.opcodes.append(guard)
+        return guard
+
+    def emit_guard_constructor(self, name):
+        guard = GuardConstructor(name, -1)
+        self.opcodes.append(guard)
+        return guard
+
     def emit_access_field(self, name):
         self.opcodes.append(AccessField(name))
 
     def emit_assign_field(self, name):
         self.opcodes.append(AssignField(name))
+
+    def emit_make_data(self, name, length):
+        self.opcodes.append(MakeData(name, length))
 
     def emit_native_call(self, native, number_of_args):
         self.opcodes.append(NativeCall(native, number_of_args))
