@@ -1,7 +1,8 @@
 from purescript import corefn
 from purescript.corefn import ModuleInterface
 from purescript.corefn.abs import Abs, NativeX
-from purescript.corefn.binders import NullBinder, BoolBinder, NewtypeBinder, VarBinder
+from purescript.corefn.binders import NullBinder, BoolBinder, NewtypeBinder, VarBinder, ConstructorBinder, \
+    ArrayLiteralBinder
 from purescript.corefn.case import Case, Alternative
 from purescript.corefn.expression import App, Let, Accessor
 from purescript.corefn.literals import Box, RecordLiteral, Record, Boolean
@@ -28,7 +29,7 @@ class Emitter(object):
             emitter = Emitter(bytecode)
             emitter.bytecode.emit_store(ast.argument)
             emitter.emit(ast.body)
-            self.bytecode.emit_declaration(name, emitter.bytecode)
+            self.bytecode.emit_load_constant(emitter.bytecode)
         elif isinstance(ast, Case):
             assert len(ast.expressions) == 1
             go_to_ends = []
@@ -60,6 +61,33 @@ class Emitter(object):
                     self.emit(alternative.expression)
                     go_to_ends.append(self.bytecode.emit_jump())
                     jump.address = len(self.bytecode.opcodes)
+                elif isinstance(binder, ConstructorBinder):
+                    # TODO check Identifier
+                    for member in binder.binders:
+                        if isinstance(member, NullBinder):
+                            self.bytecode.emit_pop()
+                        elif isinstance(member, VarBinder):
+                            self.bytecode.emit_store(member.name)
+                        elif isinstance(member, NewtypeBinder):
+                            newtype_binder, = member.binders
+                            if isinstance(newtype_binder, VarBinder):
+                                self.bytecode.emit_store(newtype_binder.name)
+                            if isinstance(newtype_binder, ArrayLiteralBinder):
+                                value, = newtype_binder.value
+                                if isinstance(value, ConstructorBinder):
+                                    value_member, = value.binders
+                                    if isinstance(value_member, VarBinder):
+                                        self.bytecode.emit_store(value_member.name)
+                                    else:
+                                        raise NotImplementedError()
+                                else:
+                                    raise NotImplementedError()
+                            else:
+                                raise NotImplementedError()
+                        else:
+                            raise NotImplementedError()
+                    self.emit(alternative.expression)
+                    go_to_ends.append(self.bytecode.emit_jump())
                 else:
                     raise NotImplementedError()
             for go_to_end in go_to_ends:
@@ -83,7 +111,7 @@ class Emitter(object):
                 bytecode = Bytecode(name)
                 emitter = Emitter(bytecode)
                 emitter.emit(_ast)
-                self.bytecode.emit_declaration(name, emitter.bytecode)
+                self.bytecode.emit_declaration(emitter.bytecode)
         elif isinstance(ast, corefn.Declaration):
             self.emit(ast.expression)
         elif isinstance(ast, NativeX):

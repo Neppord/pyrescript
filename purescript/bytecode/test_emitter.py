@@ -33,12 +33,13 @@ def test_apply():
     emitter = Emitter(bytecode)
     ast = App(Abs("n", LocalVar("n")), Int(42))
     emitter.emit(ast)
+    assert bytecode.constants == [
+        Int(42),
+        Bytecode('\\n -> ', [StoreLocal('n'), LoadLocal('n')])
+    ]
     assert bytecode.opcodes == [
         LoadConstant(0),
-        Declaration('\\n -> ', Bytecode('\\n -> ', [
-            StoreLocal('n'),
-            LoadLocal('n')
-        ])),
+        LoadConstant(1),
         Apply()
     ]
 

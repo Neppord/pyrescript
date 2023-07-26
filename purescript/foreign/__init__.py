@@ -1,7 +1,7 @@
 from purescript.corefn.abs import NativeX
 from purescript.corefn.literals import unit
 from purescript.foreign import effect_aff, data_function_uncurried, data_string_common, data_string_regex, \
-    partial_unsafe, data_lazy, unsafe_coerce, data_ring, data_enum, data_bounded
+    partial_unsafe, data_lazy, unsafe_coerce, data_ring, data_enum, data_bounded, control_bind
 from purescript.foreign.data_array import range_impl
 from purescript.foreign.data_eq import eq_int_impl
 from purescript.foreign.data_euclidean_ring import int_degree, int_div, int_mod
@@ -46,9 +46,7 @@ foreign = {
     'Data.Function.Uncurried': data_function_uncurried.exports,
     'Data.Lazy': data_lazy.exports,
     'Data.Ring': data_ring.exports,
-    'Data.Semigroup': {
-        'concatString': NativeX(concat_string, 2, []),
-    },
+    'Data.Semigroup': data_semigroup.exports,
     'Data.Semiring': {
         'intAdd': NativeX(int_add, 2, []),
         'intMul': NativeX(int_mul, 2, []),
@@ -57,6 +55,7 @@ foreign = {
     'Data.String.Common': data_string_common.exports,
     'Data.String.Regex': data_string_regex.exports,
     'Data.Unit': {'unit': unit},
+    'Control.Bind': control_bind.exports,
     'Partial.Unsafe': partial_unsafe.exports,
     'Unsafe.Coerce': unsafe_coerce.exports,
 }

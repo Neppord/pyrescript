@@ -10,7 +10,7 @@ from purescript.corefn.expression import App
 from purescript.corefn.literals import String, Int
 from purescript.corefn.parsing import load_module
 from purescript.corefn.var import LocalVar
-from purescript.bytecode import Bytecode, Apply, LoadConstant, LoadLocal, LoadExternal
+from purescript.bytecode import Bytecode, Apply, LoadConstant, LoadLocal, LoadExternal, Declaration
 from purescript.bytecode.interpreter import BytecodeInterpreter
 from purescript.bytecode.emitter import Emitter
 
@@ -23,11 +23,24 @@ def test_hello_world(capsys):
         LoadExternal('Effect.Console', 'log'),
         Apply(),
     ]
-    interpreter = BytecodeInterpreter({}, {})
+    interpreter = BytecodeInterpreter()
     effect = interpreter.interpret(bytecode)
     fun = effect.effect
     fun.native(None, *fun.arguments)
     assert capsys.readouterr().out == "hello world\n"
+
+
+def test_module():
+    hello_world = Bytecode("hello_world")
+    hello_world.emit_load_constant(String("hello world"))
+
+    module = Bytecode("Main")
+    module.emit_declaration(hello_world)
+
+    interpreter = BytecodeInterpreter()
+    frame = {}
+    interpreter.interpret(module, frame)
+    assert frame == {"hello_world": String("hello world")}
 
 
 def test_lambda():
@@ -35,7 +48,7 @@ def test_lambda():
     emitter = Emitter(bytecode)
     ast = App(Abs("n", LocalVar("n")), Int(42))
     emitter.emit(ast)
-    interpreter = BytecodeInterpreter({}, {})
+    interpreter = BytecodeInterpreter()
     answer = interpreter.interpret(bytecode)
     assert answer == Int(42)
 
@@ -57,13 +70,9 @@ def test_e2e(test_directory, monkeypatch, capsys):
         shell=True
     )
     capsys.readouterr()
-    module = load_module("Main")
-    bytecode = Bytecode("Main")
-    Emitter(bytecode).emit(module)
-    interpreter = BytecodeInterpreter({'Main': bytecode}, {})
-    effect = interpreter.interpret(bytecode.decl("main"))
-    fun = effect.effect
-    fun.native(None, *fun.arguments)
+    interpreter = BytecodeInterpreter()
+    effect = interpreter.load_module("Main")["main"].effect
+    effect.native(None, *effect.arguments)
     with open("expected.txt") as f:
         expected = f.read()
     assert capsys.readouterr().out == expected

@@ -15,7 +15,7 @@ def load_python_foreign(module_name):
         python_module = importlib.import_module(module_name)
         if os.path.commonprefix([src, python_module.__file__]) != src:
             reload(python_module)
-        return ForeignModule(module_name, python_module.exports)
+        return python_module.exports
     except:
         return interpret_foreign(module_name)
     finally:
@@ -25,7 +25,7 @@ def load_python_foreign(module_name):
 def interpret_foreign(module_name):
     from purescript.foreign import foreign
     if module_name in foreign:
-        return ForeignModule(module_name, foreign[module_name])
+        return foreign[module_name]
     else:
         raise NotImplementedError("Could not find foreign module %s" % (module_name))
 

@@ -15,8 +15,10 @@ class Bytecode(object):
             self.opcodes = []
         self.constants = []
 
-    def emit_declaration(self, name, bytecode):
-        self.opcodes.append(Declaration(name, bytecode))
+    def emit_declaration(self, bytecode):
+        self.emit_load_constant(bytecode)
+        self.emit_apply()
+        self.emit_store(bytecode.name)
 
     def emit_store(self, name):
         self.opcodes.append(StoreLocal(name))
@@ -62,12 +64,6 @@ class Bytecode(object):
 
     def emit_load_external(self, module_name, name):
         self.opcodes.append(LoadExternal(module_name, name))
-
-    def decl(self, name):
-        for opcode in self.opcodes:
-            if isinstance(opcode, Declaration) and opcode.name == name:
-                return opcode.bytecode
-        raise KeyError(name)
 
     def __repr__(self):
         return "Bytecode(%r, %r)" % (self.name, self.opcodes)

@@ -5,57 +5,70 @@ from purescript.corefn.parsing import load_module
 from purescript.bytecode import LoadConstant, LoadExternal, Bytecode, Apply, NativeCall, StoreLocal, Declaration, \
     LoadLocal, JumpAbsoluteIfNotEqual, AccessField, AssignField, Duplicate, Pop, JumpAbsolute
 from purescript.bytecode.emitter import Emitter
+from purescript.prim import prim
 
 
 class BytecodeInterpreter(object):
 
-    def __init__(self, loaded_modules, loaded_foreign_modules):
-        self.__loaded_modules = loaded_modules
-        self.__loaded_foreign_modules = loaded_foreign_modules
+    def __init__(self):
+        self.__loaded_modules = {}
 
     def load_module(self, module_name):
+        if module_name in prim:
+            return prim[module_name]
         if module_name not in self.__loaded_modules:
-            loaded_module = load_module(module_name)
-            module_bytecode = Bytecode(module_name)
-            Emitter(module_bytecode).emit(loaded_module)
-            self.__loaded_modules[module_name] = module_bytecode
+            self.__loaded_modules[module_name] = {}
+            error = None
+
+            try:
+                foreign = load_python_foreign(module_name)
+                self.__loaded_modules[module_name] = foreign
+            except NotImplementedError as e:
+                error = e
+                foreign = {}
+
+            try:
+                loaded_module = load_module(module_name)
+                module_bytecode = Bytecode(module_name)
+                Emitter(module_bytecode).emit(loaded_module)
+                namespace = {}
+                namespace.update(foreign)
+                self.__loaded_modules[module_name] = namespace
+                self.interpret(module_bytecode, namespace)
+            except IOError:
+                if error:
+                    raise error
         return self.__loaded_modules[module_name]
 
-    def load_foreign_module(self, module_name):
-        if module_name not in self.__loaded_foreign_modules:
-            loaded_module = load_python_foreign(module_name)
-            module_bytecode = Bytecode(module_name)
-            Emitter(module_bytecode).emit(loaded_module)
-            self.__loaded_foreign_modules[module_name] = module_bytecode
-        return self.__loaded_foreign_modules[module_name]
-
-    def interpret(self, bytecode, value_stack=None, call_stack=None):
+    def interpret(self, bytecode, frame=None):
         pc = 0
-        if not value_stack:
-            value_stack = []
-        if not call_stack:
-            call_stack = []
-        frame = {}
+        value_stack = []
+        call_stack = []
+        if frame is None:
+            frame = {}
         while 1:
             while len(bytecode.opcodes) <= pc:
                 if call_stack:
                     bytecode, pc = call_stack.pop()
-                else:
+                elif value_stack:
                     return value_stack.pop()
+                else:
+                    return None
             opcode = bytecode.opcodes[pc]
             if isinstance(opcode, LoadConstant):
                 value_stack.append(bytecode.constants[opcode.index])
             elif isinstance(opcode, LoadExternal):
-                try:
-                    module_bytecode = self.load_module(opcode.module)
-                    decl = module_bytecode.decl(opcode.name)
-                except (IOError, KeyError):
-                    module_bytecode = self.load_foreign_module(opcode.module)
-                    decl = module_bytecode.decl(opcode.name)
-                call_stack.append((bytecode, pc + 1))
-                bytecode = decl
-                pc = 0
-                continue
+                if (
+                        opcode.module in [b.name for b, _ in call_stack] or
+                        opcode.module == bytecode.name
+                ) and opcode.name in frame:
+                    value_stack.append(frame[opcode.name])
+                else:
+                    module_frame = self.load_module(opcode.module)
+                    if opcode.name not in module_frame:
+                        raise ValueError(opcode)
+                    decl = module_frame[opcode.name]
+                    value_stack.append(decl)
             elif isinstance(opcode, Apply):
                 func = value_stack.pop()
                 if isinstance(func, Bytecode):
@@ -99,7 +112,7 @@ class BytecodeInterpreter(object):
                 value = value_stack.pop()
                 record = value_stack.pop()
                 assert isinstance(record, Record)
-                new_record = {k:v for k,v in record.obj.items()}
+                new_record = {k: v for k, v in record.obj.items()}
                 new_record[opcode.name] = value
                 value_stack.append(Record(new_record))
             elif isinstance(opcode, JumpAbsoluteIfNotEqual):
