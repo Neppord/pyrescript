@@ -6,9 +6,8 @@ from purescript.corefn.case import Case, Alternative
 from purescript.corefn.expression import Let, App
 from purescript.corefn.var import LocalVar
 from purescript.bytecode import Bytecode, Declaration, LoadLocal, Apply, StoreLocal, Duplicate, JumpAbsoluteIfNotEqual, \
-    Pop, JumpAbsolute
+    Pop, JumpAbsolute, LoadConstant
 from purescript.corefn.literals import Int, String, Boolean
-from purescript.bytecode import LoadConstant
 from purescript.bytecode.emitter import Emitter
 
 
