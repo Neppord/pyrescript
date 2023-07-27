@@ -79,6 +79,7 @@ class CallFrame(BaseFrame):
     def get_module_frame(self):
         return self.parent
 
+
 class BytecodeInterpreter(object):
 
     def __init__(self):
@@ -177,11 +178,7 @@ class BytecodeInterpreter(object):
                         if len(args) == func.x:
                             value_stack.append(func.native(*args))
                         else:
-                            value_stack.append(NativeX(
-                                func.native,
-                                func.x,
-                                args
-                            ))
+                            value_stack.append(NativeX(func.native, func.x, args))
                     else:
                         value_stack.append(func.native(*func.arguments))
                 else:
