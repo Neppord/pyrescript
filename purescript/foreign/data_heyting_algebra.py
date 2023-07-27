@@ -1,5 +1,4 @@
-from purescript.corefn.abs import NativeX
-from purescript.corefn.value import Boolean
+from purescript.corefn.value import Boolean, NativeX
 
 exports = {
     'boolConj': NativeX(lambda a, b: Boolean(a.value and b.value), 2, []),

@@ -2,7 +2,6 @@ import importlib
 import os
 import sys
 
-from purescript.corefn.abs import NotImplementedYet
 from purescript.corefn.expression import Expression
 from purescript.prim import prim
 

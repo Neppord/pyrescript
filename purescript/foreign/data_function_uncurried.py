@@ -1,4 +1,4 @@
-from purescript.corefn.abs import NativeX
+from purescript.corefn.value import NativeX
 
 exports = {
     'mkFn4': NativeX(lambda fn: fn, 1, []),

@@ -1,11 +1,11 @@
 from purescript import corefn
 from purescript.bytecode import Bytecode
 from purescript.corefn import Module
-from purescript.corefn.abs import Abs, NativeX, Constructor
+from purescript.corefn.abs import Abs, Constructor
 from purescript.corefn.case import Case, Alternative
 from purescript.corefn.expression import App, Let, Accessor
 from purescript.corefn.literals import RecordLiteral
-from purescript.corefn.value import Box, Record
+from purescript.corefn.value import Box, Record, Closure, NativeX
 from purescript.corefn.var import LocalVar, ExternalVar
 
 
@@ -28,7 +28,7 @@ class Emitter(object):
             emitter = Emitter(bytecode)
             emitter.bytecode.emit_store(ast.argument)
             emitter.emit(ast.body)
-            self.bytecode.emit_load_constant(emitter.bytecode)
+            self.bytecode.emit_lambda(emitter.bytecode)
         elif isinstance(ast, Case):
             go_to_ends = []
             for expression in ast.expressions:

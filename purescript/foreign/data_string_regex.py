@@ -1,5 +1,4 @@
-from purescript.corefn.abs import AbsInterface, NativeX
-from purescript.corefn.value import String, Box, Record, Boolean, Array, Int
+from purescript.corefn.value import String, Box, Record, Boolean, Array, Int, NativeX, Data
 from rpython.rlib.rsre import rsre_re
 
 
@@ -32,11 +31,10 @@ class RegEx(Box):
 
 # TODO: check regex
 def _regex_impl(left, right, s1, flags):
-    assert isinstance(left, AbsInterface)
-    assert isinstance(right, AbsInterface)
     assert isinstance(s1, String)
     assert isinstance(flags, String)
-    return right.call_abs(RegEx(s1.value, flags))
+    assert isinstance(right, Data)
+    return Data(right.name, right.length, right.members + [RegEx(s1.value, flags)])
 
 
 def _match(just, nothing, re, s2):
@@ -44,11 +42,11 @@ def _match(just, nothing, re, s2):
     assert isinstance(s2, String)
     groups = re.match(s2.value)
     if groups:
-        return just(Array([
+        return Data(just.name, just.length, just.members + [Array([
             nothing if g is None
-            else just(String(g))
+            else Data(just.name, just.length, just.members + [String(g)])
             for g in groups
-        ]))
+        ])])
     else:
         return nothing
 
@@ -60,7 +58,7 @@ def _search(just, nothing, re, s):
     if index == -1:
         return nothing
     else:
-        return just(Int(index))
+        return Data(just.name, just.length, just.members + [Int(index)])
 
 
 def _replaceBy(just, nothing, re, s):

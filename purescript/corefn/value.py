@@ -133,3 +133,27 @@ class Unit(Box):
 
 
 unit = Unit()
+
+
+class Closure(Box):
+    def __init__(self, vars_, bytecode):
+        self.bytecode = bytecode
+        self.vars = vars_
+
+    def __repr__(self):
+        return "Closure(%s, %s)" % (self.vars.__repr__(), self.bytecode.__repr__())
+
+
+class NativeX(Box):
+    def __init__(self, native, x, arguments):
+        self.x = x
+        self.native = native
+        self.arguments = arguments
+        assert x >= len(arguments)
+
+    def __repr__(self):
+        return "NativeX(%s, %s, %s)" % (
+            self.native.__name__,
+            self.x,
+            self.arguments.__repr__()
+        )

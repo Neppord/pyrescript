@@ -1,5 +1,4 @@
-from purescript.corefn.abs import NativeX
-from purescript.corefn.value import Char, Int
+from purescript.corefn.value import Char, Int, NativeX
 
 
 def _to_char_code(c):

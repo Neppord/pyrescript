@@ -1,5 +1,5 @@
 from purescript.bytecode import Bytecode
-from purescript.corefn.abs import NativeX
+from purescript.corefn.value import Closure, NativeX
 
 
 def bindE(a, atob):
@@ -9,13 +9,13 @@ def bindE(a, atob):
     bytecode.emit_load_constant(atob)
     bytecode.emit_apply()
     bytecode.emit_apply()
-    return bytecode
+    return Closure({}, bytecode)
 
 
 def pureE(x):
     bytecode = Bytecode("$pureE")
     bytecode.emit_load_constant(x)
-    return bytecode
+    return Closure({}, bytecode)
 
 
 exports = {

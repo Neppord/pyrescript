@@ -7,9 +7,9 @@ import pytest
 from purescript.bytecode import Bytecode, Apply, LoadConstant, LoadExternal
 from purescript.bytecode.emitter import Emitter
 from purescript.bytecode.interpreter import BytecodeInterpreter, BaseFrame
-from purescript.corefn.abs import Abs, NativeX
+from purescript.corefn.abs import Abs
 from purescript.corefn.expression import App
-from purescript.corefn.value import String, Int
+from purescript.corefn.value import String, Int, NativeX, Closure
 from purescript.corefn.var import LocalVar
 
 
@@ -24,8 +24,9 @@ def test_hello_world(capsys):
     interpreter = BytecodeInterpreter()
     effect = interpreter.interpret(bytecode)
     while effect:
-        if isinstance(effect, Bytecode):
-            effect = interpreter.interpret(effect)
+        if isinstance(effect, Closure):
+            frame = BaseFrame(effect.bytecode, 0, effect.vars)
+            effect = interpreter.interpret(effect.bytecode, frame)
         elif isinstance(effect, NativeX):
             effect = effect.native(*effect.arguments)
         else:
@@ -78,8 +79,10 @@ def test_e2e(test_directory, monkeypatch, capsys):
     while effect:
         if isinstance(effect, NativeX):
             effect = effect.native(*effect.arguments)
-        elif isinstance(effect, Bytecode):
-            effect = interpreter.interpret(effect)
+        elif isinstance(effect, Closure):
+            vars_ = effect.vars
+            frame = BaseFrame(effect.bytecode, 0, vars_)
+            effect = interpreter.interpret(effect.bytecode, frame)
         else:
             break
     with open("expected.txt") as f:

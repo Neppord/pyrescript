@@ -159,6 +159,17 @@ class StoreLocal(OpCode):
         return "StoreLocal(%s)" % self.name.__repr__()
 
 
+class Lambda(OpCode):
+    def __init__(self, bytecode):
+        self.bytecode = bytecode
+
+    def __eq__(self, other):
+        return isinstance(other, Lambda) and other.bytecode == self.bytecode
+
+    def __repr__(self):
+        return "Lambda(%s)" % self.bytecode.__repr__()
+
+
 class NativeCall(OpCode):
     def __init__(self, native, number_of_args):
         self.native = native

@@ -1,10 +1,9 @@
 from purescript.corefn import load_python_foreign
-from purescript.corefn.abs import NativeX
-from purescript.corefn.value import Record, Data
+from purescript.corefn.value import Record, Data, Closure, NativeX
 from purescript.corefn.parsing import load_module
 from purescript.bytecode import LoadConstant, LoadExternal, Bytecode, Apply, NativeCall, StoreLocal, Declaration, \
     LoadLocal, JumpAbsoluteIfNotEqual, AccessField, AssignField, Duplicate, Pop, JumpAbsolute, MakeData, \
-    GuardConstructor, GuardValue, Stash, RestoreStash, DropStash
+    GuardConstructor, GuardValue, Stash, RestoreStash, DropStash, Lambda
 from purescript.bytecode.emitter import Emitter
 from purescript.prim import prim
 
@@ -57,6 +56,11 @@ class BaseFrame(object):
     def get_module_frame(self):
         return self
 
+    def get_closure(self):
+        closure = {}
+        closure.update(self.vars)
+        return closure
+
 
 class CallFrame(BaseFrame):
     def __init__(self, parent, bytecode, pc, vars_):
@@ -78,6 +82,17 @@ class CallFrame(BaseFrame):
 
     def get_module_frame(self):
         return self.parent
+
+    def get_closure(self):
+        closure = self.parent.get_closure()
+        closure.update(self.vars)
+        return closure
+
+
+class ClosureFrame(object):
+
+    def __int__(self, closure, parent):
+        pass
 
 
 class BytecodeInterpreter(object):
@@ -134,6 +149,8 @@ class BytecodeInterpreter(object):
             opcode = frame.get_opcode()
             if isinstance(opcode, LoadConstant):
                 value_stack.append(frame.get_constant())
+            elif isinstance(opcode, Lambda):
+                value_stack.append(Closure(frame.get_closure(), opcode.bytecode))
             elif isinstance(opcode, LoadExternal):
                 if opcode.module == frame.get_module_name():
                     if frame.get_module_frame().has_var(opcode.name):
@@ -164,9 +181,9 @@ class BytecodeInterpreter(object):
                     value_stack.append(decl)
             elif isinstance(opcode, Apply):
                 func = value_stack.pop()
-                if isinstance(func, Bytecode):
+                if isinstance(func, Closure):
                     frame.pc += 1
-                    frame = CallFrame(frame, func, 0, {})
+                    frame = CallFrame(frame, func.bytecode, 0, func.vars)
                     continue
                 elif isinstance(func, Data):
                     arg = value_stack.pop()

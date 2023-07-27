@@ -1,6 +1,7 @@
 from purescript.bytecode.opcode import Declaration, Apply, Duplicate, Pop, LoadConstant, LoadLocal, AccessField, \
     AssignField, LoadExternal, StoreLocal, NativeCall, JumpAbsoluteIfNotEqual, JumpAbsolute, MakeData, GuardValue, \
-    GuardConstructor, Stash, RestoreStash, DropStash
+    GuardConstructor, Stash, RestoreStash, DropStash, Lambda
+from purescript.corefn.value import Closure
 
 
 class Bytecode(object):
@@ -17,9 +18,12 @@ class Bytecode(object):
         self.constants = []
 
     def emit_declaration(self, bytecode):
-        self.emit_load_constant(bytecode)
+        self.emit_load_constant(Closure({}, bytecode))
         self.emit_apply()
         self.emit_store(bytecode.name)
+
+    def emit_lambda(self, bytecode):
+        self.opcodes.append(Lambda(bytecode))
 
     def emit_store(self, name):
         self.opcodes.append(StoreLocal(name))

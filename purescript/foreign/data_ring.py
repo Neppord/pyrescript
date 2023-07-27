@@ -1,5 +1,4 @@
-from purescript.corefn.abs import NativeX
-from purescript.corefn.value import Int, Float
+from purescript.corefn.value import Int, Float, NativeX
 
 
 def _intSub(a, b):

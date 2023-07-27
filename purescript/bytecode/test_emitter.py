@@ -1,6 +1,6 @@
 from purescript.bytecode import Bytecode, LoadLocal, Apply, StoreLocal, Duplicate, Pop, JumpAbsolute, LoadConstant
 from purescript.bytecode.emitter import Emitter
-from purescript.bytecode.opcode import MakeData, GuardValue, GuardConstructor, Stash, RestoreStash, DropStash
+from purescript.bytecode.opcode import MakeData, GuardValue, GuardConstructor, Stash, RestoreStash, DropStash, Lambda
 from purescript.corefn.abs import Abs, Constructor
 from purescript.corefn.binders import BoolBinder, VarBinder, NullBinder, ConstructorBinder
 from purescript.corefn.case import Case, Alternative, GuardedAlternative
@@ -41,12 +41,11 @@ def test_apply():
     ast = App(Abs("n", LocalVar("n")), Int(42))
     emitter.emit(ast)
     assert bytecode.constants == [
-        Int(42),
-        Bytecode('\\n -> ', [StoreLocal('n'), LoadLocal('n')])
+        Int(42)
     ]
     assert bytecode.opcodes == [
         LoadConstant(0),
-        LoadConstant(1),
+        Lambda(Bytecode('\\n -> ', [StoreLocal('n'), LoadLocal('n')])),
         Apply()
     ]
 

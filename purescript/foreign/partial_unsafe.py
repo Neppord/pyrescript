@@ -1,4 +1,4 @@
-from purescript.corefn.abs import NativeX
+from purescript.corefn.value import NativeX
 
 
 def _unsafe_partial(value):

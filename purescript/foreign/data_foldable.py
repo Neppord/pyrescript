@@ -1,5 +1,4 @@
-from purescript.corefn.abs import NativeX
-from purescript.corefn.value import Array
+from purescript.corefn.value import Array, NativeX
 
 
 def foldr_array_(f, b, arr):

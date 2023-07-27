@@ -1,5 +1,4 @@
-from purescript.corefn.abs import NativeX
-from purescript.corefn.value import String, Array
+from purescript.corefn.value import String, Array, NativeX
 
 
 def concat_string(a, b):
