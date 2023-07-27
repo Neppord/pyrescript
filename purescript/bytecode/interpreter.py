@@ -4,10 +4,80 @@ from purescript.corefn.literals import Record, Data
 from purescript.corefn.parsing import load_module
 from purescript.bytecode import LoadConstant, LoadExternal, Bytecode, Apply, NativeCall, StoreLocal, Declaration, \
     LoadLocal, JumpAbsoluteIfNotEqual, AccessField, AssignField, Duplicate, Pop, JumpAbsolute, MakeData, \
-    GuardConstructor, GuardValue
+    GuardConstructor, GuardValue, Stash, RestoreStash, DropStash
 from purescript.bytecode.emitter import Emitter
 from purescript.prim import prim
 
+
+def print_trace(trace):
+    ret = []
+    for b, p in trace:
+        if len(b.opcodes) <= p:
+            continue
+        code = b.opcodes[p]
+        if isinstance(code, LoadConstant):
+            ret.append(b.constants[code.index])
+        else:
+            ret.append(code)
+    return ret
+
+
+class BaseFrame(object):
+    def __init__(self, bytecode, pc, vars_):
+        assert isinstance(bytecode, Bytecode)
+        self.bytecode = bytecode
+        assert isinstance(pc, int)
+        self.pc = pc
+        assert isinstance(vars_, dict)
+        self.vars = vars_
+
+    def get_opcode(self):
+        return self.bytecode.opcodes[self.pc]
+
+    def get_constant(self):
+        op = self.bytecode.opcodes[self.pc]
+        assert isinstance(op, LoadConstant)
+        return self.bytecode.constants[op.index]
+
+    def is_done(self):
+        return len(self.bytecode.opcodes) <= self.pc
+
+    def get_var(self, name):
+        return self.vars[name]
+
+    def has_var(self, name):
+        return name in self.vars
+
+    def set_var(self, name, value):
+        self.vars[name] = value
+
+    def get_module_name(self):
+        return self.bytecode.name
+
+    def get_module_frame(self):
+        return self
+
+
+class CallFrame(BaseFrame):
+    def __init__(self, parent, bytecode, pc, vars_):
+        super(CallFrame, self).__init__(bytecode, pc, vars_)
+        assert isinstance(parent, BaseFrame)
+        self.parent = parent
+
+    def get_var(self, name):
+        if name in self.vars:
+            return self.vars[name]
+        else:
+            return self.parent.get_var(name)
+
+    def has_var(self, name):
+        return name in self.vars or self.parent.has_var(name)
+
+    def get_module_name(self):
+        return self.parent.get_module_name()
+
+    def get_module_frame(self):
+        return self.parent
 
 class BytecodeInterpreter(object):
 
@@ -34,53 +104,56 @@ class BytecodeInterpreter(object):
                 Emitter(module_bytecode).emit(loaded_module)
                 namespace = {}
                 namespace.update(foreign)
+                module_frame = BaseFrame(module_bytecode, 0, namespace)
                 self.__loaded_modules[module_name] = namespace
-                self.interpret(module_bytecode, namespace)
+                self.interpret(module_bytecode, module_frame)
             except IOError:
                 if error:
                     raise error
         return self.__loaded_modules[module_name]
 
     def interpret(self, bytecode, frame=None):
-        pc = 0
         value_stack = []
-        call_stack = []
+        stash = []
         if frame is None:
-            frame = {}
+            frame = BaseFrame(bytecode, 0, {})
+        else:
+            assert isinstance(frame, BaseFrame)
+            assert bytecode == frame.bytecode
         trace = []
         while 1:
-            trace.append((bytecode, pc))
-            while len(bytecode.opcodes) <= pc:
-                if call_stack:
-                    bytecode, pc = call_stack.pop()
+            trace.append((frame.bytecode, frame.pc))
+            while frame.is_done():
+                if isinstance(frame, CallFrame):
+                    frame = frame.parent
                 elif value_stack:
                     return value_stack.pop()
                 else:
                     return None
-            opcode = bytecode.opcodes[pc]
+            opcode = frame.get_opcode()
             if isinstance(opcode, LoadConstant):
-                value_stack.append(bytecode.constants[opcode.index])
+                value_stack.append(frame.get_constant())
             elif isinstance(opcode, LoadExternal):
-                if (
-                        opcode.module in [b.name for b, _ in call_stack] or
-                        opcode.module == bytecode.name
-                ):
-                    if opcode.name in frame:
-                        value_stack.append(frame[opcode.name])
+                if opcode.module == frame.get_module_name():
+                    if frame.get_module_frame().has_var(opcode.name):
+                        value_stack.append(frame.get_module_frame().get_var(opcode.name))
                     else:
                         module_name = opcode.module
                         name = opcode.name
                         loaded_module = load_module(module_name)
                         # TODO, or should the name be module name only
                         declaration_bytecode = Bytecode(module_name + "." + name)
-                        declarations = loaded_module.declarations()
-                        declaration = None
-                        for declaration in declarations:
+                        found = None
+                        for declaration in loaded_module.declarations():
                             if declaration.name == name:
+                                found = declaration
                                 break
-                        Emitter(declaration_bytecode).emit(declaration)
-                        value = self.interpret(declaration_bytecode, frame)
-                        frame[name] = value
+                        if found is None:
+                            raise ValueError("could not find declaration %s in %s" % (name, module_name))
+                        Emitter(declaration_bytecode).emit(found)
+                        get_module_frame = BaseFrame(declaration_bytecode, 0, frame.get_module_frame().vars)
+                        value = self.interpret(declaration_bytecode, get_module_frame)
+                        frame.set_var(name, value)
                         value_stack.append(value)
                 else:
                     module_frame = self.load_module(opcode.module)
@@ -91,9 +164,8 @@ class BytecodeInterpreter(object):
             elif isinstance(opcode, Apply):
                 func = value_stack.pop()
                 if isinstance(func, Bytecode):
-                    call_stack.append((bytecode, pc + 1))
-                    bytecode = func
-                    pc = 0
+                    frame.pc += 1
+                    frame = CallFrame(frame, func, 0, {})
                     continue
                 elif isinstance(func, Data):
                     arg = value_stack.pop()
@@ -117,7 +189,7 @@ class BytecodeInterpreter(object):
             elif isinstance(opcode, NativeCall):
                 value_stack.append(NativeX(opcode.native, opcode.number_of_args, []))
             elif isinstance(opcode, StoreLocal):
-                frame[opcode.name] = value_stack.pop()
+                frame.set_var(opcode.name, value_stack.pop())
             elif isinstance(opcode, Declaration):
                 value_stack.append(opcode.bytecode)
             elif isinstance(opcode, Duplicate):
@@ -125,9 +197,12 @@ class BytecodeInterpreter(object):
                 value_stack.append(value)
                 value_stack.append(value)
             elif isinstance(opcode, Pop):
-                value_stack.pop()
+                if value_stack:
+                    value_stack.pop()
+                else:
+                    raise ValueError("Stack was empty")
             elif isinstance(opcode, LoadLocal):
-                value = frame[opcode.name]
+                value = frame.get_var(opcode.name)
                 value_stack.append(value)
             elif isinstance(opcode, AccessField):
                 record = value_stack.pop()
@@ -144,12 +219,12 @@ class BytecodeInterpreter(object):
                 v1 = value_stack.pop()
                 v2 = value_stack.pop()
                 if v1 != v2:
-                    pc = opcode.address
+                    frame.pc = opcode.address
                     continue
                 else:
                     pass
             elif isinstance(opcode, JumpAbsolute):
-                pc = opcode.address
+                frame.pc = opcode.address
                 continue
             elif isinstance(opcode, MakeData):
                 value_stack.append(Data(opcode.name, opcode.length, []))
@@ -160,13 +235,19 @@ class BytecodeInterpreter(object):
                         value_stack.append(m)
                 else:
                     value_stack.append(data)
-                    pc = opcode.address
+                    frame.pc = opcode.address
                     continue
             elif isinstance(opcode, GuardValue):
                 value = value_stack.pop()
                 if not value == opcode.value:
-                    pc = opcode.address
+                    frame.pc = opcode.address
                     continue
+            elif isinstance(opcode, Stash):
+                stash.append([v for v in value_stack])
+            elif isinstance(opcode, RestoreStash):
+                value_stack = [v for v in stash[-1]]
+            elif isinstance(opcode, DropStash):
+                stash.pop()
             else:
                 raise NotImplementedError(opcode)
-            pc += 1
+            frame.pc += 1

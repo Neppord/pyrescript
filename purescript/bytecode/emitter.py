@@ -32,10 +32,13 @@ class Emitter(object):
             go_to_ends = []
             for expression in ast.expressions:
                 self.emit(expression)
+            self.bytecode.emit_stash()
             for alternative in ast.alternatives:
+                self.bytecode.emit_restore_stash()
                 go_to_ends.extend(alternative.emit_alternative_bytecode(self))
             for go_to_end in go_to_ends:
                 go_to_end.address = len(self.bytecode.opcodes)
+            self.bytecode.emit_drop_stash()
         elif isinstance(ast, Alternative):
             for binder in ast.binders:
                 self.emit(binder)

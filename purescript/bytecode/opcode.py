@@ -207,6 +207,7 @@ class GuardConstructor(OpCode):
     Checks that the top of the stack is a data object with matching constructor name, otherwise puts it back and jumps
     if it matches it splices the members onto the stack in reverse order, with the first member at the top of the stack
     """
+
     def __init__(self, name, address):
         self.name = name
         self.address = address
@@ -248,3 +249,27 @@ class MakeData(OpCode):
 
     def __repr__(self):
         return "MakeData(%s, %s)" % (self.name.__repr__(), self.length)
+
+
+class Stash(OpCode):
+    def __repr__(self):
+        return "Stash()"
+
+    def __eq__(self, other):
+        return isinstance(other, Stash)
+
+
+class RestoreStash(OpCode):
+    def __repr__(self):
+        return "RestoreStash()"
+
+    def __eq__(self, other):
+        return isinstance(other, RestoreStash)
+
+
+class DropStash(OpCode):
+    def __repr__(self):
+        return "DropStash()"
+
+    def __eq__(self, other):
+        return isinstance(other, DropStash)

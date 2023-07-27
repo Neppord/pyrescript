@@ -1,6 +1,6 @@
 import pprint
 
-from purescript.bytecode.opcode import MakeData, GuardValue, GuardConstructor
+from purescript.bytecode.opcode import MakeData, GuardValue, GuardConstructor, Stash, RestoreStash, DropStash
 from purescript.corefn.abs import Abs, Constructor
 from purescript.corefn.binders import BoolBinder, VarBinder, NullBinder, ConstructorBinder
 from purescript.corefn.case import Case, Alternative, GuardedAlternative
@@ -72,12 +72,18 @@ def test_case_boolean_binder():
     emitter.emit(ast)
     assert bytecode.opcodes == [
         LoadConstant(0),
-        GuardValue(Boolean(True), 4),
+        Stash(),
+        RestoreStash(),
+        Duplicate(),
+        GuardValue(Boolean(True), 7),
         LoadConstant(1),
-        JumpAbsolute(7),
-        GuardValue(Boolean(False), 7),
+        JumpAbsolute(12),
+        RestoreStash(),
+        Duplicate(),
+        GuardValue(Boolean(False), 12),
         LoadConstant(2),
-        JumpAbsolute(7),
+        JumpAbsolute(12),
+        DropStash()
     ]
 
 
@@ -91,9 +97,12 @@ def test_case_var_binder():
     emitter.emit(ast)
     assert bytecode.opcodes == [
         LoadConstant(0),
+        Stash(),
+        RestoreStash(),
         StoreLocal('n'),
         LoadLocal('n'),
-        JumpAbsolute(4)
+        JumpAbsolute(6),
+        DropStash()
     ]
 
 
@@ -109,10 +118,13 @@ def test_case_constructor():
         LoadConstant(0),
         MakeData('Box', 1),
         Apply(),
-        GuardConstructor('Box', 7),
+        Stash(),
+        RestoreStash(),
+        GuardConstructor('Box', 9),
         StoreLocal('n'),
         LoadLocal('n'),
-        JumpAbsolute(7)
+        JumpAbsolute(9),
+        DropStash()
     ]
 
 
@@ -129,12 +141,17 @@ def test_case_bool_and_null_binder():
     emitter.emit(ast)
     assert bytecode.opcodes == [
         LoadConstant(0),
-        GuardValue(Boolean(True), 4),
+        Stash(),
+        RestoreStash(),
+        Duplicate(),
+        GuardValue(Boolean(True), 7),
         LoadConstant(1),
-        JumpAbsolute(7),
+        JumpAbsolute(11),
+        RestoreStash(),
         Pop(),
         LoadConstant(2),
-        JumpAbsolute(7),
+        JumpAbsolute(11),
+        DropStash()
     ]
 
 
@@ -149,14 +166,19 @@ def test_guarded():
         ]
     )
     emitter.emit(ast)
-    assert bytecode.opcodes == [LoadConstant(0),
-         StoreLocal('n'),
-         LoadLocal('n'),
-         GuardValue(Boolean(True), 6),
-         LoadConstant(1),
-         JumpAbsolute(10),
-         JumpAbsolute(10),
-         Pop(),
-         LoadConstant(2),
-         JumpAbsolute(10)
+    assert bytecode.opcodes == [
+        LoadConstant(0),
+        Stash(),
+        RestoreStash(),
+        StoreLocal('n'),
+        LoadLocal('n'),
+        GuardValue(Boolean(True), 8),
+        LoadConstant(1),
+        JumpAbsolute(13),
+        JumpAbsolute(13),
+        RestoreStash(),
+        Pop(),
+        LoadConstant(2),
+        JumpAbsolute(13),
+        DropStash()
     ]

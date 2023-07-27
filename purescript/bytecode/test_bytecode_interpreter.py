@@ -5,13 +5,13 @@ from subprocess import check_call
 
 import pytest
 
-from purescript.corefn.abs import Abs
+from purescript.corefn.abs import Abs, NativeX
 from purescript.corefn.expression import App
-from purescript.corefn.literals import String, Int
+from purescript.corefn.literals import String, Int, Effect
 from purescript.corefn.parsing import load_module
 from purescript.corefn.var import LocalVar
 from purescript.bytecode import Bytecode, Apply, LoadConstant, LoadLocal, LoadExternal, Declaration
-from purescript.bytecode.interpreter import BytecodeInterpreter
+from purescript.bytecode.interpreter import BytecodeInterpreter, BaseFrame
 from purescript.bytecode.emitter import Emitter
 
 
@@ -38,9 +38,9 @@ def test_module():
     module.emit_declaration(hello_world)
 
     interpreter = BytecodeInterpreter()
-    frame = {}
+    frame = BaseFrame(module, 0, {})
     interpreter.interpret(module, frame)
-    assert frame == {"hello_world": String("hello world")}
+    assert frame.vars == {"hello_world": String("hello world")}
 
 
 def test_lambda():
@@ -71,8 +71,13 @@ def test_e2e(test_directory, monkeypatch, capsys):
     )
     capsys.readouterr()
     interpreter = BytecodeInterpreter()
-    effect = interpreter.load_module("Main")["main"].effect
-    effect.native(None, *effect.arguments)
+    effect = interpreter.load_module("Main")["main"]
+    if isinstance(effect, Effect):
+        ret = effect = effect.effect
+    if isinstance(effect, NativeX):
+        ret = effect.native(None, *effect.arguments)
+    else:
+        ret = interpreter.interpret(effect)
     with open("expected.txt") as f:
         expected = f.read()
     assert capsys.readouterr().out == expected

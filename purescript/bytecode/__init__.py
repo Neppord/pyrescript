@@ -1,6 +1,6 @@
 from purescript.bytecode.opcode import Declaration, Apply, Duplicate, Pop, LoadConstant, LoadLocal, AccessField, \
     AssignField, LoadExternal, StoreLocal, NativeCall, JumpAbsoluteIfNotEqual, JumpAbsolute, MakeData, GuardValue, \
-    GuardConstructor
+    GuardConstructor, Stash, RestoreStash, DropStash
 
 
 class Bytecode(object):
@@ -58,6 +58,15 @@ class Bytecode(object):
 
     def emit_apply(self):
         self.opcodes.append(Apply())
+
+    def emit_stash(self):
+        self.opcodes.append(Stash())
+
+    def emit_restore_stash(self):
+        self.opcodes.append(RestoreStash())
+
+    def emit_drop_stash(self):
+        self.opcodes.append(DropStash())
 
     def emit_duplicate(self):
         self.opcodes.append(Duplicate())
