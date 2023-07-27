@@ -1,6 +1,6 @@
 from purescript.corefn import load_python_foreign
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import Record, Data
+from purescript.corefn.value import Record, Data
 from purescript.corefn.parsing import load_module
 from purescript.bytecode import LoadConstant, LoadExternal, Bytecode, Apply, NativeCall, StoreLocal, Declaration, \
     LoadLocal, JumpAbsoluteIfNotEqual, AccessField, AssignField, Duplicate, Pop, JumpAbsolute, MakeData, \

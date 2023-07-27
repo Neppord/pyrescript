@@ -1,5 +1,5 @@
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import unit, String
+from purescript.corefn.value import unit, String
 from purescript.foreign.effect import pureE
 
 

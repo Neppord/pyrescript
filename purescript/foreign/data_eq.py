@@ -1,5 +1,5 @@
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import Boolean, Int
+from purescript.corefn.value import Boolean, Int
 
 
 def eq_int_impl(a, b):

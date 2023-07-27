@@ -1,4 +1,4 @@
-from purescript.corefn.literals import String
+from purescript.corefn.value import String
 
 exports = {
     'hello_world': (String("Hello world!"))

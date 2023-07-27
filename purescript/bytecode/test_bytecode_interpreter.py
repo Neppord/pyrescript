@@ -9,7 +9,7 @@ from purescript.bytecode.emitter import Emitter
 from purescript.bytecode.interpreter import BytecodeInterpreter, BaseFrame
 from purescript.corefn.abs import Abs, NativeX
 from purescript.corefn.expression import App
-from purescript.corefn.literals import String, Int
+from purescript.corefn.value import String, Int
 from purescript.corefn.var import LocalVar
 
 

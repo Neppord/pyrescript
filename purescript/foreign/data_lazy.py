@@ -1,5 +1,5 @@
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import Box
+from purescript.corefn.value import Box
 
 
 class Defered(Box):

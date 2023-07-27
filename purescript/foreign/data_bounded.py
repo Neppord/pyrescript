@@ -1,4 +1,4 @@
-from purescript.corefn.literals import Char
+from purescript.corefn.value import Char
 
 exports = {
     'topChar': Char(chr(255)),

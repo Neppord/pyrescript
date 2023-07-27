@@ -1,5 +1,5 @@
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import Array
+from purescript.corefn.value import Array
 
 exports = {
     'arrayExtend': NativeX(lambda f, xs: Array([

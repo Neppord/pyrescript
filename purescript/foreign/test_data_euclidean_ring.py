@@ -1,4 +1,4 @@
-from purescript.corefn.literals import Int
+from purescript.corefn.value import Int
 from purescript.foreign import int_mod
 
 

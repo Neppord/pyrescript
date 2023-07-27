@@ -1,5 +1,5 @@
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import unit
+from purescript.corefn.value import unit
 from purescript.foreign import effect_aff, data_function_uncurried, data_string_common, data_string_regex, \
     partial_unsafe, data_lazy, unsafe_coerce, data_ring, data_enum, data_bounded, control_bind, data_functor, \
     data_heyting_algebra, data_show, data_ord, effect, control_extend, control_apply

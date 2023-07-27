@@ -1,5 +1,5 @@
 from purescript.corefn.expression import Expression
-from purescript.corefn.literals import Boolean
+from purescript.corefn.value import Boolean
 
 
 class AlternativeInterface(object):

@@ -1,5 +1,5 @@
 from purescript.corefn.abs import AbsInterface, NativeX
-from purescript.corefn.literals import String, Box, Record, Boolean, Array, Int
+from purescript.corefn.value import String, Box, Record, Boolean, Array, Int
 from rpython.rlib.rsre import rsre_re
 
 

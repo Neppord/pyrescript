@@ -1,5 +1,5 @@
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import Int, Float
+from purescript.corefn.value import Int, Float
 
 
 def int_add(a, b):

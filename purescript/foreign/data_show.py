@@ -1,5 +1,5 @@
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import String, Int
+from purescript.corefn.value import String, Int
 
 
 def show_int_impl_(x):

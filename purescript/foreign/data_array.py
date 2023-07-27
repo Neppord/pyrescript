@@ -1,4 +1,4 @@
-from purescript.corefn.literals import Array, Int
+from purescript.corefn.value import Array, Int
 
 
 def range_impl(start, end):

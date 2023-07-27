@@ -1,15 +1,16 @@
+from rpython.rlib.parsing.tree import Nonterminal
+from rpython.rlib.parsing.tree import Symbol
+
 from purescript.corefn import Declaration, Module
+from purescript.corefn.abs import Abs, Constructor
 from purescript.corefn.binders import VarBinder, ConstructorBinder, NullBinder, NamedBinder, RecordBinder, \
     StringLiteralBinder, IntBinder, FloatBinder, BoolBinder, ArrayLiteralBinder, CharLiteralBinder, NewtypeBinder
 from purescript.corefn.case import Alternative, GuardedAlternative, Case
 from purescript.corefn.expression import App, Accessor, Let
-from purescript.corefn.abs import Abs, Constructor
-from purescript.corefn.literals import Record, Array, String, Int, Float, \
-    Boolean, unit, RecordLiteral
+from purescript.corefn.value import Array, String, Int, Float, Boolean
+from purescript.corefn.literals import RecordLiteral
 from purescript.corefn.var import LocalVar, ExternalVar
 from purescript.rjson import raw_loads
-from rpython.rlib.parsing.tree import Nonterminal
-from rpython.rlib.parsing.tree import Symbol
 
 
 def load_module(module_name):

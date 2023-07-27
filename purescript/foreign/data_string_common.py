@@ -1,5 +1,5 @@
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import String
+from purescript.corefn.value import String
 
 
 def _replace_all(replace, with_, in_):

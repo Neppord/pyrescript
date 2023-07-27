@@ -4,7 +4,8 @@ from purescript.corefn import Module
 from purescript.corefn.abs import Abs, NativeX, Constructor
 from purescript.corefn.case import Case, Alternative
 from purescript.corefn.expression import App, Let, Accessor
-from purescript.corefn.literals import Box, RecordLiteral, Record
+from purescript.corefn.literals import RecordLiteral
+from purescript.corefn.value import Box, Record
 from purescript.corefn.var import LocalVar, ExternalVar
 
 

@@ -1,15 +1,12 @@
-import pprint
-
+from purescript.bytecode import Bytecode, LoadLocal, Apply, StoreLocal, Duplicate, Pop, JumpAbsolute, LoadConstant
+from purescript.bytecode.emitter import Emitter
 from purescript.bytecode.opcode import MakeData, GuardValue, GuardConstructor, Stash, RestoreStash, DropStash
 from purescript.corefn.abs import Abs, Constructor
 from purescript.corefn.binders import BoolBinder, VarBinder, NullBinder, ConstructorBinder
 from purescript.corefn.case import Case, Alternative, GuardedAlternative
 from purescript.corefn.expression import Let, App
+from purescript.corefn.value import Int, String, Boolean
 from purescript.corefn.var import LocalVar
-from purescript.bytecode import Bytecode, Declaration, LoadLocal, Apply, StoreLocal, Duplicate, JumpAbsoluteIfNotEqual, \
-    Pop, JumpAbsolute, LoadConstant
-from purescript.corefn.literals import Int, String, Boolean
-from purescript.bytecode.emitter import Emitter
 
 
 def test_constant():
