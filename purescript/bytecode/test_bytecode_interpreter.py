@@ -1,18 +1,16 @@
 import glob
 import os.path
-import sys
 from subprocess import check_call
 
 import pytest
 
+from purescript.bytecode import Bytecode, Apply, LoadConstant, LoadExternal
+from purescript.bytecode.emitter import Emitter
+from purescript.bytecode.interpreter import BytecodeInterpreter, BaseFrame
 from purescript.corefn.abs import Abs, NativeX
 from purescript.corefn.expression import App
-from purescript.corefn.literals import String, Int, Effect, Unit, unit
-from purescript.corefn.parsing import load_module
+from purescript.corefn.literals import String, Int
 from purescript.corefn.var import LocalVar
-from purescript.bytecode import Bytecode, Apply, LoadConstant, LoadLocal, LoadExternal, Declaration
-from purescript.bytecode.interpreter import BytecodeInterpreter, BaseFrame
-from purescript.bytecode.emitter import Emitter
 
 
 def test_hello_world(capsys):
@@ -25,8 +23,13 @@ def test_hello_world(capsys):
     ]
     interpreter = BytecodeInterpreter()
     effect = interpreter.interpret(bytecode)
-    fun = effect.effect
-    fun.native(*fun.arguments)
+    while effect:
+        if isinstance(effect, Bytecode):
+            effect = interpreter.interpret(effect)
+        elif isinstance(effect, NativeX):
+            effect = effect.native(*effect.arguments)
+        else:
+            break
     assert capsys.readouterr().out == "hello world\n"
 
 
@@ -73,9 +76,7 @@ def test_e2e(test_directory, monkeypatch, capsys):
     interpreter = BytecodeInterpreter()
     effect = interpreter.load_module("Main")["main"]
     while effect:
-        if isinstance(effect, Effect):
-            effect = effect.effect
-        elif isinstance(effect, NativeX):
+        if isinstance(effect, NativeX):
             effect = effect.native(*effect.arguments)
         elif isinstance(effect, Bytecode):
             effect = interpreter.interpret(effect)

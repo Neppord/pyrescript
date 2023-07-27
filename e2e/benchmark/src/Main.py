@@ -1,5 +1,6 @@
 from purescript.corefn.abs import NativeX
-from purescript.corefn.literals import String, Effect
+from purescript.corefn.literals import String
+from purescript.foreign.effect import pureE
 
 
 def _open(s):
@@ -11,5 +12,5 @@ def _open(s):
 
 
 exports = {
-    'open': NativeX(lambda s: Effect(NativeX(_open, 1, [s])), 1, [])
+    'open': NativeX(lambda s: pureE(NativeX(_open, 1, [s])), 1, [])
 }

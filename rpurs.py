@@ -1,7 +1,6 @@
 import sys
 
 from purescript.corefn import interpret_foreign, load_python_foreign
-from purescript.corefn.literals import Effect
 from purescript.corefn.parsing import load_module
 from interpreter import Interpreter
 
@@ -14,7 +13,6 @@ def target(*args):
     module.preload_imports(interpreter)
     decl = module.decl("main")  # type: Expression
     main = decl.expression.eval(interpreter, {})
-    assert isinstance(main, Effect)
 
     def entry_point(argv):
         main.run_effect(interpreter)

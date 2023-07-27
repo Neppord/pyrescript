@@ -1,5 +1,4 @@
 from purescript.corefn.expression import Expression
-from purescript.corefn.literals import Effect
 from purescript.prim import prim
 
 
@@ -26,7 +25,6 @@ class Interpreter(object):
         """
         decl = module.decl("main")  # type: Expression
         main = decl.expression.eval(self, {})
-        assert isinstance(main, Effect)
         main.run_effect(self)
 
     def run_module_by_name(self, module_name):

@@ -1,28 +1,24 @@
-from purescript.corefn.abs import AbsInterface, NativeX
-from purescript.corefn.literals import Effect
 from purescript.bytecode import Bytecode
+from purescript.corefn.abs import NativeX
 
 
-def bindE__(a, atob):
-    return atob.call_abs(a.run_effect(i)).run_effect(i)
+def bindE(a, atob):
+    bytecode = Bytecode("$bindE")
+    bytecode.emit_load_constant(a)
+    bytecode.emit_apply()
+    bytecode.emit_load_constant(atob)
+    bytecode.emit_apply()
+    bytecode.emit_apply()
+    return bytecode
 
 
-def bindE_(a, atob):
-    if not isinstance(a, Effect):
-        raise TypeError("expected Effect got: " + a.__repr__())
-    if isinstance(atob, AbsInterface):
-        return Effect(NativeX(bindE__, 2, [a, atob]))
-    if isinstance(atob, Bytecode):
-        effect = Bytecode("effect")
-        effect.emit_load_constant(a)
-        effect.emit_load_constant(atob)
-        effect.emit_apply()
-        return effect
-    else:
-        raise TypeError("expected Abs got: " + atob.__repr__())
+def pureE(x):
+    bytecode = Bytecode("$pureE")
+    bytecode.emit_load_constant(x)
+    return bytecode
 
 
 exports = {
-    'pureE': NativeX(lambda x: Effect(x), 1, []),
-    'bindE': NativeX(bindE_, 2, []),
+    'pureE': NativeX(pureE, 1, []),
+    'bindE': NativeX(bindE, 2, []),
 }
