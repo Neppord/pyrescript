@@ -26,7 +26,7 @@ def test_hello_world(capsys):
     interpreter = BytecodeInterpreter()
     effect = interpreter.interpret(bytecode)
     fun = effect.effect
-    fun.native(None, *fun.arguments)
+    fun.native(*fun.arguments)
     assert capsys.readouterr().out == "hello world\n"
 
 
@@ -76,7 +76,7 @@ def test_e2e(test_directory, monkeypatch, capsys):
         if isinstance(effect, Effect):
             effect = effect.effect
         elif isinstance(effect, NativeX):
-            effect = effect.native(None, *effect.arguments)
+            effect = effect.native(*effect.arguments)
         elif isinstance(effect, Bytecode):
             effect = interpreter.interpret(effect)
         else:

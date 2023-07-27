@@ -31,29 +31,29 @@ class RegEx(Box):
 
 
 # TODO: check regex
-def _regex_impl(i, left, right, s1, flags):
+def _regex_impl(left, right, s1, flags):
     assert isinstance(left, AbsInterface)
     assert isinstance(right, AbsInterface)
     assert isinstance(s1, String)
     assert isinstance(flags, String)
-    return right.call_abs(i, RegEx(s1.value, flags))
+    return right.call_abs(RegEx(s1.value, flags))
 
 
-def _match(i, just, nothing, re, s2):
+def _match(just, nothing, re, s2):
     assert isinstance(re, RegEx)
     assert isinstance(s2, String)
     groups = re.match(s2.value)
     if groups:
-        return just(i, Array([
+        return just(Array([
             nothing if g is None
-            else just(i, String(g))
+            else just(String(g))
             for g in groups
         ]))
     else:
         return nothing
 
 
-def _search(i, just, nothing, re, s):
+def _search(just, nothing, re, s):
     assert isinstance(re, RegEx)
     assert isinstance(s, String)
     index = re.search(s.value)
@@ -63,11 +63,11 @@ def _search(i, just, nothing, re, s):
         return just(Int(index))
 
 
-def _replaceBy(i, just, nothing, re, s):
+def _replaceBy(just, nothing, re, s):
     raise NotImplementedError()
 
 
-def flagsImpl(i, r):
+def flagsImpl(r):
     assert isinstance(r, Record)
 
     return Record({
@@ -85,6 +85,6 @@ exports = {
     '_match': NativeX(_match, 4, []),
     '_search': NativeX(_search, 4, []),
     '_replaceBy': NativeX(_replaceBy, 4, []),
-    'showRegexImpl': NativeX(lambda i, r: String(str(r)), 1, []),
+    'showRegexImpl': NativeX(lambda r: String(str(r)), 1, []),
     'flagsImpl': NativeX(flagsImpl, 1, []),
 }

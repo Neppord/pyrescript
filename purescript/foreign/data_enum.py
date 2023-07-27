@@ -2,7 +2,7 @@ from purescript.corefn.abs import NativeX
 from purescript.corefn.literals import Char, Int
 
 
-def _to_char_code(i, c):
+def _to_char_code(c):
     assert isinstance(c, Char)
     return Int(ord(c.value))
 

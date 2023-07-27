@@ -3,11 +3,11 @@ from purescript.corefn.literals import Effect
 from purescript.bytecode import Bytecode
 
 
-def bindE__(i, a, atob):
-    return atob.call_abs(i, a.run_effect(i)).run_effect(i)
+def bindE__(a, atob):
+    return atob.call_abs(a.run_effect(i)).run_effect(i)
 
 
-def bindE_(interpreter, a, atob):
+def bindE_(a, atob):
     if not isinstance(a, Effect):
         raise TypeError("expected Effect got: " + a.__repr__())
     if isinstance(atob, AbsInterface):
@@ -23,6 +23,6 @@ def bindE_(interpreter, a, atob):
 
 
 exports = {
-    'pureE': NativeX(lambda i, x: Effect(x), 1, []),
+    'pureE': NativeX(lambda x: Effect(x), 1, []),
     'bindE': NativeX(bindE_, 2, []),
 }

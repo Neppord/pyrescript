@@ -2,7 +2,7 @@ from purescript.corefn.abs import NativeX
 from purescript.corefn.literals import String, Effect
 
 
-def _open(i, s):
+def _open(s):
     assert isinstance(s, String)
     file_name = s.value
     with file(file_name, "r") as f:
@@ -11,5 +11,5 @@ def _open(i, s):
 
 
 exports = {
-    'open': NativeX(lambda i, s: Effect(NativeX(_open, 1, [s])), 1, [])
+    'open': NativeX(lambda s: Effect(NativeX(_open, 1, [s])), 1, [])
 }

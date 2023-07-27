@@ -8,7 +8,7 @@ class Defered(Box):
         self.thunk = thunk
         self.value = None
 
-    def force(self, interpreter):
+    def force(self):
         raise NotImplementedError("what to do here!?")
 
     def __repr__(self):
@@ -18,13 +18,13 @@ class Defered(Box):
             return "Defered (%s)" % self.thunk.__repr__()
 
 
-def _defer(i, thunk):
+def _defer(thunk):
     return Defered(thunk)
 
 
-def _force(i, deferd):
+def _force(deferd):
     assert isinstance(deferd, Defered)
-    return deferd.force(i)
+    return deferd.force()
 
 
 exports = {

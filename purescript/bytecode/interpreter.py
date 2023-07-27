@@ -175,7 +175,7 @@ class BytecodeInterpreter(object):
                         arg = value_stack.pop()
                         args = func.arguments + [arg]
                         if len(args) == func.x:
-                            value_stack.append(func.native(None, *args))
+                            value_stack.append(func.native(*args))
                         else:
                             value_stack.append(NativeX(
                                 func.native,
@@ -183,7 +183,7 @@ class BytecodeInterpreter(object):
                                 args
                             ))
                     else:
-                        value_stack.append(func.native(None, *func.arguments))
+                        value_stack.append(func.native(*func.arguments))
                 else:
                     raise NotImplementedError("cant call %s" % func.__repr__())
             elif isinstance(opcode, NativeCall):
