@@ -88,7 +88,7 @@ class ArrayLiteralBinder(Binder):
         return "[%s]" % items
 
     def emit_bytecode(self, emitter):
-        go_to_nexts = []
+        go_to_nexts = [emitter.bytecode.emit_guard_array(len(self.binders))]
         for binder in self.binders:
             go_to_nexts.extend(binder.emit_bytecode(emitter))
         return go_to_nexts

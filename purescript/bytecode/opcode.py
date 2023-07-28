@@ -234,6 +234,27 @@ class GuardConstructor(OpCode):
         return "GuardConstructor(%s, %s)" % (self.name.__repr__(), self.address)
 
 
+class GuardArray(OpCode):
+    """
+    Checks that the top of the stack is an array with matching length, otherwise puts it back and jumps
+    if it matches it splices the array onto the stack in reverse order, with the first member at the top of the stack
+    """
+
+    def __init__(self, lenght, address):
+        self.lenght = lenght
+        self.address = address
+
+    def __eq__(self, other):
+        return (
+                isinstance(other, GuardArray) and
+                other.lenght == self.lenght and
+                other.address == self.address
+        )
+
+    def __repr__(self):
+        return "GuardArray(%s, %s)" % (self.lenght.__repr__(), self.address)
+
+
 class JumpAbsolute(OpCode):
     def __init__(self, address):
         self.address = address

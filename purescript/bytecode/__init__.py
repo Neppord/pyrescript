@@ -1,6 +1,6 @@
 from purescript.bytecode.opcode import Declaration, Apply, Duplicate, Pop, LoadConstant, LoadLocal, AccessField, \
     AssignField, LoadExternal, StoreLocal, NativeCall, JumpAbsoluteIfNotEqual, JumpAbsolute, MakeData, GuardValue, \
-    GuardConstructor, Stash, RestoreStash, DropStash, Lambda
+    GuardConstructor, Stash, RestoreStash, DropStash, Lambda, GuardArray
 from purescript.corefn.value import Closure
 
 
@@ -35,6 +35,11 @@ class Bytecode(object):
 
     def emit_guard_constructor(self, name):
         guard = GuardConstructor(name, -1)
+        self.opcodes.append(guard)
+        return guard
+
+    def emit_guard_array(self, length):
+        guard = GuardArray(length, -1)
         self.opcodes.append(guard)
         return guard
 

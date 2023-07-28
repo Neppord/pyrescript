@@ -178,7 +178,7 @@ def binder_(node):
                 value[k] = binder_(v)
             return RecordBinder(value)
         elif type_ == "ArrayLiteral":
-            return ArrayLiteralBinder( [binder_(b) for b in value_.children])
+            return ArrayLiteralBinder([binder_(b) for b in value_.children])
         elif type_ == "StringLiteral":
             return StringLiteralBinder(str_(value_))
         elif type_ == "CharLiteral":
@@ -192,7 +192,7 @@ def binder_(node):
         elif "false" in symbol:
             return BoolBinder(False)
         else:
-            msg = "not implemented literal %s with symbol %s " %(type_, symbol)
+            msg = "not implemented literal %s with symbol %s " % (type_, symbol)
             raise NotImplementedError(msg)
     elif type_ == "ConstructorBinder":
         annotation = object_(binder["annotation"])
@@ -205,7 +205,8 @@ def binder_(node):
         if meta_type == "IsNewtype":
             return NewtypeBinder(module_name, identifier, [binder_(b) for b in constructor_binder["binders"].children])
         else:
-            return ConstructorBinder(module_name, identifier, [binder_(b) for b in constructor_binder["binders"].children])
+            return ConstructorBinder(module_name, identifier,
+                                     [binder_(b) for b in constructor_binder["binders"].children])
     elif type_ == "NullBinder":
         return NullBinder()
     elif type_ == "NamedBinder":
