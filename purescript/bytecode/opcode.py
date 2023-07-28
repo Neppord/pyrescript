@@ -40,18 +40,6 @@ class Apply(OpCode):
         return isinstance(other, Apply)
 
 
-class Duplicate(OpCode):
-    """
-    duplicate the top of the stack, used together with operations that consumes the top of the stack.
-    """
-
-    def __repr__(self):
-        return "Duplicate()"
-
-    def __eq__(self, other):
-        return isinstance(other, Duplicate)
-
-
 class Pop(OpCode):
     """
     Throws away the top of the stack

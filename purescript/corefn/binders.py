@@ -64,7 +64,6 @@ class BoolBinder(Binder):
             return "False"
 
     def emit_bytecode(self, emitter):
-        emitter.bytecode.emit_duplicate()
         return [emitter.bytecode.emit_guard_value(Boolean(self.value))]
 
 

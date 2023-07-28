@@ -2,7 +2,7 @@ from purescript.corefn import load_python_foreign
 from purescript.corefn.value import Record, Data, Closure, NativeX, Array
 from purescript.corefn.parsing import load_module
 from purescript.bytecode import LoadConstant, LoadExternal, Bytecode, Apply, NativeCall, StoreLocal, Declaration, \
-    LoadLocal, JumpAbsoluteIfNotEqual, AccessField, AssignField, Duplicate, Pop, JumpAbsolute, MakeData, \
+    LoadLocal, JumpAbsoluteIfNotEqual, AccessField, AssignField, Pop, JumpAbsolute, MakeData, \
     GuardConstructor, GuardValue, Stash, RestoreStash, DropStash, Lambda, GuardArray
 from purescript.bytecode.emitter import Emitter
 from purescript.prim import prim
@@ -206,10 +206,6 @@ class BytecodeInterpreter(object):
                 frame.set_var(opcode.name, value_stack.pop())
             elif isinstance(opcode, Declaration):
                 value_stack.append(opcode.bytecode)
-            elif isinstance(opcode, Duplicate):
-                value = value_stack.pop()
-                value_stack.append(value)
-                value_stack.append(value)
             elif isinstance(opcode, Pop):
                 if value_stack:
                     value_stack.pop()

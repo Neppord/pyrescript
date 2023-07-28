@@ -1,4 +1,4 @@
-from purescript.bytecode.opcode import Declaration, Apply, Duplicate, Pop, LoadConstant, LoadLocal, AccessField, \
+from purescript.bytecode.opcode import Declaration, Apply, Pop, LoadConstant, LoadLocal, AccessField, \
     AssignField, LoadExternal, StoreLocal, NativeCall, JumpAbsoluteIfNotEqual, JumpAbsolute, MakeData, GuardValue, \
     GuardConstructor, Stash, RestoreStash, DropStash, Lambda, GuardArray
 from purescript.corefn.value import Closure
@@ -76,9 +76,6 @@ class Bytecode(object):
 
     def emit_drop_stash(self):
         self.opcodes.append(DropStash())
-
-    def emit_duplicate(self):
-        self.opcodes.append(Duplicate())
 
     def emit_pop(self):
         self.opcodes.append(Pop())

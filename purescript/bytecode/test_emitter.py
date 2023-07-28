@@ -1,4 +1,4 @@
-from purescript.bytecode import Bytecode, LoadLocal, Apply, StoreLocal, Duplicate, Pop, JumpAbsolute, LoadConstant
+from purescript.bytecode import Bytecode, LoadLocal, Apply, StoreLocal, Pop, JumpAbsolute, LoadConstant
 from purescript.bytecode.emitter import Emitter
 from purescript.bytecode.opcode import MakeData, GuardValue, GuardConstructor, Stash, RestoreStash, DropStash, Lambda
 from purescript.corefn.abs import Abs, Constructor
@@ -70,15 +70,13 @@ def test_case_boolean_binder():
         LoadConstant(0),
         Stash(),
         RestoreStash(),
-        Duplicate(),
-        GuardValue(Boolean(True), 7),
+        GuardValue(Boolean(True), 6),
         LoadConstant(1),
-        JumpAbsolute(12),
+        JumpAbsolute(10),
         RestoreStash(),
-        Duplicate(),
-        GuardValue(Boolean(False), 12),
+        GuardValue(Boolean(False), 10),
         LoadConstant(2),
-        JumpAbsolute(12),
+        JumpAbsolute(10),
         DropStash()
     ]
 
@@ -139,14 +137,13 @@ def test_case_bool_and_null_binder():
         LoadConstant(0),
         Stash(),
         RestoreStash(),
-        Duplicate(),
-        GuardValue(Boolean(True), 7),
+        GuardValue(Boolean(True), 6),
         LoadConstant(1),
-        JumpAbsolute(11),
+        JumpAbsolute(10),
         RestoreStash(),
         Pop(),
         LoadConstant(2),
-        JumpAbsolute(11),
+        JumpAbsolute(10),
         DropStash()
     ]
 
