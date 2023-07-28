@@ -189,7 +189,9 @@ class BytecodeInterpreter(object):
                     arg = value_stack.pop()
                     value_stack.append(Data(func.name, func.length, func.members + [arg]))
                 elif isinstance(func, NativeX):
-                    if func.x <= func.arguments:
+                    if len(func.arguments) == func.x:
+                        value_stack.append(func.native(*func.arguments))
+                    elif func.x <= func.arguments:
                         arg = value_stack.pop()
                         args = func.arguments + [arg]
                         if len(args) == func.x:
